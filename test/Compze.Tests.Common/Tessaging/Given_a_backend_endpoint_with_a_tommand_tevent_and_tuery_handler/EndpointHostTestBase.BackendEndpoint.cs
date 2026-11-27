@@ -25,6 +25,11 @@ public abstract partial class EndpointHostTestBase
       //the 30s default. Specs that need a wait to SUCCEED compose their own endpoints with their own patience.
       protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(500);
 
+      //Marked failed at the first failure: the specifications that make this endpoint's exactly-once handlers throw pin how
+      //a tessage marked failed surfaces through the testing host, and none of them expects a later try to succeed. The
+      //retries themselves are specified in Compze.Tessaging.Specifications.
+      protected override HandlingRetries? HandlingRetries => HandlingRetries.For(TimeSpan.Zero);
+
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireCommonTestTypeMappings();
 
       //Exactly-once kinds are async end to end, so their handlers pass their gates asynchronously, holding no thread while a gate keeps them waiting.

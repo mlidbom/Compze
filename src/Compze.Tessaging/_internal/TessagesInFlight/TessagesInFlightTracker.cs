@@ -35,6 +35,9 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(it => it.DoneWith(tessage, handlingEndpointId, exception));
 
+   public void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception) =>
+      _implementation.Update(it => it.FailedTry(tessage, handlingEndpointId, exception));
+
    public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(it => it.DroppedBeforeDelivery(transportTessage, remoteEndpointId));
 
@@ -48,6 +51,10 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
       public required string TypeName { get; init; }
       public required string Body { get; init; }
       internal Dictionary<EndpointId, bool> EndpointDeliveryStatus { get; } = [];
+
+      ///<summary>What the last failed try of the tessage's handling failed with, in each endpoint where its handling is being<br/>
+      /// tried again.</summary>
+      internal Dictionary<EndpointId, Exception> LastFailedTries { get; } = [];
    }
 
    class NonThreadSafeImplementation
@@ -85,7 +92,17 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
          //A tessage this process never sent - one the inbox recovery scan reloaded from its own rows after a crash - has no
          //in-flight entry here: there is nothing to mark done, only the handling that just finished.
          if(_trackedTessages.TryGetValue(tessage.TessageId, out var inFlightTessage))
+         {
             inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
+            inFlightTessage.LastFailedTries.Remove(handlingEndpointId);
+         }
+      }
+
+      internal void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception)
+      {
+         //A tessage the inbox recovery scan reloaded has no in-flight entry here, as in DoneWith.
+         if(_trackedTessages.TryGetValue(tessage.TessageId, out var inFlightTessage))
+            inFlightTessage.LastFailedTries[handlingEndpointId] = exception;
       }
 
       internal void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>

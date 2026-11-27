@@ -19,7 +19,11 @@ partial class Inbox
       Task<IReadOnlyList<ITessagingSqlLayer.UnHandledTessage>> GetUnHandledTessagesAsync();
 
       Task MarkAsSucceededAsync(TransportTessage.InComing tessage);
-      Task RecordExceptionAsync(TransportTessage.InComing tessage, Exception exception);
+
+      ///<summary>Records a failed try of the tessage's handling, with how long its handling has now been failing — see<br/>
+      /// <see cref="ITessagingSqlLayer.IInboxSqlLayer.RecordFailedTryAsync"/>.</summary>
+      Task RecordFailedTryAsync(TransportTessage.InComing tessage, Exception exception, TimeSpan failingTime);
+
       Task MarkAsFailedAsync(TransportTessage.InComing tessage);
       Task StartAsync();
    }

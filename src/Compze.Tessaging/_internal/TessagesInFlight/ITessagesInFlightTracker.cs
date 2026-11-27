@@ -18,6 +18,10 @@ interface ITessagesInFlightTracker
     ///<summary>Completes when nothing is in flight, holding no thread while it waits; throws when <paramref name="timeoutOverride"/>, or 10 seconds, passes first.</summary>
     Task AwaitNoTessagesInFlightAsync(WaitTimeout? timeoutOverride);
     void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception);
+    ///<summary>A try of <paramref name="tessage"/>'s handling in <paramref name="handlingEndpointId"/> failed with<br/>
+    /// <paramref name="exception"/>, and the tessage is tried again or marked failed: still in flight. The at-rest wait's<br/>
+    /// timeout shows each tessage's last failed try, so a test whose handler keeps failing says why it didn't come to rest.</summary>
+    void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception);
     ///<summary>A queued tessage was dropped without being handled by <paramref name="remoteEndpointId"/> — on the best-effort tier,<br/>
     /// the one tessage in flight at a delivery failure (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).<br/>
     /// Nothing further will happen with it, so it is no longer in flight to that endpoint.</summary>

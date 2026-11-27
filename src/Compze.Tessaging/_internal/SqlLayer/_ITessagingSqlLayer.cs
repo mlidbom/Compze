@@ -92,7 +92,13 @@ interface ITessagingSqlLayer
       Task<IReadOnlyList<UnHandledTessage>> GetUnHandledTessagesAsync();
 
       Task<int> MarkAsSucceededAsync(TessageId tessageId);
-      Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
+
+      ///<summary>Records a failed try of the tessage's handling: one more failure counted, the exception it failed with, and<br/>
+      /// <paramref name="failingTime"/>, how long its handling has now been failing, which the recovery scan hands back after a<br/>
+      /// restart (<see cref="UnHandledTessage.FailingTime"/>). Runs in no transaction: the handling transaction it records<br/>
+      /// the failure of has rolled back.</summary>
+      Task<int> RecordFailedTryAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType, TimeSpan failingTime);
+
       Task<int> MarkAsFailedAsync(TessageId tessageId);
       Task InitAsync();
    }
@@ -147,12 +153,16 @@ interface ITessagingSqlLayer
 
    ///<summary>One tessage the inbox admitted but whose handling has not finished, as loaded by the recovery scan at endpoint<br/>
    /// start (see <see cref="IInboxSqlLayer.GetUnHandledTessagesAsync"/>): exactly what re-enqueueing for handling needs —<br/>
-   /// identity, type for deserialization, and the serialized body.</summary>
-   public class UnHandledTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   /// identity, type for deserialization, the serialized body, and how long its handling had been failing.</summary>
+   public class UnHandledTessage(TessageId tessageId, TypeId typeId, string serializedTessage, TimeSpan failingTime)
    {
       internal TessageId TessageId { get; } = tessageId;
       internal TypeId TypeId { get; } = typeId;
       internal string SerializedTessage { get; } = serializedTessage;
+
+      ///<summary>How long the tessage's handling had been failing when the endpoint's previous process last recorded a failed<br/>
+      /// try: zero for a tessage no try of which has failed. Its retries go on from there.</summary>
+      internal TimeSpan FailingTime { get; } = failingTime;
    }
 
    ///<summary>The endpoint catalog's persistence: the one shared, unprefixed table every domain database carries — each<br/>
@@ -224,6 +234,7 @@ interface ITessagingSqlLayer
       public const string ExceptionTessage = nameof(ExceptionTessage);
       public const string ExceptionType = nameof(ExceptionType);
       public const string ExceptionStackTrace = nameof(ExceptionStackTrace);
+      public const string FailingTimeMilliseconds = nameof(FailingTimeMilliseconds);
    }
 
    ///<summary>The inbox's per-sender admission high-water marks: one row per sender peer, holding the sequence number of the<br/>

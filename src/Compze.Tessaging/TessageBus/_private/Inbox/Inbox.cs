@@ -3,6 +3,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -30,8 +31,8 @@ static class InboxRegistrar
                   .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, HandlingRetries handlingRetries, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, handlingRetries, configuration.Id)),
          Singleton.For<IInbox>()
                   .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher observationDispatcher, ITypeMap typeMap, ITessagingSerializer serializer)
                                 => new Inbox(handlerExecutionEngine, tessageStorage, observationDispatcher, typeMap, serializer))
@@ -69,7 +70,8 @@ static class InboxRegistrar
    //transport server starts serving, so the backlog enters the engine ahead of anything newly arriving and per-pair handling
    //order survives the crash; the handling claim makes any double-enqueue this could ever race into a clean skip.
    //Observation is deliberately not re-dispatched: a recovered tessage was already registered once, and the dedup that
-   //shields observers from redeliveries shields them from its re-registration too.
+   //shields observers from redeliveries shields them from its re-registration too. A recovered tessage's retries go on from the
+   //failing time its row recorded, so a restart neither resets them nor counts the time the endpoint was down.
    async Task ReEnqueueUnHandledTessagesAsync()
    {
       var unHandled = await _storage.GetUnHandledTessagesAsync().caf();
@@ -77,7 +79,7 @@ static class InboxRegistrar
 
       this.Log().Info($"Recovery scan: re-enqueueing {unHandled.Count} admitted but unhandled tessage(s) for handling.");
       foreach(var tessage in unHandled)
-         _handlerExecutionEngine.Enqueue(new TransportTessage.InComing(tessage.SerializedTessage, tessage.TypeId.CanonicalString, tessage.TessageId, _typeMap, _serializer));
+         _handlerExecutionEngine.Enqueue(new TransportTessage.InComing(tessage.SerializedTessage, tessage.TypeId.CanonicalString, tessage.TessageId, _typeMap, _serializer), tessage.FailingTime);
    }
 
    public async Task ReceiveAsync(TransportTessage.InComing tessage)
@@ -104,10 +106,10 @@ static class InboxRegistrar
       if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent && _observationDispatcher.AnyTeventObserversFor(tessage.TessageTypeId.Type))
          _observationDispatcher.QueueForObservers(PublisherTevent.Wrapped((ITevent)tessage.DeserializeTessageAndCacheForNextCall()));
 
-      _handlerExecutionEngine.Enqueue(tessage);
+      _handlerExecutionEngine.Enqueue(tessage, failingTime: TimeSpan.Zero);
    }
 
-   public Task AwaitAllReceivedTessagesProcessedAsync() => _handlerExecutionEngine.AwaitAllReceivedTessagesProcessedAsync();
+   public Task DrainAndStopHandlingAsync() => _handlerExecutionEngine.DrainAndStopHandlingAsync();
 
    public async ValueTask DisposeAsync()
    {

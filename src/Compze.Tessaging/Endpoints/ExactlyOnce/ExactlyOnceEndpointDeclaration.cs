@@ -12,6 +12,10 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 ///</summary>
 public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclaration<TIdentity>, IExactlyOnceEndpointDeclaration where TIdentity : IEndpointIdentity
 {
+   ///<summary>How long the endpoint keeps trying a tessage whose handling fails before it marks the tessage failed — see<br/>
+   /// <see cref="ExactlyOnceEndpointBuilder.HandlingRetries"/>. Null — the default — means 5 minutes of failing.</summary>
+   protected virtual HandlingRetries? HandlingRetries => null;
+
    ///<summary>Override to register exactly-once tommand handlers — see <see cref="IExactlyOnceTommandHandlerRegistrar"/>.</summary>
    protected virtual void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) {}
 
@@ -30,6 +34,7 @@ public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclar
       environment.Configure(builder);
       environment.ConfigureDomainDatabase(builder);
       ConfigureSharedAspects(builder);
+      if(HandlingRetries is {} handlingRetries) builder.HandlingRetries(handlingRetries);
       builder.RegisterTessageBusHandlers(handle =>
       {
          RegisterExactlyOnceTommandHandlers(handle);

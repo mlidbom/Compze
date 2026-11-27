@@ -39,7 +39,7 @@ public class NavigationSpecification_specification : UniversalTestBase
       public static string Name => "NavigationSpecificationNavigating";
       public static EndpointId Id => new(Guid.Parse("5D2A9F63-84C1-4E70-B3A8-16F027C4E9B5"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
    }
 
    ///<summary>Answers the tueries the chains navigate and remembers the tommands posted to it — the far side of every
@@ -52,7 +52,7 @@ public class NavigationSpecification_specification : UniversalTestBase
       readonly NavigationSpecification_specification _specification;
       internal AnsweringEndpointDeclaration(NavigationSpecification_specification specification) => _specification = specification;
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
          .ForTuery((TheAnswerTuery _) => new NumberResource { Value = 42 })

@@ -31,6 +31,12 @@ class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException 
                         Body:
                         {tessage.Body}
                         """);
+         foreach(var (endpointId, exception) in tessage.LastFailedTries)
+            sb.AppendLine(CultureInfo.InvariantCulture,
+                          $"""
+                           Being tried again in {endpointId}, after a try that failed with:
+                           {exception}
+                           """);
       }
 
       if(pendingObservations.Count > 0)

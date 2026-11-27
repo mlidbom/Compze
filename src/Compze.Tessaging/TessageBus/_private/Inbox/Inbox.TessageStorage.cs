@@ -23,12 +23,13 @@ class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IT
       => (await _sqlLayer.MarkAsSucceededAsync(tessage.TessageId).caf())
                ._assert(affectedRows => affectedRows == 1);
 
-   public async Task RecordExceptionAsync(TransportTessage.InComing tessage, Exception exception)
+   public async Task RecordFailedTryAsync(TransportTessage.InComing tessage, Exception exception, TimeSpan failingTime)
    {
-      (await _sqlLayer.RecordExceptionAsync(tessage.TessageId,
+      (await _sqlLayer.RecordFailedTryAsync(tessage.TessageId,
                                             exception.StackTrace ?? string.Empty,
                                             exception.Message,
-                                            exception.GetType().GetFullNameCompilable()).caf())
+                                            exception.GetType().GetFullNameCompilable(),
+                                            failingTime).caf())
                ._assert(affectedRows => affectedRows == 1);
    }
 

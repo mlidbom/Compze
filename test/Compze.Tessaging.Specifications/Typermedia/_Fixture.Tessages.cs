@@ -1,11 +1,7 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
-using Compze.TypeIdentifiers.DependencyInjection;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
 // ReSharper disable MemberCanBeInternal serialization...
-
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Specifications.Typermedia.AssemblyTypeMapper))]
 
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning disable CA1724 // Type names should not match namespaces
@@ -69,27 +65,4 @@ public class RememberNumberTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTo
    public static RememberNumberTommand Create(int number) => new() { Id = TessageId.New(), Number = number };
 
    public int Number { get; set; }
-}
-
-#pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
-class AssemblyTypeMapper : IAssemblyTypeMapper
-{
-   public void Map(IAssemblyTypeMappingRegistrar map)
-      => map.Map<GreetingTuery>("7e8158a9-4972-4bd3-a0a5-9b261e7e5e64")
-            .Map<RegisterGreeterTommand>("8b7a82f3-9c2e-4f24-9a96-2f0d2af56a01")
-            .Map<TueryBothEndpointsHandle>("c93a55b7-30a1-4a35-b7c8-01c9d61d31e6")
-            .Map<TueryOnlyTheSecondEndpointHandles>("5f2f0f68-8a4e-4a2e-b7a2-38d8bd7fca10")
-            .Map<TueryServedByTheLateEndpoint>("2a6de5cf-40b8-4f11-9c76-8f0e2f5f13b2")
-            .Map<TueryNothingServes>("9d41c2b7-6a35-4a90-8f3e-5b7c1d20ae44")
-            .Map<TheAnswerTuery>("6c15f9a3-2d70-4e81-9b4c-73a0e5182fd6")
-            .Map<AddTuery>("0b83d4e6-51c9-4a27-8e60-2f9d71c34b58")
-            .Map<RememberNumberTommand>("f27a061b-9e34-4c85-b1d0-58e63a2790cf");
-}
-
-// ReSharper disable once CheckNamespace
-public static class TypermediaHostingSpecificationTypeMappings
-{
-   /// <summary>Requires the type identity of this specification assembly — its test message types.</summary>
-   public static IComponentRegistrar RequireTypermediaHostingSpecificationTypeMappings(this IComponentRegistrar @this)
-      => @this.RequireMappedTypesFromAssemblyContaining<AssemblyTypeMapper>();
 }

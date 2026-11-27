@@ -60,7 +60,7 @@ property:
 | Rung | What it is | Loses vs. the rung above |
 |---|---|---|
 | **Participation** | In-process, synchronous, in the *publisher's* transaction. A handler failure aborts the publish itself. | — (the strongest thing there is) |
-| **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried until handled. | Participation in the publisher's transaction |
+| **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried while it fails for as long as the endpoint's `HandlingRetries` allow. | Participation in the publisher's transaction |
 | **Best-effort** | Across the wire, handler in its *own* transaction. No store, no dedup, no retry. | Guaranteed arrival |
 | **Observation** | Committed facts only, off-thread, per-observer FIFO, no transaction. | Transactional handling |
 
@@ -94,7 +94,8 @@ Defined in `Compze.Tessaging.Abstractions` (`_TessageTypes..Interfaces.cs`):
   keeps apart. A plain `IRemotableTevent` and "delivered best-effort" are the same statement made once.
 - **`IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage`** — guaranteed arrival: sent
   transactionally through the outbox, handled transactionally through the inbox, deduped by its
-  `IAtMostOnceTessage` `Id`, retried until handled.
+  `IAtMostOnceTessage` `Id`, retried while its handling fails, for as long as the receiving endpoint's
+  `HandlingRetries` allow (see "Failing to *handle*" under [Ordering](#ordering)).
 - The markers underneath: `IMustBeSentTransactionally` (the send joins a transaction — requires the outbox),
   `IMustBeHandledTransactionally` (dedup/handling is atomic with the handler's effects — requires the
   inbox), and `IAtMostOnceTessage` (carries the `TessageId` infrastructure dedups on). At-most-once
@@ -208,7 +209,7 @@ delivery guarantee comes from each arriving tevent's type — the subscriber nev
 
 - a local publish → participation (synchronous, publisher's transaction);
 - an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order on arrival, registered
-  durably, handled in its own transaction under a row-level handling claim, retried until handled. The
+  durably, handled in its own transaction under a row-level handling claim, retried while it fails. The
   sender is acknowledged at admission, so a hard crash between admission and handler-commit gets no
   redelivery — the inbox's recovery scan at endpoint start re-enqueues every admitted but unhandled tessage,
   which is what makes acknowledged mean will-be-handled across crashes;
@@ -315,6 +316,20 @@ Per rung:
 - **Receive side: failing to *receive* is fatal.** An endpoint that cannot register an arriving guaranteed
   tevent in its inbox has a fatal bug — the system goes down rather than lose the tevent. Failing to
   *handle* (handler exceptions, retries exhausted) is a separate concern with its own policy.
+- **Failing to *handle*: the order is held, then given up visibly, at one point.** The inbox handles its
+  exactly-once tessages one at a time, in admission order, so a tessage whose handling fails holds the line:
+  it is tried again — a few tries at once, then a delay growing from a second to a minute — and nothing
+  behind it is handled meanwhile. When its *failing time* — how long its handling has been failing while the
+  endpoint runs and can reach its database, recorded with each failed try, so it carries across restarts —
+  reaches the endpoint's declared `HandlingRetries` (5 minutes by default), it is marked failed and the
+  endpoint goes on with the tessages behind it. Marking failed is the only point where the order is given
+  up, and it is recorded on the tessage's inbox row; `HandlingRetries.UntilHandled` never gives it up.
+  Retrying a failed tessage later, by an administrator, handles it out of order (see
+  `TODO/failed-tessage-administration.md`). A try counts only when the endpoint could record it: when the
+  endpoint's own database is unreachable, it is the endpoint failing, not the tessage, so the tessage keeps
+  its place, waits, and the time doesn't count. Stopping the endpoint ends a wait to be tried again and
+  stops handling before the process lock is released: the waiting tessage and those behind it are left
+  UnHandled, and the recovery scan at the next start re-enqueues them in admission order.
 
 ## Tommands are different
 

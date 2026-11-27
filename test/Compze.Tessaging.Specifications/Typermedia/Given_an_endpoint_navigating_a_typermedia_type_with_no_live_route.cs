@@ -38,7 +38,7 @@ public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route :
       public static string Name => "Navigator";
       public static EndpointId Id => new(Guid.Parse("6F8D2C15-B7A9-4E30-95D6-1A4B8C7E2F90"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       //Short deliberately: these specifications pin what exhausted patience says, so waiting out the full default would only slow the suite.
       protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(100);
