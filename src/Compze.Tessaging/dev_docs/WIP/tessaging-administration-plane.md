@@ -86,13 +86,17 @@ its own process: its own endpoint marks its own tessage failed.
   `BestEffortTeventQueueOverflowException`.
 - **Never guaranteed delivery.** Magnus's two reasons: it would cost too much, and a failing handler of an administration
   tessage would be a catch-22. So tueries and tommands are at most once, and every act is safe to repeat: it acts only when
-  its precondition holds, such as a retry only of a tessage marked failed.
+  its precondition holds, such as a retry only of a tessage marked failed. The failed-tessage todo gave a third reason, that
+  an exactly-once retry tommand would queue behind the very tessage holding the line. Since the handling order, it holds
+  only for `HandlingOrder.AsAdmitted`: a handler registered with `HandlingOrder.None` doesn't queue behind it. Magnus's
+  two reasons stand on their own.
 - **The durable record is the endpoint's own tables,** read through the endpoint, never by the administering side from the
   tables (agreed in the failed-tessage todo): the endpoint owns its inbox, its handling claim and its handlers.
 - **Nothing is held for the administering side.** An administered endpoint keeps no subscriptions, queues or connections
   for it, so an administration UI that comes and goes costs the suite nothing.
 - **Administration works while the application's handling is stuck.** It is served by the transport server, not by the
-  inbox, so a tessage holding the ordered line holds up nothing of it.
+  inbox, so a tessage holding the ordered line holds up nothing of it, nor do the 20 tessages the inbox may execute at
+  once when their handlers gave up their place in the handling order.
 
 ## 1. Every endpoint's administration API
 
@@ -299,7 +303,9 @@ its peers. The endpoint's process lock already makes "one process per endpoint" 
 
 - **The act, in a transaction of its own:** a conditional update from `Failed` to `UnHandled`, the failing time back to
   zero. The earlier failures' count and last exception stay, for display, until the next failed try replaces them. After
-  the commit, the inbox enqueues the tessage at the end of its handling line.
+  the commit, the inbox enqueues the tessage in its handling line, which looks up its handling order in the roster as for
+  any enqueue: at the end of the line for `HandlingOrder.AsAdmitted`, dispatched as soon as it is ready for
+  `HandlingOrder.None`.
 - **Exactly once, by construction.** A row marked failed was never handled successfully: every try's unit of work rolled
   back. The claim still requires `UnHandled`, and the claim, the handler's work and the success mark still commit together.
   So the retry starts its first and only successful handling, whatever happens around it.
@@ -311,7 +317,7 @@ its peers. The endpoint's process lock already makes "one process per endpoint" 
   retry finds nothing to do.
 - **Out of order, as agreed.** Marking failed gave up the tessage's place in its pair's order. A retry handles it after
   whatever its pair's later tessages have reached. The pair's admission is untouched: the high-water mark never moves back,
-  so the sender's stream goes on.
+  so the sender's stream goes on. A tessage whose handlers gave up their place with `HandlingOrder.None` had none to lose.
 - **Crash windows.** Before the commit: still failed, nothing lost. After it and before the enqueue: an `UnHandled` row,
   which the next start's recovery scan enqueues, in admission order among the unhandled ones: out of order either way.
 - **Restarts:** the failed rows wait in the table-set and are listed again.
