@@ -24,6 +24,13 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
   MsSql's 0.88 s (p90 1.36 s), and their suites 81 s and 69 s, against MySQL's 3.8 s and 212 s.
 - **Not the connections.** A run keeps up to 256 open, of the 400 `max_connections` allows, and 250 idle connections
   held open didn't slow the DDL. Two runs at once pass 400: see [what slow resets break](#what-slow-resets-break).
+- **Not MySQL's version.** On this machine's drive, with the same `my.ini` and 16 workers, MySQL 5.7.44 completed 2.6
+  database uses a second, 8.0.44 4.0, 8.4.6 3.9, and the installed 9.7.0 4.2 to 4.5, the reset's median between 1.5
+  and 1.7 s on each. Alone, each resets a database in 0.13 to 0.22 s. 5.7 syncs less, 177 times for the 15 tables'
+  creation against 8.0 and later's 296 to 378, but runs less DDL at once.
+- **What would cut it:** [emptying the tables instead of dropping
+  them](#emptying-the-tables-instead-of-dropping-them), 23 times the database uses a second, or [Windows' write-cache
+  buffer flushing](#windows-write-cache-buffer-flushing) turned off. Neither is decided.
 
 ## What was measured
 
@@ -59,10 +66,15 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
 
   The samples, 200 ms apart, see only resets of a quarter second and longer.
 
-- **History, from threadripper's binary logs** (`binlog_resets.py`): resets there were slow from the first run,
+- **History, from the binary logs** (`binlog_resets.py`): on threadripper, resets were slow from its first run,
   2026-11-17, with 47% taking 3 to 9 s. Since 2026-11-24, 8 to 18% take 10 s or more, against 0 to 2% before, and the
-  longest 16 to 37 s. Tables created per reset grew from about 12 to 13 or 14. This machine's binary logs from before
-  2026-11-17 would show how fast resets were here, and with how many tables; they are readable only elevated.
+  longest 16 to 37 s. Tables created per reset grew from about 12 to 13 or 14. This machine's logs hold test runs from
+  2026-11-17 on only: none ran against its server from 2026-10-15, and older logs have expired. On 2026-11-17 half its
+  resets took 3 to 9 s, and on 2026-11-18 a fifth to a third took 10 s or more, the longest 34 s, at 12 to 13 tables a
+  reset. The sub-second resets Magnus remembers were years ago, on threadripper, under the Windows 10 installation that
+  was replaced 2026-05-30, and an older MySQL.
+- **This machine's installed server, quiet, 2026-11-27:** alone, the 15 tables' creation took 0.40 s and the reset
+  0.21 s; under 16 workers, the reset's median was 1.6 s.
 
 ## What slow resets break
 
@@ -142,6 +154,39 @@ difference the runs could show. Compze.Tests.Integration on the two MySql jobs:
 
 The same code varies from 112 to 223 s, and CI's MySql jobs take about as long as its PgSql and MsSql jobs. A cloud VM's
 disk completes a sync at once, which a consumer NVMe drive on Windows doesn't: that is my understanding, not measured.
+
+## Emptying the tables instead of dropping them
+
+`MySqlDbPoolSqlLayer.ResetDatabase` drops the database and creates it again. Its comment from 2020 says dropping the
+objects instead, as the other layers do, was no faster, and for dropping the tables that still holds. Emptying them and
+keeping them is another matter: Compze's schema code creates every table with `CREATE TABLE IF NOT EXISTS`, which then
+does next to nothing. On this machine's installed server, 16 workers, each use a reset, the 15 tables' creation and 5
+commits (`ddl_capacity.py --reset`), 2026-11-27:
+
+| Reset | Database uses/s | fsyncs a use | Reset median / p90 | Schema creation median |
+|---|---|---|---|---|
+| `DROP DATABASE` and `CREATE DATABASE`: today's | 4.2 | 295 | 1.67 / 2.07 s | 1.96 s |
+| `DROP TABLE` of every table | 4.2 | 297 | 1.60 / 2.22 s | 1.99 s |
+| `TRUNCATE TABLE` of every table | 3.6 | 337 | 4.14 / 5.16 s | 0.15 s |
+| `DELETE FROM` every table, in one transaction | 97.5 | 9 | 0.01 / 0.01 s | 0.10 s |
+
+What emptying would cost: a reset database would hold the tables its previous user created, empty, where today it holds
+none.
+
+- **A table of another schema:** one of the same name that another checkout's code, or an earlier build, created with
+  other columns. `CREATE TABLE IF NOT EXISTS` keeps it, and the test fails on its columns.
+- **`AUTO_INCREMENT` counters** carry on from the previous use: `DELETE` doesn't reset them. Compze's MySQL tables have
+  four such columns.
+- **A test's own tables** stay, emptied, and a large table takes longer to empty than to drop.
+
+## Windows' write-cache buffer flushing
+
+A disk's policy "Turn off Windows write-cache buffer flushing on the device" (Device Manager, the disk's Policies tab;
+`CacheIsPowerProtected` in the registry) has Windows complete a sync without asking the drive to flush its cache. MySQL
+keeps its durability protocol and its settings, and a sync costs what it costs on a drive with power-loss protection,
+such as a server's. What it gives up is the drive's guarantee across a power loss, for everything on the disk. It is
+off, Windows' default, on every disk of both machines (2026-11-27). Magnus thinks he may have turned it on under
+threadripper's earlier Windows 10 installation. Its effect here is not measured.
 
 ## Measuring again
 
