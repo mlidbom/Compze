@@ -39,6 +39,14 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
   - **The dispatch decision moved into the inbox's line:** its list of dispatching rules, one rule long, is gone.
   - **On SQLite, handlings take turns whatever their order,** contrary to change 3's walk-through below as first
     written: the handling transaction holds the one writer from its claim of the tessage on, before the handler runs.
+- **Increment 4 is built** (a registration's transaction timeout), on Magnus's go on topic 8, in two steps, as change 2
+  below designs it, with three choices of the build's own:
+  - **A unit of work with a timeout of its own is internal** to Compze.DependencyInjection, visible to Compze.Tessaging
+    alone: no consumer has asked for a public one. `TransactionScopeCe.DefaultTimeout` is the backstop made public.
+  - **A tevent's handling gets the longest timeout of its handlers', the default counting for a handler that chose
+    none,** so that no handler gets less than it would have had.
+  - **The registration's choices are one value,** `InboxHandlingChoices`, the order and the timeout, which the roster
+    holds for each handler and combines for a tevent. A timeout not longer than zero explodes at registration too.
 - **Decision 7** is settled by Magnus on topic 7: hearing that a tessage was marked failed leaves this design for
   Tessaging's administration plane, designed by a helper of its own (2026-11-27).
 
@@ -277,7 +285,7 @@ sender's timeout.
 
 ### Mechanism
 
-- **Today's timeout is one constant,** 45 seconds for every unit of work (`TransactionScopeCE.TransactionTimeout`): a
+- **Today's timeout is one constant,** 45 seconds for every unit of work (`TransactionScopeCe.DefaultTimeout`): a
   backstop, so that a unit of work whose thread wedged rolls back in bounded time.
 - **The inbox's unit of work for a handling takes its timeout from the registration** of the tessage's handler. For a
   tevent whose handlers declare several, the longest.

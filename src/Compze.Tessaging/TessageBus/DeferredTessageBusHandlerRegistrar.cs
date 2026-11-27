@@ -47,6 +47,7 @@ public sealed class DeferredTessageBusHandlerRegistrar : IDeferredTommandHandler
    /// explodes here. A long transaction holds its connection and its locks for as long as it runs: on SQLite, the one writer.</param>
    public DeferredTessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted, TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand
    {
+      //review-naming: the parameters order and transactionTimeout, as the design named them (2026-11-27), on every verb that takes them.
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddDeferredTommandHandler(handler, order, transactionTimeout);
       return this;

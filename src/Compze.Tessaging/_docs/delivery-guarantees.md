@@ -56,6 +56,12 @@ handles it in a transaction that also records that it was handled, so its handle
   other handlers, so what it shares with them in memory needs locking. A tevent gives up its place only when every
   handler it runs in the endpoint gives it up. On SQLite, whose one writer takes one transaction at a time, handlings
   still take turns: a tessage that gives up its place is handled while another waits to be tried again.
+- **A handler can have a longer transaction, or a shorter one:** `transactionTimeout`, an argument of each handler verb,
+  sets how long the transaction in which the endpoint handles one of its tessages may run, where it is 45 seconds by
+  default. So a handler that waits a minute on something outside the database runs as any other. A handling whose
+  transaction times out rolls back, and is tried again as any failing handling is. The timeout is at most .NET's
+  `TransactionManager.MaximumTimeout`, 10 minutes unless the process raises it, and a tevent's handling gets the longest
+  of its handlers'. A long transaction holds its locks while it runs: on SQLite, the one writer every other write waits for.
 - **A handler can be cancelled.** A handler that takes a `CancellationToken`, after the unit of work, is handed the
   token of the execution it serves: for a tessage the endpoint received, one the endpoint's stop cancels; for a handler
   run within a send or a publish, the token given to `SendAsync` or `PublishAsync`. A try that a stop cancels doesn't

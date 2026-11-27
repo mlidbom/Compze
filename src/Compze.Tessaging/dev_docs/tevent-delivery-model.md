@@ -345,6 +345,14 @@ Per rung:
   their place behind one whose sender hasn't committed; the drain waits for what gave up its place too, also
   while a tessage that keeps its place waits to be tried again. On SQLite the handling transaction holds the
   one writer from its claim of the tessage on, so handlings take turns there whatever their order.
+- **The handling transaction's timeout: a handler's registration may choose it.** Every unit of work's
+  transaction times out after `TransactionScopeCe.DefaultTimeout`, 45 seconds, a backstop for a wedged thread.
+  Every handler verb the inbox serves takes a `transactionTimeout`, which the inbox's unit of work for the
+  handling gets instead: the longest of a tevent's handlers', the default counting for one that chose none. A
+  timeout above `TransactionManager.MaximumTimeout`, which .NET would silently shorten, explodes at
+  registration. The timed-out transaction rolls back the claim with the handler's work, so the try fails and
+  counts, as any failing try does. A handler running in its sender's or publisher's unit of work runs within
+  that one's timeout.
 
 ## Tommands are different
 
