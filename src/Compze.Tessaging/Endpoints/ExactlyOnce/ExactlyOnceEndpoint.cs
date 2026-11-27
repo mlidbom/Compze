@@ -45,7 +45,13 @@ public class ExactlyOnceEndpoint : Endpoint
    /// else touches the database.</summary>
    private protected override async Task ClaimTheProcessLockAsync() => await _processLock.AcquireAsync().caf();
 
-   private protected override async Task ReleaseTheProcessLockAsync() => await _processLock.ReleaseAsync().caf();
+   ///<summary>Releases the process lock once the inbox no longer admits the tommands the endpoint sends itself — see<br/>
+   /// <see cref="IInbox.StopAdmittingTessagesSentToItselfAsync"/>.</summary>
+   private protected override async Task ReleaseTheProcessLockAsync()
+   {
+      await _inbox.StopAdmittingTessagesSentToItselfAsync().caf();
+      await _processLock.ReleaseAsync().caf();
+   }
 
    ///<summary>The inbox listens and the outbox's durable storage initializes in the listening phase — before any endpoint in<br/>
    /// the host starts sending, so the sending phase's connection delivery streams can load their recovery backlogs from it.</summary>

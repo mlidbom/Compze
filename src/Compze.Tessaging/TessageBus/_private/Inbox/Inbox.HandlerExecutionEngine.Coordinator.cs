@@ -20,7 +20,7 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
+      internal partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;
@@ -52,6 +52,9 @@ partial class Inbox
          /// than hang. Called after the transport has stopped, so nothing new arrives.</summary>
          internal async Task DrainAndStopAsync(WaitTimeout patience, CancellationToken cancellationToken)
          {
+            //What the endpoint sends itself from here on waits for its next start, so that the drain ends: a handler the drain
+            //runs may send the next step of a flow, and that step's handler the next.
+            _implementation.Update(implementation => implementation.StopTakingTessagesSentToItselfIntoTheLine());
             var aHandlerIsLikelyHung = !await TryDrainAsync(patience, cancellationToken).caf();
 
             await StopAsync().caf();
@@ -101,8 +104,34 @@ partial class Inbox
          internal void EnqueueTessageTask(TransportTessage.InComing tessage, TimeSpan failingTime) => _implementation.Update(implementation =>
          {
             this.Log().Debug($"Enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, failingTime, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token));
+            implementation.EnqueueTessageTask(NewHandlerExecutionTask(tessage, failingTime, sentByTheEndpointToItself: false));
          });
+
+         ///<summary>Opens the admission of the tessages the endpoint sends itself: once the recovery scan has enqueued what the<br/>
+         /// endpoint's previous process left unhandled, which must have its place in the line first, being older.</summary>
+         internal void StartAdmittingTessagesSentToItself() => _implementation.Update(implementation => implementation.StartAdmittingTessagesSentToItself());
+
+         ///<summary>Begins admitting a tessage the endpoint sends itself — see <see cref="AdmissionOfATessageSentToItself"/>. Throws<br/>
+         /// before the admission opens (<see cref="StartAdmittingTessagesSentToItself"/>), and once it has closed<br/>
+         /// (<see cref="StopAdmittingTessagesSentToItselfAsync"/>).</summary>
+         internal AdmissionOfATessageSentToItself BeginAdmittingATessageSentToItself()
+         {
+            _implementation.Update(implementation => implementation.BeginAdmittingATessageSentToItself());
+            return new AdmissionOfATessageSentToItself(this);
+         }
+
+         ///<summary>Refuses the tessages the endpoint sends itself from now on, and waits, for at most <paramref name="patience"/>,<br/>
+         /// for the senders' transactions of those being admitted to end.</summary>
+         internal async Task StopAdmittingTessagesSentToItselfAsync(WaitTimeout patience)
+         {
+            _implementation.Update(implementation => implementation.StopAdmittingTessagesSentToItself());
+            if(!await _implementation.TryAwaitAsync(implementation => implementation.AdmissionsOfTessagesSentToItselfInProgress == 0, timeout: patience).caf())
+               this.Log().Warning(_implementation.Read(implementation =>
+                  $"Stopping: {implementation.AdmissionsOfTessagesSentToItselfInProgress} transaction(s) sending a tessage to the endpoint itself had still not ended {patience} after the endpoint stopped admitting them. Proceeding with the stop: such a tessage that commits now may wait in the inbox until a later start of the endpoint, behind tessages sent after it."));
+         }
+
+         HandlerExecutionTask NewHandlerExecutionTask(TransportTessage.InComing tessage, TimeSpan failingTime, bool sentByTheEndpointToItself) =>
+            new(tessage, failingTime, sentByTheEndpointToItself, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token);
 
          void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));
 
@@ -134,6 +163,15 @@ partial class Inbox
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
             bool _dispatchingStopped;
             int _waitingToBeTriedAgainCount;
+            AdmissionOfTessagesSentToItself _admissionOfTessagesSentToItself = AdmissionOfTessagesSentToItself.NotYetOpen;
+            bool _tessagesSentToItselfTakeAPlaceInTheLine = true;
+
+            ///<summary>How many tessages the endpoint sends itself are being admitted: from before their senders' transactions<br/>
+            /// write their rows to those transactions' ends.</summary>
+            internal int AdmissionsOfTessagesSentToItselfInProgress { get; private set; }
+
+            ///<summary>False once the endpoint has begun to stop: a tessage it sends itself then waits for its next start.</summary>
+            internal bool TakesTessagesSentToItselfIntoTheLine => _tessagesSentToItselfTakeAPlaceInTheLine && !_dispatchingStopped;
 
             ///<summary>True when nothing more will be handled before stopping: nothing is executing and nothing waits to<br/>
             /// execute, or every executing tessage waits to be tried again. A tessage waiting to be tried again holds the line: the<br/>
@@ -150,8 +188,7 @@ partial class Inbox
                   return false;
                }
 
-               dispatchable = _tessagesWaitingToExecute
-                 .FirstOrDefault(queuedTask => dispatchingRules.All(rule => rule.CanBeDispatched(this, queuedTask.TransportTessage)));
+               dispatchable = FirstDispatchableTessage(dispatchingRules);
 
                if (dispatchable == null)
                {
@@ -162,9 +199,75 @@ partial class Inbox
                return true;
             }
 
+            ///<summary>The first tessage in the line that the dispatching rules allow, passing over every tessage the endpoint sent<br/>
+            /// itself whose sender hasn't committed, and every tessage the endpoint sent itself behind such a one: the endpoint's<br/>
+            /// stream to itself is handled in the order its senders committed. Other streams don't wait for it.</summary>
+            HandlerExecutionTask? FirstDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
+            {
+               var aTessageSentToItselfAwaitsItsSendersCommit = false;
+               foreach(var waiting in _tessagesWaitingToExecute)
+               {
+                  if(waiting.AwaitsItsSendersCommit)
+                  {
+                     aTessageSentToItselfAwaitsItsSendersCommit = true;
+                     continue;
+                  }
+
+                  if(waiting.IsSentByTheEndpointToItself && aTessageSentToItselfAwaitsItsSendersCommit) continue;
+
+                  if(dispatchingRules.All(rule => rule.CanBeDispatched(this, waiting.TransportTessage))) return waiting;
+               }
+
+               return null;
+            }
+
             internal void EnqueueTessageTask(HandlerExecutionTask tessage) => _tessagesWaitingToExecute.Add(tessage);
 
             internal void StopDispatching() => _dispatchingStopped = true;
+
+            internal void StopTakingTessagesSentToItselfIntoTheLine() => _tessagesSentToItselfTakeAPlaceInTheLine = false;
+
+            internal void StartAdmittingTessagesSentToItself()
+            {
+               State.Assert(_admissionOfTessagesSentToItself == AdmissionOfTessagesSentToItself.NotYetOpen);
+               _admissionOfTessagesSentToItself = AdmissionOfTessagesSentToItself.Open;
+            }
+
+            internal void BeginAdmittingATessageSentToItself()
+            {
+               State.Assert(_admissionOfTessagesSentToItself != AdmissionOfTessagesSentToItself.NotYetOpen,
+                            () => "The endpoint sent a tommand to itself before it had started. It handles such a tommand in its own inbox, where what its previous process left unhandled must take its place in the line first, being older: send it once the endpoint has started.");
+               State.Assert(_admissionOfTessagesSentToItself != AdmissionOfTessagesSentToItself.Closed,
+                            () => "The endpoint sent a tommand to itself after its stop had ended. It handles such a tommand in its own inbox, which the endpoint's next process may already own: send it before stopping the endpoint.");
+               AdmissionsOfTessagesSentToItselfInProgress++;
+            }
+
+            internal void StopAdmittingTessagesSentToItself() => _admissionOfTessagesSentToItself = AdmissionOfTessagesSentToItself.Closed;
+
+            ///<summary>The sender of a tessage the endpoint sent itself committed: the tessage, if it took a place in the line, may<br/>
+            /// be handled, and is in flight until it is.</summary>
+            internal void AdmissionOfATessageSentToItselfCommitted(HandlerExecutionTask? placeInTheLine)
+            {
+               AdmissionsOfTessagesSentToItselfInProgress--;
+               if(placeInTheLine == null) return;
+               _globalStateTracker.AdmittedTessageSentToItself(placeInTheLine.TransportTessage, _endpointId);
+               placeInTheLine.ItsSenderCommitted();
+            }
+
+            ///<summary>The sender of a tessage the endpoint sent itself didn't commit: the tessage's row rolled back with it, and<br/>
+            /// its place in the line is withdrawn.</summary>
+            internal void AdmissionOfATessageSentToItselfWithdrawn(HandlerExecutionTask? placeInTheLine)
+            {
+               AdmissionsOfTessagesSentToItselfInProgress--;
+               if(placeInTheLine != null) _tessagesWaitingToExecute.Remove(placeInTheLine);
+            }
+
+            enum AdmissionOfTessagesSentToItself
+            {
+               NotYetOpen,
+               Open,
+               Closed
+            }
 
             internal void RecordedFailedTry(HandlerExecutionTask executing, Exception exception) => _globalStateTracker.FailedTry(executing.TransportTessage, _endpointId, exception);
 

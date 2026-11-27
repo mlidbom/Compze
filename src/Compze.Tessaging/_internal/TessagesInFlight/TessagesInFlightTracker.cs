@@ -35,6 +35,9 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(it => it.DoneWith(tessage, handlingEndpointId, exception));
 
+   public void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId) =>
+      _implementation.Update(it => it.AdmittedTessageSentToItself(tessage, endpointId));
+
    public void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception) =>
       _implementation.Update(it => it.FailedTry(tessage, handlingEndpointId, exception));
 
@@ -79,6 +82,16 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
 
          inFlightTessage.EndpointDeliveryStatus.TryAdd(remoteEndpointId, false); //Retrying messages must not reset the status of already delivered messages.
       }
+
+      internal void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId) =>
+         _trackedTessages.GetOrAdd(tessage.TessageId,
+                                   () => new InFlightTessage
+                                         {
+                                            TessageId = tessage.TessageId,
+                                            TypeName = tessage.TessageTypeId.CanonicalString,
+                                            Body = tessage.Body
+                                         })
+                         .EndpointDeliveryStatus.TryAdd(endpointId, false);
 
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {

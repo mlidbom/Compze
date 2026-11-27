@@ -56,6 +56,18 @@ partial class Inbox
 
             internal TessageId TessageId { get; }
 
+            ///<summary>True for a tessage the endpoint sent itself, which took its place in the line as it was admitted, in its<br/>
+            /// sender's transaction. False for one the recovery scan enqueued, whatever sent it: such tessages are in the line<br/>
+            /// before any the endpoint sends itself in this process.</summary>
+            internal bool IsSentByTheEndpointToItself { get; }
+
+            ///<summary>True while the transaction of the sender of a tessage the endpoint sent itself hasn't committed: the tessage<br/>
+            /// has its place in the line, and neither it nor any tessage the endpoint sent itself behind it may be handled yet.</summary>
+            internal bool AwaitsItsSendersCommit { get; private set; }
+
+            ///<summary>The sender of this tessage, which the endpoint sent itself, committed: the tessage may be handled.</summary>
+            internal void ItsSenderCommitted() => AwaitsItsSendersCommit = false;
+
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
 
             public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCoreAsync);
@@ -223,10 +235,12 @@ partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
+               IsSentByTheEndpointToItself = sentByTheEndpointToItself;
+               AwaitsItsSendersCommit = sentByTheEndpointToItself;
                _failingTime = failingTime;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
