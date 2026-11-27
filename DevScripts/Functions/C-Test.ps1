@@ -47,6 +47,9 @@ function C-Test {
     the run fails or is interrupted. The file itself is never changed, and it works with -NoBuild too. A run killed before
     it restores the copies leaves a record of them, and the next C-Test or C-Build restores them from it.
 
+    They are also put on the command line of the dotnet test it starts, as the MSBuild property CompzeCombinations, which
+    nothing reads: a list of the machine's processes then shows which combinations a run uses, whatever shell started it.
+
     .PARAMETER Filter
     Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores".
     A filter that matches no test fails the run.
@@ -141,7 +144,7 @@ function C-Test {
             }
             
             # Run tests
-            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -MaxParallelAssemblies $MaxParallelAssemblies -MaxParallelThreads $MaxParallelThreads -Filter $Filter
+            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -MaxParallelAssemblies $MaxParallelAssemblies -MaxParallelThreads $MaxParallelThreads -Filter $Filter -ChosenCombinations $Combinations
             
             # Collect failed tests from this iteration
             if ($testRunResult.FailedTests -and $testRunResult.FailedTests.Count -gt 0) {

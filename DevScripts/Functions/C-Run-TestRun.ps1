@@ -26,6 +26,12 @@ function C-Run-TestRun {
     .PARAMETER Filter
     Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores"
 
+    .PARAMETER ChosenCombinations
+    The combinations of pluggable components that C-Test -Combinations wrote into the test projects' copies of
+    TestUsingPluggableComponentCombinations. They don't choose anything here: they are put on dotnet test's command line, as
+    the MSBuild property CompzeCombinations, which nothing reads, so that a list of the machine's processes shows them.
+    Joined with +, since MSBuild takes a comma or a semicolon in -p as the start of another property.
+
     .PARAMETER DisplayOutput
     Whether to display the test output to the console (default: $true)
     
@@ -63,6 +69,8 @@ function C-Run-TestRun {
 
         [string]$Filter,
 
+        [string[]]$ChosenCombinations,
+
         [bool]$DisplayOutput = $true
     )
 
@@ -72,6 +80,9 @@ function C-Run-TestRun {
     $testArguments = @('test', $SolutionPath, '--no-build', '--logger', 'trx', '--results-directory', $resultsDirectory)
     if ($Filter) {
         $testArguments += @('--filter', $Filter)
+    }
+    if ($ChosenCombinations) {
+        $testArguments += "-p:CompzeCombinations=$($ChosenCombinations -join '+')"
     }
     # RunSettings arguments go last, after --.
     if ($SingleThreaded) {
