@@ -24,6 +24,7 @@ partial class MsSqlInboxSqlLayer
                {Tessage.ExceptionType}                nvarchar(500)        NULL,
                {Tessage.ExceptionStackTrace}          nvarchar(MAX)        NULL,
                {Tessage.ExceptionTessage}             nvarchar(MAX)        NULL,
+               {Tessage.FailingTimeMilliseconds}      bigint               NOT NULL  DEFAULT 0,
 
 
                CONSTRAINT PK_{tables.InboxTessages} PRIMARY KEY CLUSTERED ( [{Tessage.GeneratedId}] ASC ),

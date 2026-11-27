@@ -41,9 +41,17 @@ handles it in a transaction that also records that it was handled, so its handle
 - **In order.** What one endpoint sends another, tevents and tommands alike, the other receives in the order the sending
   transactions committed, across restarts on either side. An endpoint handles its exactly-once tessages one at a time,
   in the order they arrived.
-- **A failing handler is retried, a few times.** When a handler throws, its transaction rolls back and it is run again
-  at once, up to five times in all. After the fifth failure the tessage is recorded as failed, and isn't handled again;
-  the endpoint goes on with the next.
+- **A failing handler is retried, for 5 minutes unless the endpoint declares otherwise.** When a handler throws, its
+  transaction rolls back and the tessage is tried again: a few times at once, then with a delay that grows from a second
+  up to a minute. The tessages behind it wait, since the endpoint handles them in order. When its handling has failed
+  for 5 minutes, the tessage is marked failed, and isn't handled again, not after a restart either; the endpoint goes on
+  with the next. The time counts while the endpoint runs and can reach its database, across restarts: when the
+  endpoint can't reach its database, it is the endpoint that is failing, not the tessage, and nothing counts.
+- **How long, declared on the endpoint:** `HandlingRetries`, in an exactly-once declaration, or on its builder.
+  `HandlingRetries.For(...)` gives a tessage another time, and `HandlingRetries.UntilHandled` never marks one failed: the
+  order is kept, whatever that costs the tessages behind it.
+
+[!code-csharp[](delivery-guarantees.cs#declaring_handling_retries)]
 
 ## Best-effort delivery
 
@@ -92,5 +100,6 @@ participating, or send a tommand to an endpoint that does the work later.
 - **Forgetting an endpoint.** An endpoint remembers every endpoint it has met, and nothing yet makes it forget one. What
   is owed an endpoint that never returns waits for it: exactly-once tessages in the outbox, and best-effort tevents in
   memory until the queue's bound fails the publishes.
-- **Administering failed tessages.** A tessage whose handling failed five times stays recorded as failed in the inbox,
-  and nothing yet shows or retries it.
+- **Administering failed tessages.** A tessage marked failed stays recorded as failed in the inbox, with its last
+  failure, and nothing yet shows or retries it. Retrying it will handle it out of order: marking it failed gave up its
+  place.

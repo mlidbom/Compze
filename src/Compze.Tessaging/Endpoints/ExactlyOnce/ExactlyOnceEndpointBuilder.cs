@@ -18,8 +18,20 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
+   ExactlyOnce.HandlingRetries? _handlingRetries;
 
    internal ExactlyOnceEndpointBuilder(IContainerBuilder containerBuilder, EndpointConfiguration configuration) : base(containerBuilder, configuration) {}
+
+   ///<summary>Declares how long the endpoint keeps trying a tessage whose handling fails before it marks the tessage failed<br/>
+   /// and goes on with the tessages behind it: see <see cref="ExactlyOnce.HandlingRetries"/>. Declared at most once; an<br/>
+   /// endpoint that declares nothing tries for 5 minutes of failing.</summary>
+   public ExactlyOnceEndpointBuilder HandlingRetries(HandlingRetries retries)
+   {
+      AssertStillComposing();
+      State.Assert(_handlingRetries is null, () => "The endpoint already declared its handling retries — an endpoint has exactly one.");
+      _handlingRetries = retries;
+      return this;
+   }
 
    //todo:review: This just dealing in an IComponentRegistrar feels questionable
    ///<summary>Declares the domain database this endpoint joins — where the domain data its executions touch lives, and where<br/>
@@ -41,13 +53,14 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
    }
 
    ///<summary>The durable vertical: the declared domain database, the endpoint's place in it (the table-set and the endpoint<br/>
-   /// catalog's process lock), the inbox (receiver dedup, transactional retry), the outbox (durable rows, recovery backlog,<br/>
+   /// catalog's process lock), the inbox (receiver dedup, transactional handling and its retries), the outbox (durable rows, recovery backlog,<br/>
    /// per-peer exactly-once in-order delivery streams), the tommand senders, and the exactly-once request handling that<br/>
    /// receives arriving tessages into the inbox.</summary>
    private protected override void RegisterTheTierMachinery()
    {
       //Computed eagerly, so an endpoint name that cannot key storage fails loud at build, not at first resolution.
-      Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)));
+      Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)),
+                         Singleton.For<HandlingRetries>().Instance(_handlingRetries ?? ExactlyOnce.HandlingRetries.Default));
       _registerDomainDatabase!(Registrar);
       Registrar.EndpointProcessLock()
                .Outbox()

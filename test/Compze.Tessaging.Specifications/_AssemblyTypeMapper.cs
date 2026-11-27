@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Specifications.ExactlyOnce;
 using Compze.Tessaging.Specifications.Typermedia;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.DependencyInjection;
@@ -20,7 +21,8 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<TueryNothingServes>("9d41c2b7-6a35-4a90-8f3e-5b7c1d20ae44")
             .Map<TheAnswerTuery>("6c15f9a3-2d70-4e81-9b4c-73a0e5182fd6")
             .Map<AddTuery>("0b83d4e6-51c9-4a27-8e60-2f9d71c34b58")
-            .Map<RememberNumberTommand>("f27a061b-9e34-4c85-b1d0-58e63a2790cf");
+            .Map<RememberNumberTommand>("f27a061b-9e34-4c85-b1d0-58e63a2790cf")
+            .Map<NumberedExactlyOnceTommand>("5c9e1f74-3a28-4b6d-9e05-b7d41a26c83f");
 }
 #pragma warning restore CA1812
 

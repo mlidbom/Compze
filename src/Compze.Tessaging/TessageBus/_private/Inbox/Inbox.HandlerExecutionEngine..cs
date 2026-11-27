@@ -2,6 +2,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -20,14 +21,16 @@ partial class Inbox
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
+      HandlingRetries handlingRetries,
       EndpointId endpointId) : IDisposable, IAsyncDisposable
    {
       Task? _awaitDispatchableTessageLoop;
-      readonly CancellationTokenSource _stopping = new();
+      bool _disposed;
 
       //todo: properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud, non-hanging backstop.
-      ///<summary>How long <see cref="AwaitAllReceivedTessagesProcessedAsync"/> waits for the inbox to drain before giving up and letting<br/>
-      /// teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching this means a handler is likely hung</summary>
+      ///<summary>How long <see cref="DrainAndStopHandlingAsync"/> waits for the inbox to drain, and then for a running try to<br/>
+      /// end, before giving up and letting teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching<br/>
+      /// this means a handler is likely hung</summary>
       static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
@@ -35,30 +38,32 @@ partial class Inbox
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, handlingRetries, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
-      internal void Enqueue(TransportTessage.InComing transportTessage)
+      ///<summary>Enqueues a tessage for handling, behind every tessage enqueued before it. <paramref name="failingTime"/> is how<br/>
+      /// long its handling has already been failing: zero for a tessage just received, what the endpoint's previous process<br/>
+      /// recorded for one the recovery scan enqueues again.</summary>
+      internal void Enqueue(TransportTessage.InComing transportTessage, TimeSpan failingTime)
       {
          this.Log().Debug($"Enqueueing {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
-         _coordinator.EnqueueTessageTask(transportTessage);
+         _coordinator.EnqueueTessageTask(transportTessage, failingTime);
       }
 
-      ///<summary>Drains the inbox for shutdown: waits (best-effort, up to <see cref="ShutdownDrainPatience"/>) for every received<br/>
-      /// tessage to finish processing, so the endpoint tears down with empty queues.</summary>
-      internal Task AwaitAllReceivedTessagesProcessedAsync() => _coordinator.AwaitAllReceivedTessagesProcessedAsync(ShutdownDrainPatience);
+      ///<summary>Drains the inbox for shutdown and stops handling — see <see cref="Coordinator.DrainAndStopAsync"/>.</summary>
+      internal Task DrainAndStopHandlingAsync() => _coordinator.DrainAndStopAsync(ShutdownDrainPatience);
 
       void AwaitDispatchableTessageThreadLoop()
       {
          try
          {
-            while(!_stopping.IsCancellationRequested)
+            while(true)
             {
-               var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules, _stopping.Token);
+               var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
                task.Execute();
             }
          }
-         catch(OperationCanceledException) {} // Expected during shutdown: Dispose() cancelled the wait for the next dispatchable tessage.
+         catch(OperationCanceledException) {} // Expected: stopping handling cancelled the wait for the next dispatchable tessage.
       }
 
       internal void Start()
@@ -70,19 +75,23 @@ partial class Inbox
             ThreadPriority.AboveNormal);
       }
 
-      ///<summary>Stops the dispatch loop and awaits its thread's end, holding no thread while it does; throws a<br/>
-      /// <see cref="TimeoutException"/> if the thread takes longer than 5 seconds to end.</summary>
+      ///<summary>Stops handling and awaits the dispatch loop thread's end, holding no thread while it does; throws a<br/>
+      /// <see cref="TimeoutException"/> if the thread takes longer than 5 seconds to end. The inbox and the container both<br/>
+      /// dispose the engine: only the first disposal does anything.</summary>
       public async ValueTask DisposeAsync()
       {
+         if(_disposed) return;
+         _disposed = true;
+
+         await _coordinator.StopAsync().caf();
          if(_awaitDispatchableTessageLoop != null)
          {
             this.Log().Info("Stopping");
-            await _stopping.CancelAsync().caf();
             await _awaitDispatchableTessageLoop.WaitAsync(5.Seconds()).caf();
             _awaitDispatchableTessageLoop = null;
             this.Log().Info("Stopped");
          }
-         _stopping.Dispose();
+         _coordinator.Dispose();
       }
 
       ///<summary>The backstop for a container disposed synchronously: the inbox's own disposal has stopped the loop already, so<br/>

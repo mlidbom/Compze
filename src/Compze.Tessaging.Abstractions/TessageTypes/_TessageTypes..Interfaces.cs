@@ -70,7 +70,9 @@ public interface ITessageWithIdentity : ITessage
    TessageId Id { get; }
 }
 
-///<summary>A tessage that is handled at least once. Guaranteed by infrastructure through retries.</summary>
+///<summary>A tessage that is delivered until it arrives, and whose handling is retried while it fails: for as long as the<br/>
+/// receiving endpoint's handling retries allow, 5 minutes of failing unless it declares otherwise. Then the tessage is<br/>
+/// marked failed and not handled again until an administrator retries it.</summary>
 public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage;
 
 //bug: Nothing deduplicates at-most-once typermedia tommands, whatever the summary says. Posting the same tommand twice
@@ -83,7 +85,9 @@ public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, I
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
-///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
+///<summary>A tessage that is handled exactly once, in the order it was sent in: guaranteed by infrastructure through<br/>
+/// deduplication, retries and transactions, for as long as the receiving endpoint's handling retries allow. A tessage it marks<br/>
+/// failed gives up its place in the order.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage, IAtLeastOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;

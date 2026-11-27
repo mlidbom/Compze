@@ -136,12 +136,12 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
       var raw = await _connectionFactory.UseCommandAsync(
          async command =>
          {
-            var rows = new List<(TessageId TessageId, int TypeId, string Body)>();
+            var rows = new List<(TessageId TessageId, int TypeId, string Body, long FailingTimeMilliseconds)>();
 
             command.SetCommandText(
                $"""
 
-                SELECT {TessageTable.TessageId}, {TessageTable.TypeId}, {TessageTable.Body}
+                SELECT {TessageTable.TessageId}, {TessageTable.TypeId}, {TessageTable.Body}, {TessageTable.FailingTimeMilliseconds}
                 FROM {_tables.InboxTessages}
                 WHERE {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                 ORDER BY {TessageTable.GeneratedId} -- Admission order: per pair this is stream order, so recovery re-establishes in-order handling.
@@ -154,7 +154,8 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
             {
                rows.Add((new TessageId(reader.GetGuid(0)),
                          reader.GetInt32(1),
-                         reader.GetString(2)));
+                         reader.GetString(2),
+                         reader.GetInt64(3)));
             }
 
             return rows;
@@ -163,7 +164,8 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
       return [..raw.Select(row => new ITessagingSqlLayer.UnHandledTessage(
                               tessageId: row.TessageId,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
-                              serializedTessage: row.Body))];
+                              serializedTessage: row.Body,
+                              failingTime: TimeSpan.FromMilliseconds(row.FailingTimeMilliseconds)))];
    }
 
    public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
@@ -184,7 +186,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
               .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public async Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   public async Task<int> RecordFailedTryAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType, TimeSpan failingTime)
    {
       return await _connectionFactory.UseCommandAsync(
          async command => await command
@@ -195,7 +197,8 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                             SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
                                 {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
                                 {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
-                                {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage}
+                                {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage},
+                                {TessageTable.FailingTimeMilliseconds} = @{TessageTable.FailingTimeMilliseconds}
 
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
@@ -204,6 +207,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                    .AddNVarcharMaxParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddNVarcharMaxParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddNVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
+                   .AddParameter(TessageTable.FailingTimeMilliseconds, (long)failingTime.TotalMilliseconds)
                    .ExecuteNonQueryAsync().caf()).caf();
    }
 

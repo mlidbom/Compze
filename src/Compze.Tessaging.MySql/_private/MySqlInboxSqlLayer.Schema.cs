@@ -24,6 +24,7 @@ partial class MySqlInboxSqlLayer
                {T.ExceptionType}                varchar(500)    NULL,
                {T.ExceptionStackTrace}          mediumtext      NULL,
                {T.ExceptionTessage}             mediumtext      NULL,
+               {T.FailingTimeMilliseconds}      bigint          NOT NULL  DEFAULT 0,
 
 
                PRIMARY KEY ( {T.GeneratedId} ),

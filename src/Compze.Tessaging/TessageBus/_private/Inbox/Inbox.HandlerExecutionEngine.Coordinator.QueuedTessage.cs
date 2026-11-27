@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.TessageHandling;
@@ -16,6 +18,13 @@ partial class Inbox
    {
       partial class Coordinator
       {
+         ///<summary>The handling of one received tessage: tried, and tried again while it fails, for as long as the endpoint's<br/>
+         /// <see cref="HandlingRetries"/> allow, and then marked failed. Until it is handled or marked failed, it holds its place<br/>
+         /// at the head of the line, so that no tessage behind it is handled first.</summary>
+         ///<remarks>A try counts only when the endpoint could record it. When it couldn't, such as when the endpoint's database<br/>
+         /// is unreachable, it is the endpoint that is failing, not the tessage: the tessage is tried again once the endpoint<br/>
+         /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint ends a wait to be<br/>
+         /// tried again, and leaves the tessage unhandled for the recovery scan at the endpoint's next start.</remarks>
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
          internal class HandlerExecutionTask
          {
@@ -26,6 +35,18 @@ partial class Inbox
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
             readonly TessageHandlerExecutor _executor;
+            readonly HandlingRetries _handlingRetries;
+            readonly CancellationToken _stopping;
+            readonly HandlingRetrySchedule _handlerFailures = new();
+            readonly HandlingRetrySchedule _endpointFailures = new();
+
+            ///<summary>How long the tessage's handling has been failing, up to its last recorded failed try, this endpoint's<br/>
+            /// earlier processes included.</summary>
+            TimeSpan _failingTime;
+
+            ///<summary>When the time that counts toward <see cref="_failingTime"/> began: when this execution began, when its<br/>
+            /// last failed try was recorded, or when a wait for the endpoint ended. A <see cref="Stopwatch"/> timestamp.</summary>
+            long _failingClockStartedAt;
 
             internal TessageId TessageId { get; }
 
@@ -35,97 +56,168 @@ partial class Inbox
 
             async Task ExecuteCoreAsync()
             {
+               _failingClockStartedAt = Stopwatch.GetTimestamp();
                try
                {
-                  this.Log().Debug($"Handler executing {TransportTessage.TessageTypeEnum} tessage {TessageId}");
-                  var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
-                  await ExecuteTransactionalTessageAsync(tessage).caf();
+                  await HandleTryingAgainWhileItFailsAsync().caf();
                }
-#pragma warning disable CA1031 // Catch all exception types to ensure the coordinator always learns how the execution ended
-               catch(Exception exception)
-#pragma warning restore CA1031
+               catch(OperationCanceledException) when(_stopping.IsCancellationRequested)
                {
-                  _coordinator.Failed(this, exception);
+                  this.Log().Info($"Leaving tessage {TessageId} unhandled: the endpoint stopped handling while the tessage waited to be tried again. The recovery scan at the endpoint's next start enqueues it again, ahead of the tessages behind it.");
+                  _coordinator.LeftUnhandledAtStop(this);
                }
             }
 
-            async Task ExecuteTransactionalTessageAsync(ITessage tessage)
+            async Task HandleTryingAgainWhileItFailsAsync()
             {
-               var retryPolicy = new DefaultRetryPolicy(tessage);
-
                while(true)
                {
-                  var tessageHandlerSucceeded = false;
-                  var claimed = true;
-                  try
+                  _stopping.ThrowIfCancellationRequested();
+
+                  if(await TryHandleAsync().caf() is not {} failure)
                   {
-                     //A unit of work, so that what the handler's work finds from the transaction alone, such as the taggregate
-                     //stores' unit of work, finds this one.
-                     await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork =>
-                     {
-                        //The claim rides this handling transaction, so it and the handler's work commit or roll back as one:
-                        //a second execution of the same tessage - whatever produced it - skips before running any handler.
-                        if(!await _tessageStorage.TryClaimForHandlingAsync(TransportTessage).caf())
-                        {
-                           claimed = false;
-                           return;
-                        }
-                        await _tessageTask(tessage, unitOfWork).caf();
-                        await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
-                     }).caf();
-
-                     if(!claimed)
-                     {
-                        this.Log().Info($"Skipping tessage {TessageId}: it is not this execution's to handle - its handling already finished, or another live handling execution holds its claim.");
-                        _coordinator.Succeeded(this);
-                        return;
-                     }
-
-                     tessageHandlerSucceeded = true;
-
-                     this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
                      _coordinator.Succeeded(this);
                      return;
                   }
-#pragma warning disable CA1031 //A failed execution is retried, or recorded as failed, below: whatever the handler threw.
-                  catch(Exception exception)
+
+                  if(!await TryRecordFailedTryAsync(failure).caf())
                   {
-#pragma warning restore CA1031
-                     if(tessageHandlerSucceeded) //The handler succeeded but something about cleaning up the scope failed.
-                     {
-                        this.Log().Error(exception, "Tessage handler succeeded but an exception was thrown while cleaning up the scope.");
-                        _coordinator.Succeeded(this);
-                        return;
-                     }
-
-                     await _tessageStorage.RecordExceptionAsync(TransportTessage, exception).caf();
-
-                     //bug: An exactly-once tessage whose handler throws five times in a row is given up on for good. DefaultRetryPolicy allows
-                     //   five tries, run at once with no delay between them, so any failure that outlasts them exhausts them all. MarkAsFailedAsync
-                     //   then records the tessage as failed: nothing handles it again, not even after a restart, and nothing shows it or retries it.
-                     //   The intended behavior, which IAtLeastOnceTessage's documentation and the dev_docs state, is retrying until handled. (website-and-docs, 2026-11-24)
-                     if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
-                     {
-                        this.Log().Warning(exception, $"Transactional tessage {TessageId} failed after exhausting retries.");
-                        await _tessageStorage.MarkAsFailedAsync(TransportTessage).caf();
-                        _coordinator.Failed(this, exception);
-                        return;
-                     }
-
-                     this.Log().Warning(exception, $"Transactional tessage {TessageId} failed, will retry.");
+                     await WaitForTheEndpointAsync().caf();
+                     continue;
                   }
+
+                  if(_handlingRetries.AreExhaustedAfterFailingFor(_failingTime))
+                  {
+                     await MarkFailedAsync(failure).caf();
+                     return;
+                  }
+
+                  await WaitBeforeTryingAgainAsync(failure).caf();
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor)
+            ///<summary>One try: a unit of work that claims the tessage, runs its handlers and marks it succeeded, all of which<br/>
+            /// commit or roll back as one.</summary>
+            ///<returns>Null when the tessage was handled, or was not this execution's to handle; otherwise what the try failed with.</returns>
+            async Task<Exception?> TryHandleAsync()
+            {
+               var claimed = true;
+               try
+               {
+                  //A unit of work, so that what the handler's work finds from the transaction alone, such as the taggregate
+                  //stores' unit of work, finds this one.
+                  await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork =>
+                  {
+                     //The claim rides this handling transaction, so it and the handler's work commit or roll back as one:
+                     //a second execution of the same tessage - whatever produced it - skips before running any handler.
+                     if(!await _tessageStorage.TryClaimForHandlingAsync(TransportTessage).caf())
+                     {
+                        claimed = false;
+                        return;
+                     }
+                     await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork).caf();
+                     await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
+                  }).caf();
+               }
+#pragma warning disable CA1031 //Whatever a try fails with, the tessage is tried again or marked failed: see HandleTryingAgainWhileItFailsAsync.
+               catch(Exception exception)
+#pragma warning restore CA1031
+               {
+                  return exception;
+               }
+
+               if(claimed) this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
+               else this.Log().Info($"Skipping tessage {TessageId}: it is not this execution's to handle - its handling already finished, or another live handling execution holds its claim.");
+               return null;
+            }
+
+            ///<summary>Records the failed try, adding the time since <see cref="_failingClockStartedAt"/> to the tessage's<br/>
+            /// failing time. False when the endpoint couldn't record it: then the try doesn't count.</summary>
+            async Task<bool> TryRecordFailedTryAsync(Exception failure)
+            {
+               var failingTime = _failingTime + Stopwatch.GetElapsedTime(_failingClockStartedAt);
+               try
+               {
+                  await _tessageStorage.RecordFailedTryAsync(TransportTessage, failure, failingTime).caf();
+               }
+#pragma warning disable CA1031 //Whatever recording fails with, it is the endpoint that is failing: logged, and the tessage is tried again once the endpoint has waited.
+               catch(Exception recordingFailure)
+#pragma warning restore CA1031
+               {
+                  this.Log().Error(recordingFailure, $"The endpoint could not record a failed try of tessage {TessageId}, which failed with: {failure.Message} It is the endpoint that is failing, not the tessage, so the try doesn't count: the tessage is tried again once the endpoint has waited.");
+                  return false;
+               }
+
+               _failingTime = failingTime;
+               _failingClockStartedAt = Stopwatch.GetTimestamp();
+               _endpointFailures.Succeeded();
+               _coordinator.RecordedFailedTry(this, failure);
+               return true;
+            }
+
+            ///<summary>Waits while the endpoint itself is failing. The wait doesn't count toward the tessage's failing time.</summary>
+            async Task WaitForTheEndpointAsync()
+            {
+               await Task.Delay(_endpointFailures.DelayAfterAnotherFailure(), _stopping).caf();
+               _failingClockStartedAt = Stopwatch.GetTimestamp();
+            }
+
+            async Task WaitBeforeTryingAgainAsync(Exception failure)
+            {
+               var delay = _handlingRetries.ShortenedToTheTimeLeft(_handlerFailures.DelayAfterAnotherFailure(), _failingTime);
+               this.Log().Warning(failure, $"Handling tessage {TessageId} failed. It is tried again in {delay}: its handling has failed for {_failingTime}, and the endpoint tries {_handlingRetries}.");
+               _coordinator.StartedWaitingToBeTriedAgain();
+               try
+               {
+                  await Task.Delay(delay, _stopping).caf();
+               }
+               finally
+               {
+                  _coordinator.StoppedWaitingToBeTriedAgain();
+               }
+            }
+
+            ///<summary>Marks the tessage failed, trying again for as long as the endpoint can't record it, and lets the endpoint go<br/>
+            /// on with the tessages behind it.</summary>
+            async Task MarkFailedAsync(Exception lastFailure)
+            {
+               while(!await TryMarkFailedAsync().caf())
+               {
+                  await Task.Delay(_endpointFailures.DelayAfterAnotherFailure(), _stopping).caf();
+               }
+
+               this.Log().Error(lastFailure, $"Marked tessage {TessageId} failed: its handling failed for {_failingTime}, and the endpoint tries {_handlingRetries}. It isn't handled again until it is retried, and the endpoint goes on with the tessages behind it.");
+               _coordinator.Failed(this, lastFailure);
+            }
+
+            async Task<bool> TryMarkFailedAsync()
+            {
+               try
+               {
+                  await _tessageStorage.MarkAsFailedAsync(TransportTessage).caf();
+                  return true;
+               }
+#pragma warning disable CA1031 //Whatever marking fails with, it is the endpoint that is failing: logged, and marking is tried again once the endpoint has waited.
+               catch(Exception markingFailure)
+#pragma warning restore CA1031
+               {
+                  this.Log().Error(markingFailure, $"The endpoint could not mark tessage {TessageId} failed. It tries again once it has waited.");
+                  return false;
+               }
+            }
+
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, HandlingRetries handlingRetries, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
+               _failingTime = failingTime;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
                _tessageStorage = tessageStorage;
                _scopeFactory = scopeFactory;
                _executor = executor;
+               _handlingRetries = handlingRetries;
+               _stopping = stopping;
                _tessageTask = CreateTessageTask();
             }
 

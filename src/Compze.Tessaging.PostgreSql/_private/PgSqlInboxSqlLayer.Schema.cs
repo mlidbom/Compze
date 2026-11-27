@@ -24,6 +24,7 @@ partial class PgSqlInboxSqlLayer
            {Tessage.ExceptionType}                varchar(500)                        NULL,
            {Tessage.ExceptionStackTrace}          text                                NULL,
            {Tessage.ExceptionTessage}             text                                NULL,
+           {Tessage.FailingTimeMilliseconds}      bigint                              NOT NULL  DEFAULT 0,
 
 
            PRIMARY KEY ( {Tessage.GeneratedId} ),

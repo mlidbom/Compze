@@ -22,6 +22,7 @@ partial class SqliteInboxSqlLayer
            {Tessage.ExceptionType}                TEXT                              NULL,
            {Tessage.ExceptionStackTrace}          TEXT                              NULL,
            {Tessage.ExceptionTessage}             TEXT                              NULL,
+           {Tessage.FailingTimeMilliseconds}      INTEGER                           NOT NULL DEFAULT 0,
 
            --One position in a pair's delivery stream is one admitted tessage: the loud backstop for the admission gate.
            CONSTRAINT IX_{tables.Prefix}_InboxStreamPosition UNIQUE ( {Tessage.SenderEndpointId}, {Tessage.DeliveryStreamSequenceNumber} )

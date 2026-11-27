@@ -4,6 +4,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -19,41 +20,75 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, EndpointId endpointId)
+      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, HandlingRetries handlingRetries, EndpointId endpointId) : IDisposable
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IScopeFactory _scopeFactory = scopeFactory;
          readonly TessageHandlerExecutor _executor = executor;
+         readonly HandlingRetries _handlingRetries = handlingRetries;
          readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
-         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, CancellationToken cancellationToken)
+         ///<summary>Cancelled when handling stops: it ends the wait for the next dispatchable tessage, and every wait of a<br/>
+         /// tessage to be tried again.</summary>
+         readonly CancellationTokenSource _stopping = new();
+
+         ///<summary>Waits for the next tessage that may be dispatched, and dispatches it; throws an<br/>
+         /// <see cref="OperationCanceledException"/> once handling has stopped (<see cref="StopAsync"/>).</summary>
+         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
          {
             HandlerExecutionTask? handlerExecutionTask = null;
-            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask), cancellationToken);
+            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask), _stopping.Token);
             return handlerExecutionTask._assert().NotNull();
          }
 
-         ///<summary>The shutdown drain: waits until the inbox is quiescent — every received tessage handled, nothing waiting or<br/>
-         /// executing — so the endpoint tears down with empty queues. Best-effort: if the inbox has not gone idle within<br/>
-         /// <paramref name="patience"/> (a handler is likely hung) it logs loudly and returns, leaving teardown to proceed rather<br/>
-         /// than hang. Called after the transport has stopped, so nothing new arrives and the queue only shrinks.</summary>
-         internal async Task AwaitAllReceivedTessagesProcessedAsync(WaitTimeout patience)
+         ///<summary>The shutdown drain, then the stop. Waits until nothing more will be handled before stopping<br/>
+         /// (<see cref="NonThreadsafeImplementation.IsDrained"/>), then stops handling (<see cref="StopAsync"/>), and waits for a<br/>
+         /// try that was still running to end, so that this endpoint's process handles nothing after it returns. A tessage that<br/>
+         /// waits to be tried again, and those behind it, are left unhandled, for the recovery scan at the endpoint's next start.<br/>
+         /// Best-effort: if a wait lasts longer than <paramref name="patience"/> (a handler is likely hung) it logs loudly and<br/>
+         /// returns, leaving teardown to proceed rather than hang. Called after the transport has stopped, so nothing new<br/>
+         /// arrives.</summary>
+         internal async Task DrainAndStopAsync(WaitTimeout patience)
          {
-            if(await _implementation.TryAwaitAsync(implementation => implementation.IsIdle, timeout: patience).caf()) return;
-            this.Log().Warning(_implementation.Read(implementation =>
-               $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
+            var drained = await _implementation.TryAwaitAsync(implementation => implementation.IsDrained, timeout: patience).caf();
+            if(!drained)
+               this.Log().Warning(_implementation.Read(implementation =>
+                  $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
+
+            await StopAsync().caf();
+
+            if(drained && !await _implementation.TryAwaitAsync(implementation => implementation.ExecutingCount == 0, timeout: patience).caf())
+               this.Log().Warning($"Shutdown drain: a try of a tessage's handling was still running {patience} after handling stopped. Proceeding with teardown - a handler is likely hung.");
          }
 
-         internal void EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
+         ///<summary>Stops handling: nothing more is dispatched, and every wait of a tessage to be tried again ends, leaving the<br/>
+         /// tessage unhandled for the recovery scan at the endpoint's next start. Calling it again does nothing more.</summary>
+         internal async Task StopAsync()
+         {
+            _implementation.Update(implementation => implementation.StopDispatching());
+            await _stopping.CancelAsync().caf();
+         }
+
+         internal void EnqueueTessageTask(TransportTessage.InComing tessage, TimeSpan failingTime) => _implementation.Update(implementation =>
          {
             this.Log().Debug($"Enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _scopeFactory, _executor));
+            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, failingTime, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _handlingRetries, _stopping.Token));
          });
 
          void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));
 
          void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => _implementation.Update(implementation => implementation.Failed(queuedTessageInformation, exception));
+
+         void LeftUnhandledAtStop(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.LeftUnhandledAtStop(queuedTessageInformation));
+
+         void RecordedFailedTry(HandlerExecutionTask queuedTessageInformation, Exception exception) => _implementation.Update(implementation => implementation.RecordedFailedTry(queuedTessageInformation, exception));
+
+         void StartedWaitingToBeTriedAgain() => _implementation.Update(implementation => implementation.StartedWaitingToBeTriedAgain());
+
+         void StoppedWaitingToBeTriedAgain() => _implementation.Update(implementation => implementation.StoppedWaitingToBeTriedAgain());
+
+         public void Dispose() => _stopping.Dispose();
 
          public class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingTessagesSnapshot
          {
@@ -69,16 +104,20 @@ partial class Inbox
             public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents => _executingExactlyOnceTevents;
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
+            bool _dispatchingStopped;
+            int _waitingToBeTriedAgainCount;
 
-            ///<summary>True when the inbox is quiescent: nothing is waiting to execute and no handler is executing.</summary>
-            internal bool IsIdle => WaitingCount == 0 && ExecutingCount == 0;
+            ///<summary>True when nothing more will be handled before stopping: nothing is executing and nothing waits to<br/>
+            /// execute, or every executing tessage waits to be tried again. A tessage waiting to be tried again holds the line: the<br/>
+            /// dispatching rules dispatch no exactly-once tessage while another executes.</summary>
+            internal bool IsDrained => ExecutingCount == 0 ? WaitingCount == 0 : ExecutingCount == _waitingToBeTriedAgainCount;
             internal int WaitingCount => _tessagesWaitingToExecute.Count;
             internal int ExecutingCount { get; private set; }
 
             internal bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {
                dispatchable = null!;
-               if(ExecutingCount >= MaxConcurrentlyExecutingHandlers)
+               if(_dispatchingStopped || ExecutingCount >= MaxConcurrentlyExecutingHandlers)
                {
                   return false;
                }
@@ -97,9 +136,21 @@ partial class Inbox
 
             internal void EnqueueTessageTask(HandlerExecutionTask tessage) => _tessagesWaitingToExecute.Add(tessage);
 
-            internal void Succeeded(HandlerExecutionTask queuedTessageInformation) => DoneDispatching(queuedTessageInformation);
+            internal void StopDispatching() => _dispatchingStopped = true;
 
-            internal void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => DoneDispatching(queuedTessageInformation, exception);
+            internal void RecordedFailedTry(HandlerExecutionTask executing, Exception exception) => _globalStateTracker.FailedTry(executing.TransportTessage, _endpointId, exception);
+
+            internal void StartedWaitingToBeTriedAgain() => _waitingToBeTriedAgainCount++;
+
+            internal void StoppedWaitingToBeTriedAgain() => _waitingToBeTriedAgainCount--;
+
+            internal void Succeeded(HandlerExecutionTask queuedTessageInformation) => DoneWith(queuedTessageInformation, exception: null);
+
+            internal void Failed(HandlerExecutionTask queuedTessageInformation, Exception exception) => DoneWith(queuedTessageInformation, exception);
+
+            ///<summary>The tessage's execution ended without it being handled or marked failed: the tessages-in-flight tracker<br/>
+            /// is not told it is done, since it isn't.</summary>
+            internal void LeftUnhandledAtStop(HandlerExecutionTask queuedTessageInformation) => StopExecuting(queuedTessageInformation);
 
             //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)
@@ -123,26 +174,30 @@ partial class Inbox
                _tessagesWaitingToExecute.Remove(dispatchable);
             }
 
-            //Refactor: Switching should not be necessary. See also inbox.
-            void DoneDispatching(HandlerExecutionTask doneExecuting, Exception? exception = null)
+            void DoneWith(HandlerExecutionTask doneExecuting, Exception? exception)
             {
                this.Log().Debug($"Done with {doneExecuting.TransportTessage.TessageTypeEnum} tessage {doneExecuting.TessageId}{(exception != null ? " (FAILED)" : "")} (executing: {ExecutingCount - 1}, waiting: {_tessagesWaitingToExecute.Count})");
+               StopExecuting(doneExecuting);
+               _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
+            }
+
+            //Refactor: Switching should not be necessary. See also inbox.
+            void StopExecuting(HandlerExecutionTask executing)
+            {
                ExecutingCount--;
 
-               switch(doneExecuting.TransportTessage.TessageTypeEnum)
+               switch(executing.TransportTessage.TessageTypeEnum)
                {
                   case TransportTessageType.ExactlyOnceTevent:
-                     _executingExactlyOnceTevents.Remove(doneExecuting.TransportTessage);
+                     _executingExactlyOnceTevents.Remove(executing.TransportTessage);
                      break;
                   case TransportTessageType.ExactlyOnceTommand:
-                     _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
+                     _executingExactlyOnceTommands.Remove(executing.TransportTessage);
                      break;
                   case TransportTessageType.BestEffortTevent:
                   default:
                      throw new ArgumentOutOfRangeException();
                }
-
-               _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
             readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];

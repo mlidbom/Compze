@@ -53,7 +53,7 @@ public class ExactlyOnceEndpoint : Endpoint
 
    private protected override async Task StopTheDurableVerticalAsync() => await _outbox.StopAsync().caf();
 
-   ///<summary>Waits for the inbox to finish handling every received tessage before the container is torn down —<br/>
-   /// see <see cref="IInbox.AwaitAllReceivedTessagesProcessedAsync"/>.</summary>
-   private protected override async Task DrainTheInboxAsync() => await _inbox.AwaitAllReceivedTessagesProcessedAsync().caf();
+   ///<summary>Waits for the inbox to finish handling every received tessage it can, and stops its handling, before the process<br/>
+   /// lock is released and the container is torn down — see <see cref="IInbox.DrainAndStopHandlingAsync"/>.</summary>
+   private protected override async Task DrainTheInboxAsync() => await _inbox.DrainAndStopHandlingAsync().caf();
 }

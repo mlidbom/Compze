@@ -184,7 +184,8 @@ public abstract class Endpoint : IEndpoint
    private protected virtual Task StopTheDurableVerticalAsync() => Task.CompletedTask;
 
    ///<summary>Drains the exactly-once inbox before teardown: waits for every already-received tessage to finish handling so the<br/>
-   /// endpoint tears down with empty queues. The best-effort endpoint has no inbox, so the base does nothing.</summary>
+   /// endpoint tears down with empty queues, then stops its handling. A tessage waiting to be tried again, and those behind it,<br/>
+   /// are left for the recovery scan at the next start. The best-effort endpoint has no inbox, so the base does nothing.</summary>
    private protected virtual Task DrainTheInboxAsync() => Task.CompletedTask;
 
    public async Task StopAsync()

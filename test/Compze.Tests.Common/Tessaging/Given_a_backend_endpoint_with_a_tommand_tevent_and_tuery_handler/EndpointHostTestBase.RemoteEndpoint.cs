@@ -27,6 +27,11 @@ public abstract partial class EndpointHostTestBase
          _withItsTeventSubscriptions = withItsTeventSubscriptions;
       }
 
+      //Marked failed at the first failure: the specifications that make this endpoint's exactly-once handlers throw pin how
+      //a tessage marked failed surfaces through the testing host, and none of them expects a later try to succeed. The
+      //retries themselves are specified in Compze.Tessaging.Specifications.
+      protected override HandlingRetries? HandlingRetries => HandlingRetries.For(TimeSpan.Zero);
+
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireCommonTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle)
