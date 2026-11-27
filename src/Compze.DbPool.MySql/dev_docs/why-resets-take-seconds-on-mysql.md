@@ -48,6 +48,16 @@ need more flushes than the server's drive completes, so DDL statements queue: a 
   2026-11-17, with 47% taking 3 to 9 s. Since 2026-11-24, 8 to 18% take 10 s or more, against 0 to 2% before, and the
   longest 16 to 37 s. Tables created per reset grew from about 12 to 13 or 14.
 
+## What slow resets break
+
+- **The DbPool's lock times out.** `DbPool.ConnectionStringFor` reserves and resets inside the pool's lock, which times
+  out after 30 s, so a reset that takes longer makes a concurrent call on the same pool throw
+  `TakeMonitorLockTimeoutException`: another endpoint of the same host, starting at the same time. Twice on 2026-11-27 in
+  a full local run, in AccountManagement's user stories on MySql. A `bug:` comment marks it at the code.
+- **Tests run past their reservations.** A test host whose three databases each wait seconds for their reset, and then
+  for their schema, spends much of the 65 s reservation starting up, so another pool may take and reset a database it
+  still uses: `Unknown database 'compze_dbpool_0084'` in the same run.
+
 ## What was ruled out
 
 - **Metadata locks:** 3 of about 11,700 samples of a reset saw it waiting for one. The server counted 218 s of
