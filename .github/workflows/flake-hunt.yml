@@ -43,9 +43,10 @@ jobs:
         persistence: [Sqlite]
         di: [every]
         serializer: [Newtonsoft]
-        transport: [AspNetCore, NamedPipes]
+        transport: [AspNetCore]
+        sqlite_pool_directory: [temp, d-drive]
 
-    name: "Hunt ${{ matrix.runner }} on ${{ matrix.os }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Hunt ${{ matrix.runner }} on ${{ matrix.os }}, pool in ${{ matrix.sqlite_pool_directory }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     services:
       postgres:
@@ -104,6 +105,11 @@ jobs:
             echo "${{ matrix.persistence }}:$container:${{ matrix.serializer }}:${{ matrix.transport }}"
           done > src/TestUsingPluggableComponentCombinations
           echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
+          if [ "${{ matrix.sqlite_pool_directory }}" = "d-drive" ]; then
+            echo "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY=D:\CompzeDbPool\Sqlite" >> "$GITHUB_ENV"
+          fi
+          echo "TEMP=$TEMP"; df -h /c /d 2>/dev/null || true
+          pwsh -NoProfile -Command "Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusEnabled, OnAccessProtectionEnabled | Format-List; Get-MpPreference | Select-Object -ExpandProperty ExclusionPath" || true
 
       - name: Build the hunted test project
         run: dotnet build "$HUNTED_TEST_PROJECT" --configuration Debug -p:CompzeRuntimeAsync=$RUNTIME_ASYNC

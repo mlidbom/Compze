@@ -39,7 +39,7 @@ public abstract class UserStoryTest : UniversalTestBase
       while(!_isDone.Wait(500))
       {
          Record(Sample());
-         if(_sinceConstruction.Elapsed > SlowUserStory && Interlocked.Exchange(ref _hasDumped, 1) == 0)
+         if(_sinceConstruction.Elapsed > SlowUserStory && Environment.GetEnvironmentVariable("FLAKE_HUNT_DUMP") == "true" && Interlocked.Exchange(ref _hasDumped, 1) == 0)
             Record($"{DateTime.UtcNow:HH:mm:ss.fff} dump written: {TestProcessDump.Write("flake-hunt slow user story").FullName}");
       }
    }
