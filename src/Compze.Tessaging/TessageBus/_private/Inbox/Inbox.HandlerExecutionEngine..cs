@@ -21,7 +21,7 @@ partial class Inbox
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
-      HandlingRetries handlingRetries,
+      RetryPolicy retryPolicy,
       EndpointId endpointId) : IDisposable, IAsyncDisposable
    {
       Task? _awaitDispatchableTessageLoop;
@@ -38,7 +38,7 @@ partial class Inbox
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, handlingRetries, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, retryPolicy, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
       ///<summary>Enqueues a tessage for handling, behind every tessage enqueued before it. <paramref name="failingTime"/> is how<br/>

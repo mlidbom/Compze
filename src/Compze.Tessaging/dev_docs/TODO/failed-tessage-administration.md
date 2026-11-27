@@ -4,7 +4,7 @@
 
 Agreed with Magnus on 2026-11-27, as the effort that follows the exactly-once retry fix (branch `exactly-once-retries`).
 The retry fix makes an exactly-once endpoint retry a tessage whose handling fails, with a growing delay, for as long as
-its declared `HandlingRetries` allow, and then mark the tessage failed and go on with the tessages behind it. This
+its declared `RetryPolicy` allows, and then mark the tessage failed and go on with the tessages behind it. This
 effort is how an administrator then sees the failed tessages and retries them, once the problem is fixed.
 
 Until it exists, a failed tessage is retried by setting its inbox row's status back to UnHandled and restarting the

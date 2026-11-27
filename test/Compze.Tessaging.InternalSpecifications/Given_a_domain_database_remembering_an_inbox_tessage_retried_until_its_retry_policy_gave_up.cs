@@ -21,20 +21,20 @@ using Compze.TypeIdentifiers;
 namespace Compze.Tessaging.InternalSpecifications;
 
 ///<summary>A tessage's failing time, how long its handling has been failing, is recorded with each failed try and carries<br/>
-/// across restarts: an endpoint's next process goes on from it rather than giving the tessage its whole handling retries<br/>
+/// across restarts: an endpoint's next process goes on from it rather than giving the tessage its whole time to retry<br/>
 /// again. So a tessage whose handling had failed for all of them when the endpoint's previous process stopped is marked failed<br/>
 /// at its first failed try in the next one. The previous process is scripted through the inbox sql layer: the tessage is<br/>
-/// admitted, and a failed try is recorded with a failing time of the endpoint's whole handling retries.</summary>
-public class Given_a_domain_database_remembering_an_inbox_tessage_whose_handling_failed_for_all_its_handling_retries : UniversalTestBase
+/// admitted, and a failed try is recorded with a failing time of the endpoint's whole time to retry.</summary>
+public class Given_a_domain_database_remembering_an_inbox_tessage_retried_until_its_retry_policy_gave_up : UniversalTestBase
 {
    static readonly EndpointId PreviousSendersPeerEndpointId = new(Guid.Parse("5E1C7A93-2B64-4F08-9D35-C1A7B48E260F"));
-   static readonly TimeSpan TheEndpointsHandlingRetries = TimeSpan.FromMinutes(1);
+   static readonly TimeSpan TheEndpointsMaxTimeToRetry = TimeSpan.FromMinutes(1);
 
    readonly TestingEndpointHost _host;
    readonly ExactlyOnceEndpoint _restartedEndpoint;
    readonly IThreadGate _tommandHandlerThreadGate = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "TommandHandlerThreadGate");
 
-   public Given_a_domain_database_remembering_an_inbox_tessage_whose_handling_failed_for_all_its_handling_retries()
+   public Given_a_domain_database_remembering_an_inbox_tessage_retried_until_its_retry_policy_gave_up()
    {
       _host = TestingEndpointHost.Create();
       _restartedEndpoint = _host.RegisterEndpoint(new RestartedEndpointDeclaration(this));
@@ -45,10 +45,10 @@ public class Given_a_domain_database_remembering_an_inbox_tessage_whose_handling
       public static string Name => "Restarted";
       public static EndpointId Id => new(Guid.Parse("C03B5D86-9E21-4A7F-B8D4-6F12E07A93C5"));
 
-      readonly Given_a_domain_database_remembering_an_inbox_tessage_whose_handling_failed_for_all_its_handling_retries _specification;
-      internal RestartedEndpointDeclaration(Given_a_domain_database_remembering_an_inbox_tessage_whose_handling_failed_for_all_its_handling_retries specification) => _specification = specification;
+      readonly Given_a_domain_database_remembering_an_inbox_tessage_retried_until_its_retry_policy_gave_up _specification;
+      internal RestartedEndpointDeclaration(Given_a_domain_database_remembering_an_inbox_tessage_retried_until_its_retry_policy_gave_up specification) => _specification = specification;
 
-      protected override HandlingRetries? HandlingRetries => HandlingRetries.For(TheEndpointsHandlingRetries);
+      protected override RetryPolicy? RetryPolicy => RetryPolicy.GiveUpAfter(TheEndpointsMaxTimeToRetry);
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
 
@@ -72,7 +72,7 @@ public class Given_a_domain_database_remembering_an_inbox_tessage_whose_handling
       (await inbox.SaveTessageAsync(tommand.Id, tommandTypeId, serializedTommand,
                                     new DeliveryStreamPosition(PreviousSendersPeerEndpointId, sequenceNumber: 1, predecessorSequenceNumber: 0)))
         .Must().Be(ITessagingSqlLayer.SaveTessageResult.NewTessage);
-      (await inbox.RecordFailedTryAsync(tommand.Id, exceptionStackTrace: "", exceptionTessage: "The previous process's last failed try", exceptionType: "", failingTime: TheEndpointsHandlingRetries))
+      (await inbox.RecordFailedTryAsync(tommand.Id, exceptionStackTrace: "", exceptionTessage: "The previous process's last failed try", exceptionType: "", failingTime: TheEndpointsMaxTimeToRetry))
         .Must().Be(1);
 
       await _host.StartAsync();

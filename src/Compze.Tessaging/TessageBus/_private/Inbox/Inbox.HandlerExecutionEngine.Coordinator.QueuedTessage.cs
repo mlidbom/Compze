@@ -19,7 +19,7 @@ partial class Inbox
       partial class Coordinator
       {
          ///<summary>The handling of one received tessage: tried, and tried again while it fails, for as long as the endpoint's<br/>
-         /// <see cref="HandlingRetries"/> allow, and then marked failed. Until it is handled or marked failed, it holds its place<br/>
+         /// <see cref="RetryPolicy"/> allow, and then marked failed. Until it is handled or marked failed, it holds its place<br/>
          /// at the head of the line, so that no tessage behind it is handled first.</summary>
          ///<remarks>A try counts only when the endpoint could record it. When it couldn't, such as when the endpoint's database<br/>
          /// is unreachable, it is the endpoint that is failing, not the tessage: the tessage is tried again once the endpoint<br/>
@@ -35,7 +35,7 @@ partial class Inbox
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
             readonly TessageHandlerExecutor _executor;
-            readonly HandlingRetries _handlingRetries;
+            readonly RetryPolicy _retryPolicy;
             readonly CancellationToken _stopping;
             readonly HandlingRetrySchedule _handlerFailures = new();
             readonly HandlingRetrySchedule _endpointFailures = new();
@@ -91,7 +91,7 @@ partial class Inbox
                      continue;
                   }
 
-                  if(_theNextTryIsTheLast || _handlingRetries.AreExhaustedAfterFailingFor(_failingTime))
+                  if(_theNextTryIsTheLast || _retryPolicy.GivesUpAfterFailingFor(_failingTime))
                   {
                      await MarkFailedAsync(failure).caf();
                      return;
@@ -170,13 +170,13 @@ partial class Inbox
             async Task WaitBeforeTryingAgainAsync(Exception failure)
             {
                var delay = _handlerFailures.DelayAfterAnotherFailure();
-               if(_handlingRetries.TimeLeftAfterFailingFor(_failingTime) is {} timeLeft && timeLeft <= delay)
+               if(_retryPolicy.TimeLeftAfterFailingFor(_failingTime) is {} timeLeft && timeLeft <= delay)
                {
                   delay = timeLeft;
                   _theNextTryIsTheLast = true;
                }
 
-               this.Log().Warning(failure, $"Handling tessage {TessageId} failed. It is tried again in {delay}: its handling has failed for {_failingTime}, and the endpoint tries {_handlingRetries}.");
+               this.Log().Warning(failure, $"Handling tessage {TessageId} failed. It is tried again in {delay}: its handling has failed for {_failingTime}, and the endpoint's retry policy is {_retryPolicy}.");
                _coordinator.StartedWaitingToBeTriedAgain();
                try
                {
@@ -197,7 +197,7 @@ partial class Inbox
                   await Task.Delay(_endpointFailures.DelayAfterAnotherFailure(), _stopping).caf();
                }
 
-               this.Log().Error(lastFailure, $"Marked tessage {TessageId} failed: its handling failed for {_failingTime}, and the endpoint tries {_handlingRetries}. It isn't handled again until it is retried, and the endpoint goes on with the tessages behind it.");
+               this.Log().Error(lastFailure, $"Marked tessage {TessageId} failed: its handling failed for {_failingTime}, and the endpoint's retry policy is {_retryPolicy}. It isn't handled again until it is retried, and the endpoint goes on with the tessages behind it.");
                _coordinator.Failed(this, lastFailure);
             }
 
@@ -217,7 +217,7 @@ partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, HandlingRetries handlingRetries, CancellationToken stopping)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
@@ -227,7 +227,7 @@ partial class Inbox
                _tessageStorage = tessageStorage;
                _scopeFactory = scopeFactory;
                _executor = executor;
-               _handlingRetries = handlingRetries;
+               _retryPolicy = retryPolicy;
                _stopping = stopping;
                _tessageTask = CreateTessageTask();
             }

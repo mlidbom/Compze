@@ -71,7 +71,7 @@ public interface ITessageWithIdentity : ITessage
 }
 
 ///<summary>A tessage that is delivered until it arrives, and whose handling is retried while it fails: for as long as the<br/>
-/// receiving endpoint's handling retries allow, 5 minutes of failing unless it declares otherwise. Then the tessage is<br/>
+/// receiving endpoint's retry policy allows, giving up after 5 minutes unless it declares otherwise. Then the tessage is<br/>
 /// marked failed and not handled again until an administrator retries it.</summary>
 public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage;
 
@@ -86,7 +86,7 @@ public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTo
 public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 ///<summary>A tessage that is handled exactly once, in the order it was sent in: guaranteed by infrastructure through<br/>
-/// deduplication, retries and transactions, for as long as the receiving endpoint's handling retries allow. A tessage it marks<br/>
+/// deduplication, retries and transactions, for as long as the receiving endpoint's retry policy allows. A tessage it marks<br/>
 /// failed gives up its place in the order.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage, IAtLeastOnceTessage;
 

@@ -20,13 +20,13 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
-      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, HandlingRetries handlingRetries, EndpointId endpointId) : IDisposable
+      partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
       {
          readonly ITaskRunner _taskRunner = taskRunner;
          readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IScopeFactory _scopeFactory = scopeFactory;
          readonly TessageHandlerExecutor _executor = executor;
-         readonly HandlingRetries _handlingRetries = handlingRetries;
+         readonly RetryPolicy _retryPolicy = retryPolicy;
          readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
          ///<summary>Cancelled when handling stops: it ends the wait for the next dispatchable tessage, and every wait of a<br/>
@@ -73,7 +73,7 @@ partial class Inbox
          internal void EnqueueTessageTask(TransportTessage.InComing tessage, TimeSpan failingTime) => _implementation.Update(implementation =>
          {
             this.Log().Debug($"Enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, failingTime, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _handlingRetries, _stopping.Token));
+            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, failingTime, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token));
          });
 
          void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));

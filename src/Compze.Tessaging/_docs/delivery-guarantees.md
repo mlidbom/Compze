@@ -47,11 +47,11 @@ handles it in a transaction that also records that it was handled, so its handle
   for 5 minutes, the tessage is marked failed, and isn't handled again, not after a restart either; the endpoint goes on
   with the next. The time counts while the endpoint runs and can reach its database, across restarts: when the
   endpoint can't reach its database, it is the endpoint that is failing, not the tessage, and nothing counts.
-- **How long, declared on the endpoint:** `HandlingRetries`, in an exactly-once declaration, or on its builder.
-  `HandlingRetries.For(...)` gives a tessage another time, and `HandlingRetries.UntilHandled` never marks one failed: the
-  order is kept, whatever that costs the tessages behind it.
+- **When to give up, declared on the endpoint:** its `RetryPolicy`, in an exactly-once declaration, or on its builder.
+  `RetryPolicy.GiveUpAfter(...)` gives up after another time, and `RetryPolicy.RetryForever` never gives up on a tessage:
+  the order is kept, whatever that costs the tessages behind it.
 
-[!code-csharp[](delivery-guarantees.cs#declaring_handling_retries)]
+[!code-csharp[](delivery-guarantees.cs#declaring_a_retry_policy)]
 
 ## Best-effort delivery
 

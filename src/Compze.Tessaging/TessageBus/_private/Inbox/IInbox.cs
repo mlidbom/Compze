@@ -1,11 +1,12 @@
 using Compze.Tessaging._private.Transport;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 
 namespace Compze.Tessaging.TessageBus._private.Inbox;
 
 ///<summary>The receiving half of the endpoint's exactly-once Tessaging pipeline: arriving tessages are registered here by the<br/>
 /// endpoint's transport request handling, persisted and deduped, then handled transactionally, one at a time in the order<br/>
 /// they arrived: a tessage whose handling fails is tried again for as long as the endpoint's<br/>
-/// <see cref="Endpoints.ExactlyOnce.HandlingRetries"/> allow, then marked failed.</summary>
+/// <see cref="RetryPolicy"/> allow, then marked failed.</summary>
 interface IInbox
 {
    Task StartAsync();

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.8.0-alpha
 
-- **The documentation of `IAtLeastOnceTessage` and `IExactlyOnceTessage` says what the guarantee is:** handled in order, the handling retried while it fails for as long as the receiving endpoint's handling retries allow, and then marked failed, giving up its place in the order. It said only that the infrastructure guarantees it through retries.
+- **The documentation of `IAtLeastOnceTessage` and `IExactlyOnceTessage` says what the guarantee is:** handled in order, the handling retried while it fails for as long as the receiving endpoint's retry policy allows, and then marked failed, giving up its place in the order. It said only that the infrastructure guarantees it through retries.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.13.0-internal (was 0.12.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.7.0-alpha

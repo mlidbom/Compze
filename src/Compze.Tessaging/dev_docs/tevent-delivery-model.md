@@ -60,7 +60,7 @@ property:
 | Rung | What it is | Loses vs. the rung above |
 |---|---|---|
 | **Participation** | In-process, synchronous, in the *publisher's* transaction. A handler failure aborts the publish itself. | — (the strongest thing there is) |
-| **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried while it fails for as long as the endpoint's `HandlingRetries` allow. | Participation in the publisher's transaction |
+| **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried while it fails for as long as the endpoint's `RetryPolicy` allows. | Participation in the publisher's transaction |
 | **Best-effort** | Across the wire, handler in its *own* transaction. No store, no dedup, no retry. | Guaranteed arrival |
 | **Observation** | Committed facts only, off-thread, per-observer FIFO, no transaction. | Transactional handling |
 
@@ -95,7 +95,7 @@ Defined in `Compze.Tessaging.Abstractions` (`_TessageTypes..Interfaces.cs`):
 - **`IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage`** — guaranteed arrival: sent
   transactionally through the outbox, handled transactionally through the inbox, deduped by its
   `IAtMostOnceTessage` `Id`, retried while its handling fails, for as long as the receiving endpoint's
-  `HandlingRetries` allow (see "Failing to *handle*" under [Ordering](#ordering)).
+  `RetryPolicy` allows (see "Failing to *handle*" under [Ordering](#ordering)).
 - The markers underneath: `IMustBeSentTransactionally` (the send joins a transaction — requires the outbox),
   `IMustBeHandledTransactionally` (dedup/handling is atomic with the handler's effects — requires the
   inbox), and `IAtMostOnceTessage` (carries the `TessageId` infrastructure dedups on). At-most-once
@@ -321,9 +321,9 @@ Per rung:
   it is tried again — a few tries at once, then a delay growing from a second to a minute — and nothing
   behind it is handled meanwhile. When its *failing time* — how long its handling has been failing while the
   endpoint runs and can reach its database, recorded with each failed try, so it carries across restarts —
-  reaches the endpoint's declared `HandlingRetries` (5 minutes by default), it is marked failed and the
+  reaches the endpoint's declared `RetryPolicy` (giving up after 5 minutes by default), it is marked failed and the
   endpoint goes on with the tessages behind it. Marking failed is the only point where the order is given
-  up, and it is recorded on the tessage's inbox row; `HandlingRetries.UntilHandled` never gives it up.
+  up, and it is recorded on the tessage's inbox row; `RetryPolicy.RetryForever` never gives it up.
   Retrying a failed tessage later, by an administrator, handles it out of order (see
   `TODO/failed-tessage-administration.md`). A try counts only when the endpoint could record it: when the
   endpoint's own database is unreachable, it is the endpoint failing, not the tessage, so the tessage keeps

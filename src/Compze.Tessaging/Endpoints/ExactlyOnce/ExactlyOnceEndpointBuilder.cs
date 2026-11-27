@@ -18,18 +18,18 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
-   ExactlyOnce.HandlingRetries? _handlingRetries;
+   ExactlyOnce.RetryPolicy? _retryPolicy;
 
    internal ExactlyOnceEndpointBuilder(IContainerBuilder containerBuilder, EndpointConfiguration configuration) : base(containerBuilder, configuration) {}
 
-   ///<summary>Declares how long the endpoint keeps trying a tessage whose handling fails before it marks the tessage failed<br/>
-   /// and goes on with the tessages behind it: see <see cref="ExactlyOnce.HandlingRetries"/>. Declared at most once; an<br/>
-   /// endpoint that declares nothing tries for 5 minutes of failing.</summary>
-   public ExactlyOnceEndpointBuilder HandlingRetries(HandlingRetries retries)
+   ///<summary>Declares how the endpoint retries a tessage whose handling fails, and when it gives up, marks the tessage failed<br/>
+   /// and goes on with the tessages behind it: see <see cref="ExactlyOnce.RetryPolicy"/>. Declared at most once; an endpoint<br/>
+   /// that declares nothing gives up after 5 minutes of retrying.</summary>
+   public ExactlyOnceEndpointBuilder RetryPolicy(RetryPolicy policy)
    {
       AssertStillComposing();
-      State.Assert(_handlingRetries is null, () => "The endpoint already declared its handling retries — an endpoint has exactly one.");
-      _handlingRetries = retries;
+      State.Assert(_retryPolicy is null, () => "The endpoint already declared its retry policy — an endpoint has exactly one.");
+      _retryPolicy = policy;
       return this;
    }
 
@@ -60,7 +60,7 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
    {
       //Computed eagerly, so an endpoint name that cannot key storage fails loud at build, not at first resolution.
       Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)),
-                         Singleton.For<HandlingRetries>().Instance(_handlingRetries ?? ExactlyOnce.HandlingRetries.Default));
+                         Singleton.For<RetryPolicy>().Instance(_retryPolicy ?? ExactlyOnce.RetryPolicy.Default));
       _registerDomainDatabase!(Registrar);
       Registrar.EndpointProcessLock()
                .Outbox()

@@ -17,14 +17,14 @@ using Compze.Underscore;
 namespace Compze.Tessaging.Specifications.ExactlyOnce;
 
 ///<summary>Two exactly-once endpoints: a Sender with no handlers, and a Receiver handling <see cref="NumberedExactlyOnceTommand"/><br/>
-/// with the handling retries a specification declares, whose tries of the first tommand fail as the specification scripts.<br/>
+/// with the retry policy a specification declares, whose tries of the first tommand fail as the specification scripts.<br/>
 /// Each endpoint keeps its identity and its pooled database across host rebuilds, so a specification can stop the Receiver<br/>
 /// and start it again.</summary>
 public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestBase
 {
    static readonly WaitTimeout GateTimeout = WaitTimeout.Seconds(30);
 
-   readonly HandlingRetries? _receiversRetries;
+   readonly RetryPolicy? _receiversRetryPolicy;
    readonly IDependencyInjectionContainer _rootContainer;
    readonly ConcurrentQueue<HandlerTry> _tries = new();
    readonly ConcurrentQueue<HandledTommand> _handled = new();
@@ -39,10 +39,10 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    ///<summary>How many tries of the first tommand's handling fail, from the first try on: <see cref="int.MaxValue"/> keeps failing.</summary>
    protected int TriesOfTheFirstTommandThatFail { get; set; }
 
-   ///<param name="receiversRetries">The Receiver's declared handling retries; null declares none, for the default.</param>
-   protected ExactlyOnceSenderAndReceiverSpecification(HandlingRetries? receiversRetries)
+   ///<param name="receiversRetryPolicy">The Receiver's declared retry policy; null declares none, for the default.</param>
+   protected ExactlyOnceSenderAndReceiverSpecification(RetryPolicy? receiversRetryPolicy)
    {
-      _receiversRetries = receiversRetries;
+      _receiversRetryPolicy = receiversRetryPolicy;
       _rootContainer = TestEnv.DIContainer.CreateTestingContainerBuilder()
                               ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer())
                               .Build();
@@ -144,7 +144,7 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
       readonly ExactlyOnceSenderAndReceiverSpecification _specification;
       internal ReceiverDeclaration(ExactlyOnceSenderAndReceiverSpecification specification) => _specification = specification;
 
-      protected override HandlingRetries? HandlingRetries => _specification._receiversRetries;
+      protected override RetryPolicy? RetryPolicy => _specification._receiversRetryPolicy;
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 

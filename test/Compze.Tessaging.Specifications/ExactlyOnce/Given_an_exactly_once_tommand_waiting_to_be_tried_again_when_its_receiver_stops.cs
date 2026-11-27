@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Specifications.ExactlyOnce;
 
 ///<summary>Stopping an endpoint ends the wait of a tessage to be tried again, rather than the stop waiting for the tessage's<br/>
 /// retries, and leaves the tessage unhandled. The endpoint's next process tries it again before the tessages behind it.</summary>
-public class Given_an_exactly_once_tommand_waiting_to_be_tried_again_when_its_receiver_stops() : ExactlyOnceSenderAndReceiverSpecification(HandlingRetries.UntilHandled)
+public class Given_an_exactly_once_tommand_waiting_to_be_tried_again_when_its_receiver_stops() : ExactlyOnceSenderAndReceiverSpecification(RetryPolicy.RetryForever)
 {
    static readonly WaitTimeout HandlingTimeout = WaitTimeout.Seconds(30);
    TimeSpan _timeTheStopTook;

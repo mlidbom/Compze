@@ -31,8 +31,8 @@ static class InboxRegistrar
                   .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, HandlingRetries handlingRetries, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, handlingRetries, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, RetryPolicy retryPolicy, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, retryPolicy, configuration.Id)),
          Singleton.For<IInbox>()
                   .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher observationDispatcher, ITypeMap typeMap, ITessagingSerializer serializer)
                                 => new Inbox(handlerExecutionEngine, tessageStorage, observationDispatcher, typeMap, serializer))

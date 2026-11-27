@@ -42,7 +42,7 @@ class TypermediaHandlerExecutor
 
    const int MaxAttempts = 5;
 
-#pragma warning disable CA1031 // Catch-all is intentional — retry any exception, matching DefaultRetryPolicy behavior
+#pragma warning disable CA1031 // Catch-all is intentional: any exception is retried, up to MaxAttempts.
    async Task<TResult> ExecuteWithRetryAsync<TResult>(Func<Task<TResult>> action)
    {
       var remainingAttempts = MaxAttempts;
