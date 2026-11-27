@@ -13,7 +13,6 @@
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.PostgreSql" />
   </ItemGroup>
