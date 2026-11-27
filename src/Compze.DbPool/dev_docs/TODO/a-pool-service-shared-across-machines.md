@@ -7,7 +7,7 @@ reach `main`.
 
 - **The DbPool coordinates its reservations per machine only.** `DbPoolMachineWideState` keeps them in an interprocess
   object under this machine's LocalAppData, shared by every test process on the machine and seen by no other.
-- **Every machine names the pool databases the same:** `Compze_DbPool_v2_0001` and on.
+- **Every machine names the pool databases the same:** `Compze_DbPool_v3_0001` and on.
 - **So two machines that use the same database servers reset each other's databases** in the middle of their tests:
   failures that look like flakes.
 

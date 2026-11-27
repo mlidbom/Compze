@@ -17,6 +17,7 @@ public class After_a_process_holding_a_reservation_is_killed : UniversalTestBase
    internal const string StateName = "Compze.DbPool.InternalSpecifications.After_a_process_holding_a_reservation_is_killed";
 
    internal static readonly TimeSpan ReservationLength = TimeSpan.FromSeconds(65);
+   internal const int MaximumNumberOfDatabases = 100;
    static readonly TimeSpan PatienceWithTheOtherProcess = TimeSpan.FromSeconds(60);
 
    string _databaseTheKilledProcessHeld = null!;
@@ -27,7 +28,7 @@ public class After_a_process_holding_a_reservation_is_killed : UniversalTestBase
       _databaseTheKilledProcessHeld = await TheDatabaseAnotherProcessHeldWhenItWasKilledAsync();
 
       var poolId = Guid.NewGuid();
-      using var state = new DbPoolMachineWideState(StateName);
+      using var state = new DbPoolMachineWideState(StateName, MaximumNumberOfDatabases);
       _databaseTheNextReservationGot = state.ReserveDatabase("the next reservation", poolId, ReservationLength).Name;
       state.ReleaseReservationsFor(poolId);
    }

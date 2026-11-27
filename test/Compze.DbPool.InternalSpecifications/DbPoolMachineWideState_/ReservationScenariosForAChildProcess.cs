@@ -16,7 +16,7 @@ public class ReservationScenariosForAChildProcess
    /// <see cref="DatabaseFileVariable"/> names, and holds it until the process is killed, which it would be long before the end of its wait.</summary>
    [XF(Explicit = true)] public async Task reserve_a_database_and_hold_it_until_killed()
    {
-      using var state = new DbPoolMachineWideState(After_a_process_holding_a_reservation_is_killed.StateName);
+      using var state = new DbPoolMachineWideState(After_a_process_holding_a_reservation_is_killed.StateName, After_a_process_holding_a_reservation_is_killed.MaximumNumberOfDatabases);
       var database = state.ReserveDatabase("held until its process is killed", Guid.NewGuid(), After_a_process_holding_a_reservation_is_killed.ReservationLength);
 
       var databaseFile = Environment.GetEnvironmentVariable(DatabaseFileVariable)

@@ -18,12 +18,13 @@ namespace Compze.DbPool;
                                                        //Reusing recently used databases helps performance in a pretty big way, disk cache, connection pool etc.
                                                       .OrderByDescending(db => db.ReservationExpirationTime);
 
-   public bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out DbPoolDatabase? reserved)
+   ///<summary>Reserves a free database, creating one when none is free and fewer than <paramref name="maximumNumberOfDatabases"/> exist.</summary>
+   internal bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, int maximumNumberOfDatabases, [NotNullWhen(true)] out DbPoolDatabase? reserved)
    {
       ReleaseTheReservationsThatHaveEnded();
 
       reserved = UnReserved.FirstOrDefault();
-      if(reserved == null && Databases.Count < DbPool.NumberOfDatabases)
+      if(reserved == null && Databases.Count < maximumNumberOfDatabases)
       {
          Databases.Add(new DbPoolDatabase(Databases.Count + 1));
          reserved = UnReserved.FirstOrDefault();

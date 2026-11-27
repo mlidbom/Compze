@@ -30,22 +30,18 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    readonly IDbPoolSqlLayer _sqlLayer;
    readonly DbPoolMachineWideState _machineWideState;
    static TimeSpan _reservationLength;
-   //Databases materialize lazily up to this cap, so the cap costs nothing until demand reaches it. Sized for the hungriest
-   //consumer: a sqlite-family endpoint reserves three databases - domain, the type-id interner's own, and the peer registry's
-   //own - so a parallel suite run peaks well above the 50 that sufficed when an endpoint reserved two. Exhaustion is loud but
-   //slow: reservation waits up to 45 seconds, then throws - a suite-wide slowdown with unrelated-looking timeouts.
-   internal const int NumberOfDatabases = 100;
 
    DbPool(IDbPoolSqlLayer sqlLayer, TimeSpan reservationLength) : base(forceStackTraceAllocation: false)
    {
       _sqlLayer = sqlLayer;
       _reservationLength = reservationLength;
 
-      _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
+      _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable(), sqlLayer.MaximumNumberOfDatabases);
    }
 
    ///<summary>How long a call waits for another call that is reserving and resetting the database for the same reservation name, and<br/>
-   /// <see cref="Dispose"/> for the calls still doing so: longer than a reservation waits for a free database, 45 seconds, and<br/>
+   /// <see cref="Dispose"/> for the calls still doing so: longer than a reservation waits for a free database,<br/>
+   /// <see cref="DbPoolMachineWideState.PatienceWithNoFreeDatabase"/>, and<br/>
    /// than a reset takes on a server that a test suite keeps busy.</summary>
    static readonly WaitTimeout WaitForAnotherCallsPreparation = new(2.Minutes());
 

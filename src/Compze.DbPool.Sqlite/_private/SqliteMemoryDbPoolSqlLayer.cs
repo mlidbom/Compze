@@ -18,6 +18,11 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections =
       IThreadShared.New(new Dictionary<string, SqliteConnection>());
 
+   ///<summary>Many more than a server's 100: an in-memory database costs memory only while a pool holds it, and is private to that pool, so<br/>
+   /// nothing but the most databases a test suite holds at once calls for a limit. Compze's suite held 152 at once on a machine with 32 logical<br/>
+   /// processors in November 2026, and 100 made its tests time out.</summary>
+   public int MaximumNumberOfDatabases => 1000;
+
    public string ConnectionStringFor(DbPoolDatabase db)
    {
       return new SqliteConnectionStringBuilder
