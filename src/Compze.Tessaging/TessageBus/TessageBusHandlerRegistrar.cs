@@ -36,7 +36,8 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// it does every exactly-once tevent published by another endpoint, that is the endpoint's stopping token: cancelled when<br/>
    /// the endpoint's stop no longer waits for its inbox (<see cref="Endpoints.IEndpoint.StopAsync"/>). The handler's unit of work<br/>
    /// then rolls back, and the endpoint's next start handles the tevent again. When the handler takes part in its publisher's<br/>
-   /// execution, and for a best-effort arrival, it is a token that is never cancelled.</remarks>
+   /// execution, it is the token the publisher was given (<see cref="IUnitOfWorkTeventPublisher.PublishAsync"/>). A best-effort<br/>
+   /// arrival's handlers receive a token that is never cancelled.</remarks>
    ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
    public TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent
    {
@@ -73,7 +74,7 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// it does every tommand sent from another endpoint, that is the endpoint's stopping token: cancelled when the endpoint's<br/>
    /// stop no longer waits for its inbox (<see cref="Endpoints.IEndpoint.StopAsync"/>). The handler's unit of work then rolls back,<br/>
    /// and the endpoint's next start handles the tommand again. When the tommand runs inline, in its sender's execution, it is<br/>
-   /// a token that is never cancelled.</remarks>
+   /// the token the sender was given (<see cref="IUnitOfWorkTommandSender.SendAsync"/>).</remarks>
    ///<param name="handler">The handler: the tommand, the unit of work, and the token of the execution it serves.</param>
    public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : IExactlyOnceTommand
    {

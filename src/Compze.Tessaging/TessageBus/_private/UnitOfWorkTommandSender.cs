@@ -44,7 +44,7 @@ static class UnitOfWorkTommandSenderRegistrar
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public async Task SendAsync(IExactlyOnceTommand tommand)
+   public async Task SendAsync(IExactlyOnceTommand tommand, CancellationToken cancellationToken = default)
    {
       _contextGuard.EnsureAccessValid();
       //The consistency law: in-boundary is immediate and transactional. Because the roster is fixed per endpoint instance,
@@ -52,12 +52,12 @@ static class UnitOfWorkTommandSenderRegistrar
       if(_roster.HandlesTommand(tommand.GetType()))
       {
          TessageInspector.AssertValidToExecuteLocally(tommand);
-         await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver), CancellationToken.None).caf();
+         await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver), cancellationToken).caf();
       }
       else
       {
          TessageInspector.AssertValidToSendRemote(tommand);
-         await _outbox.SendTransactionallyAsync(tommand).caf();
+         await _outbox.SendTransactionallyAsync(tommand, cancellationToken).caf();
       }
    }
 }

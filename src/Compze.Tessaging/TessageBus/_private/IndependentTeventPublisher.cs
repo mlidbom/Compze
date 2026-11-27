@@ -34,10 +34,10 @@ static class IndependentTeventPublisherRegistrar
       _scopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(tevent));
    }
 
-   public async Task PublishAsync(ITevent tevent)
+   public async Task PublishAsync(ITevent tevent, CancellationToken cancellationToken = default)
    {
       AssertStandsOutsideAnyAmbientTransaction();
-      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(tevent).caf()).caf();
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(tevent, cancellationToken).caf()).caf();
    }
 
    static void AssertStandsOutsideAnyAmbientTransaction() =>

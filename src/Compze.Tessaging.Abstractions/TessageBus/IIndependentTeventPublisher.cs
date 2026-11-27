@@ -26,5 +26,8 @@ public interface IIndependentTeventPublisher
    ///<summary>Publishes <paramref name="tevent"/> as its own unit of work — the one form serving every tevent kind, awaiting<br/>
    /// participation and the durable outbox write an <see cref="IExactlyOnceTevent"/>'s contract demands. The unit of work<br/>
    /// commits when the awaited publish completes; an exactly-once tevent is then durably on its way.</summary>
-   Task PublishAsync(ITevent tevent);
+   ///<param name="tevent">The tevent to publish.</param>
+   ///<param name="cancellationToken">Gives up the publish, as for <see cref="IUnitOfWorkTeventPublisher.PublishAsync"/>: the<br/>
+   /// unit of work then rolls back.</param>
+   Task PublishAsync(ITevent tevent, CancellationToken cancellationToken = default);
 }

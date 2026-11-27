@@ -61,7 +61,7 @@ class HandlerAvailability : IHandlerAvailability
                : MultipleHandlersForTypermediaTypeException.BecausePatienceIsExhausted(tessageType, _patience.Duration, [..liveRoutes.Select(route => route.HandlerEndpointId)]);
    }
 
-   public async Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType)
+   public async Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType, CancellationToken cancellationToken)
    {
       EndpointId? bindableReceiverId = null;
       IReadOnlyList<EndpointId> rememberedHandlerIds = [];
@@ -79,7 +79,7 @@ class HandlerAvailability : IHandlerAvailability
          if(rememberedHandlerIds.Count != 1) return false;
          bindableReceiverId = rememberedHandlerIds[0];
          return true;
-      }, new WaitTimeout(_patience.Duration)).caf();
+      }, new WaitTimeout(_patience.Duration), cancellationToken).caf();
 
       if(aReceiverIsBindable) return bindableReceiverId._assert().NotNull();
 

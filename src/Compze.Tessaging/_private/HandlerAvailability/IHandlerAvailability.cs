@@ -41,7 +41,7 @@ interface IHandlerAvailability
    ///<remarks>The wait strictly precedes the bind, so the exactly-once in-order guarantee is untouched: the tommand still<br/>
    /// binds exactly once, before its row is saved, and rides the bound pair's single ordered, receiver-deduped delivery<br/>
    /// stream — waiting only moves <em>when</em> that one bind happens in the two states that used to throw immediately.</remarks>
-   Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType);
+   Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType, CancellationToken cancellationToken);
 
    ///<summary>Readiness (see <see cref="IEndpoint.AwaitReadinessAsync"/>): completes when a handler for every type in<br/>
    /// <paramref name="readinessTypes"/> is available — the endpoint's own roster serves it, an exactly-once tommand type has<br/>

@@ -83,7 +83,7 @@ partial class Outbox : IOutbox
       });
    }
 
-   public async Task SendTransactionallyAsync(IExactlyOnceTommand exactlyOnceTommand)
+   public async Task SendTransactionallyAsync(IExactlyOnceTommand exactlyOnceTommand, CancellationToken cancellationToken)
    {
       State.NotNull(Transaction.Current);
       //Captured before the first await: the commit hook must bind to the caller's unit of work even if the ambient has drifted in a continuation.
@@ -102,7 +102,7 @@ partial class Outbox : IOutbox
       //ISqlitePeerRegistryConnectionPool). Only stranding what a shrink renounced writes the domain database, so the one
       //recording that can queue behind this caller's open transaction is a replacement that both adds the awaited type and
       //renounces another - it lands when the blocking transaction completes, worst case this wait's own patience.
-      var receiverId = await _handlerAvailability.AwaitBindableReceiverOfAsync(exactlyOnceTommand.GetType()).caf();
+      var receiverId = await _handlerAvailability.AwaitBindableReceiverOfAsync(exactlyOnceTommand.GetType(), cancellationToken).caf();
       var assignedSequenceNumbers = await _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).caf();
 
       transaction.OnCommittedSuccessfully(() =>
