@@ -69,7 +69,9 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       try
       {
          _log.Debug($"Resetting database {reservedDatabase.Name}");
+         DiagnosticLog.Write(_poolId, $"RESET-START {reservedDatabase.Name} {reservationName}");
          TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(reservedDatabase));
+         DiagnosticLog.Write(_poolId, $"RESET-DONE {reservedDatabase.Name} {reservationName}");
       }
 #pragma warning disable CA1031 //It's hard to know what kind of exception a sql layer may end up throwing, and it's likewise hard to see any other action to take than nuking the database and starting over
       catch(Exception exception)
@@ -87,6 +89,6 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       if(Disposed) return;
       base.Dispose();
       _sqlLayer.Dispose(reservedDatabases);
-      _machineWideState.ReleaseReservationsFor(_poolId);
+      _machineWideState.ReleaseReservationsFor(_poolId, reservedDatabases);
    });
 }

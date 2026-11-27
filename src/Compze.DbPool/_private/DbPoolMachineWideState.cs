@@ -49,12 +49,47 @@ class DbPoolMachineWideState
 
          var waitTimeout = new WaitTimeout(remainingTime < timeUntilNextLeaseExpiration ? remainingTime : timeUntilNextLeaseExpiration);
 
-         if(_shared.TryUpdateWhen(state => state.TryReserve(reservationName, poolId, reservationLength, out reserved),_ => {}, timeout: waitTimeout))
+         List<string> expired = [];
+         if(_shared.TryUpdateWhen(state =>
+                                  {
+                                     expired = state.Databases.Where(db => db.ShouldBeReleased).Select(db => db.ToString()).ToList();
+                                     return state.TryReserve(reservationName, poolId, reservationLength, out reserved);
+                                  },
+                                  _ =>
+                                  {
+                                     foreach(var it in expired) DiagnosticLog.Write(poolId, $"EXPIRED-RELEASED {it}");
+                                     DiagnosticLog.Write(poolId, $"RESERVED {reserved}");
+                                  }, timeout: waitTimeout))
          {
             return reserved!;
          }
       }
    }
 
-   internal void ReleaseReservationsFor(Guid poolId) => _shared.Update(state => state.ReleaseReservationsFor(poolId));
+   internal void ReleaseReservationsFor(Guid poolId, IReadOnlyList<DbPoolDatabase> heldLocally) => _shared.Update(state =>
+   {
+      foreach(var local in heldLocally)
+      {
+         var shared = state.Databases.Single(db => db.Id == local.Id);
+         DiagnosticLog.Write(poolId, shared.ReservedByPoolId == poolId ? $"RELEASING-OWN {shared}" : $"RELEASING-LOST {local.Name} reservedAt={local.ReservationExpirationTime.AddSeconds(-65):HH:mm:ss.fff}Z now held by: {shared}");
+      }
+      state.ReleaseReservationsFor(poolId);
+   });
+}
+
+static class DiagnosticLog
+{
+   static readonly string Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "dbpool-diagnostics.log");
+   internal static void Write(Guid poolId, string line)
+   {
+      for(var attempt = 0; attempt < 50; attempt++)
+      {
+         try
+         {
+            File.AppendAllText(Path, $"{DateTime.UtcNow:HH:mm:ss.fff}Z pid={Environment.ProcessId} pool={poolId.ToString()[..8]} {line}{Environment.NewLine}");
+            return;
+         }
+         catch(IOException) { Thread.Sleep(5); }
+      }
+   }
 }
