@@ -13,13 +13,19 @@ function C-Prepare-Release {
       order. Lines edited in place count as gained: they describe the code as it is now.
     - The released section is restored to the text it was released with, from the release tag.
     - Then everything is packed (C-Pack -CI), and the section of every version awaiting release, prepared now or before,
-      gets the line the release requires when the version raises Compze dependency floors across a minor version
-      (.github/scripts/lib/DependencyFloors.ps1 says why), or loses one that no longer holds. It is computed as the release
-      computes it, against the package's previous version on nuget.org. A version prepared before its dependencies were
-      gets its line then, so running the command again is safe.
+      gets the lines the release requires: when the version raises Compze dependency floors across a minor version
+      (.github/scripts/lib/DependencyFloors.ps1 says why), and when it changes its exact-version dependencies
+      (.github/scripts/lib/ExactVersionDependencies.ps1). It loses a line that no longer holds. They are computed as the
+      release computes them, against the package's previous version on nuget.org. A version prepared before its
+      dependencies were gets its lines then, so running the command again is safe.
 
     A package whose top section gained nothing isn't prepared: a change no changelog entry describes isn't one to release.
     Neither is a package without a release tag at its version: a new package, or one already prepared.
+
+    But a package at a released version that uses the internals of a package the release releases is prepared too, and so
+    on for those that use its internals: it requires the exact version of each package whose internals it uses, so the
+    release can't leave it behind. Its section holds what it gained, if anything, and the line naming its exact-version
+    dependencies. It gets a patch bump when it gained nothing: its own code didn't change.
 
     So before changing anything, it refuses, as C-SimulateRelease and the release do, when a package it doesn't prepare,
     whose version has a release tag, has shipped files that changed since that tag: its project folder's files but its
@@ -29,18 +35,19 @@ function C-Prepare-Release {
     consumer sees, acknowledge them with C-Acknowledge-UnreleasedChanges, then run this again. Preparing a package's release
     removes its acknowledgement, which the release makes moot. With nothing to release, it reports that and refuses nothing.
 
-    Returns what it prepared in this run: each package, and its version before and after. Review the changes with git diff, then run
-    C-SimulateRelease, which checks them as the release will.
+    Returns what it prepared in this run: each package, its version before and after, and why it was prepared: its
+    changelog, or the packages whose internals it uses. Review the changes with git diff, then run C-SimulateRelease, which
+    checks them as the release will.
 
     .PARAMETER PackageId
-    Prepare only these packages.
+    Prepare only these packages, and the packages that use their internals.
 
     .PARAMETER Patch
     Bump the patch version instead of the minor version: for releases whose changes no consumer meets.
 
     .PARAMETER PatchPackageId
-    Bump the patch version of these packages, and the minor version of the others it prepares: for a release that mixes
-    the two. Each must be one it prepares in this run; it refuses otherwise, changing nothing.
+    Bump the patch version of these packages, and the minor version of the others it prepares for their changelogs: for a
+    release that mixes the two. Each must be one it prepares in this run; it refuses otherwise, changing nothing.
 
     .EXAMPLE
     C-Prepare-Release
@@ -89,6 +96,26 @@ function C-Prepare-Release {
         Get-PackagesWithAChangelog $PackageId | Where-Object { -not $_.IsReleased -and (Get-TopChangelogSection (Read-TextFile $_.Changelog).Lines).Version -eq $_.Version }
     }
 
+    function Get-PackagesToPrepareForTheInternalsTheyUse($ToPrepare) {
+        # The packages at a released version that use the internals of a package the release releases, one of $ToPrepare
+        # or one already awaiting release, or of one this adds: each as a preparation, with what its changelog gained and
+        # the packages whose internals it uses as its reason. -PackageId doesn't limit them: the release can't leave them
+        # behind, since each requires the exact version of the packages whose internals it uses.
+        $packages = @(Get-PackagesWithAChangelog)
+        $packagesWhoseInternalsEachUses = ReadPackagesWhoseInternalsEachPackageUses @($packages | ForEach-Object { $_.PackageId })
+        $released = @(@($ToPrepare | ForEach-Object { $_.Package.PackageId }) + @(Get-PackagesAwaitingRelease | ForEach-Object { $_.PackageId }))
+        $added = @(GetPackagesThatUseTheInternalsOf $released $packagesWhoseInternalsEachUses)
+        $releasedTogether = $released + $added
+        foreach ($package in @($packages | Where-Object { $_.IsReleased -and $added -contains $_.PackageId })) {
+            $usesTheInternalsOf = @($packagesWhoseInternalsEachUses[$package.PackageId] | Where-Object { $releasedTogether -contains $_ })
+            [PSCustomObject]@{
+                Package     = $package
+                GainedLines = @(Get-ChangelogLinesGainedSinceTheRelease $package)
+                Reason      = "uses the internals of $($usesTheInternalsOf -join ', ')"
+            }
+        }
+    }
+
     function Get-ChangelogLinesGainedSinceTheRelease($Package) {
         # The lines of the changelog's top section that its text at the release tag doesn't have, in their order. The top
         # section must be the released version's.
@@ -126,14 +153,16 @@ function C-Prepare-Release {
         Write-TextFile $file $lines
     }
 
-    function Set-RaisedDependencyFloorsLine($Package, [string]$ExpectedLine) {
-        # Makes the top section's line stating raised dependency floors the expected one, the section's last line: removes
-        # the line when none is expected.
+    function Set-DependencyLine($Package, [string]$LineLead, [string]$ExpectedLine) {
+        # Makes the top section's line that starts with $LineLead, which states something about the version's Compze
+        # dependencies, the expected one, the section's last line: removes the line when none is expected. In a section
+        # with no other line, it goes below the blank line under the heading.
         $file = Read-TextFile $Package.Changelog
         $top = Get-TopChangelogSection $file.Lines
-        $body = @($top.BodyLines | Where-Object { -not $_.StartsWith($script:RaisedDependencyFloorsLineLead) })
+        $body = @($top.BodyLines | Where-Object { -not $_.StartsWith($LineLead) })
         $lastContentIndex = $body.Count - 1
         while ($lastContentIndex -ge 0 -and -not $body[$lastContentIndex].Trim()) { $lastContentIndex-- }
+        if ($lastContentIndex -lt 0 -and $body.Count -gt 0) { $lastContentIndex = 0 }
         $newBody = @(if ($lastContentIndex -ge 0) { $body[0..$lastContentIndex] }) + @(if ($ExpectedLine) { $ExpectedLine }) +
                    @(if ($lastContentIndex + 1 -lt $body.Count) { $body[($lastContentIndex + 1)..($body.Count - 1)] })
         if (($newBody -join "`n") -eq ($top.BodyLines -join "`n")) { return }
@@ -195,6 +224,7 @@ function C-Prepare-Release {
     }
 
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/DependencyFloors.ps1")
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/ExactVersionDependencies.ps1")
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/PackageManifests.ps1")
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
 
@@ -205,8 +235,9 @@ function C-Prepare-Release {
 
     $toPrepare = @(foreach ($package in @(Get-PackagesWithAChangelog $PackageId | Where-Object IsReleased)) {
         $gainedLines = @(Get-ChangelogLinesGainedSinceTheRelease $package)
-        if ($gainedLines | Where-Object { $_.Trim() }) { [PSCustomObject]@{ Package = $package; GainedLines = $gainedLines } }
+        if ($gainedLines | Where-Object { $_.Trim() }) { [PSCustomObject]@{ Package = $package; GainedLines = $gainedLines; Reason = 'its changelog' } }
     })
+    $toPrepare += @(Get-PackagesToPrepareForTheInternalsTheyUse $toPrepare)
     if ($toPrepare.Count -eq 0 -and @(Get-PackagesAwaitingRelease $PackageId).Count -eq 0) {
         Write-Host "Nothing to prepare: no released package's changelog has gained entries since its release."
         return
@@ -219,23 +250,26 @@ function C-Prepare-Release {
     if ($unacknowledgedUnreleasedChanges.Count -gt 0) { throw "C-Prepare-Release refuses, and prepared nothing: $(FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges)" }
 
     $prepared = @(foreach ($preparation in $toPrepare) {
-        $newVersion = Get-BumpedVersion $preparation.Package.Version -Patch:($Patch -or $PatchPackageId -contains $preparation.Package.PackageId)
+        $gainedNothing = -not ($preparation.GainedLines | Where-Object { $_.Trim() })
+        $newVersion = Get-BumpedVersion $preparation.Package.Version -Patch:($Patch -or $gainedNothing -or $PatchPackageId -contains $preparation.Package.PackageId)
         Set-ProjectVersion $preparation.Package $newVersion
         Split-ReleasedChangelogSection $preparation.Package $newVersion $preparation.GainedLines
-        [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion }
+        [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion; Reason = $preparation.Reason }
     })
     if ($prepared.Count -gt 0) { RemoveUnreleasedChangeAcknowledgements @($prepared | ForEach-Object { $_.PackageId }) }
-    $awaitingRelease = @(Get-PackagesAwaitingRelease $PackageId)
+    $awaitingRelease = @(Get-PackagesAwaitingRelease $(if ($PackageId) { @($PackageId) + @($prepared | ForEach-Object { $_.PackageId }) }))
 
     C-Pack -CI
-    if ($global:LASTEXITCODE -ne 0) { throw "C-Prepare-Release: packing failed (see above), so the dependency floors lines weren't checked." }
+    if ($global:LASTEXITCODE -ne 0) { throw "C-Prepare-Release: packing failed (see above), so the lines about the versions' Compze dependencies weren't checked." }
 
     $versionsOnNuGetOrg = Get-NuGetOrgRestorableVersions -PackageId @($awaitingRelease | ForEach-Object { $_.PackageId })
     foreach ($package in $awaitingRelease) {
         $previousVersion = @($versionsOnNuGetOrg[$package.PackageId] | Where-Object { [semver]$_ -lt [semver]$package.Version } | Sort-Object { [semver]$_ }) | Select-Object -Last 1
         if (-not $previousVersion) { continue }
-        $nupkgPath = Join-Path $script:CompzeRoot "nupkgs/$($package.PackageId).$($package.Version).nupkg"
-        Set-RaisedDependencyFloorsLine $package (FormatRaisedDependencyFloorsLine @(GetDependencyFloorsRaisedAcrossAMinorVersion (ReadNuGetOrgPackageManifest $package.PackageId $previousVersion) (ReadNupkgManifest $nupkgPath)))
+        $previousManifest = ReadNuGetOrgPackageManifest $package.PackageId $previousVersion
+        $manifest = ReadNupkgManifest (Join-Path $script:CompzeRoot "nupkgs/$($package.PackageId).$($package.Version).nupkg")
+        Set-DependencyLine $package $script:RaisedDependencyFloorsLineLead (FormatRaisedDependencyFloorsLine @(GetDependencyFloorsRaisedAcrossAMinorVersion $previousManifest $manifest))
+        Set-DependencyLine $package $script:ExactVersionDependenciesLineLead (FormatExactVersionDependenciesLine @(GetExactVersionDependenciesChanged $previousManifest $manifest))
     }
 
     $prepared
