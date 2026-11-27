@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 public class When_calling_Must_StartWith : UniversalTestBase

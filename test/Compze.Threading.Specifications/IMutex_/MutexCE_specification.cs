@@ -9,7 +9,6 @@ using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
-// ReSharper disable InconsistentNaming
 
 // ReSharper disable AccessToDisposedClosure
 

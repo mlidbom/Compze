@@ -103,7 +103,6 @@ public class MonitorCEPerformanceTests : UniversalTestBase
       }
    }
 
-   // ReSharper disable once InconsistentNaming
    static void RunScenarios(Action action, TimeSpan singleThreadAllowedTime, TimeSpan multiThreadAllowedTime)
    {
       RunSingleThreadedScenario(action, singleThreadMaxTime: singleThreadAllowedTime);

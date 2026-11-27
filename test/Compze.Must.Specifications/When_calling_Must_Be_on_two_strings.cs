@@ -1,9 +1,3 @@
-
-
-// ReSharper disable InconsistentNaming
-
-
-
 #pragma warning disable CA1711 // ending name on Exception
 
 namespace Compze.Must.Specifications;

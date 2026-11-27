@@ -10,7 +10,6 @@ using Compze.Hosting.Testing;
 using Compze.Threading.Testing;
 using Compze.xUnitMatrix;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Sql.InternalSpecifications.TransactionCommit;

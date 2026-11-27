@@ -11,8 +11,6 @@ using Compze.Must;
 
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Tests.Integration.Sql.TypeIdInterning;
 
 /// <summary>

@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 public class When_a_failing_assertion_shows_a_value_that_once_killed_the_test_process : UniversalTestBase

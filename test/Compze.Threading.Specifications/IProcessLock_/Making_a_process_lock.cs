@@ -3,8 +3,6 @@ using Compze.Threading.Interprocess;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IProcessLock_;
 
 public class Making_a_process_lock : ProcessLockSpecification

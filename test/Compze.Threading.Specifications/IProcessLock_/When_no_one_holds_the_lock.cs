@@ -2,8 +2,6 @@ using Compze.Must;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IProcessLock_;
 
 public class When_no_one_holds_the_lock : ProcessLockSpecification

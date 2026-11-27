@@ -13,8 +13,6 @@ using static Compze.Must.MustActions;
 using Compze.Threading._internal;
 using Compze.Threading.Interprocess._private;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.InternalSpecifications.Interprocess;
 
 [Collection(nameof(NonParallelCollection))]

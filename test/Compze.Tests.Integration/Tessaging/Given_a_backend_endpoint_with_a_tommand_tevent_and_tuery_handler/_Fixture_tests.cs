@@ -6,8 +6,6 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class EndpointHostTest_Tests : EndpointHostTestBase

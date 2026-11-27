@@ -4,7 +4,6 @@ using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable IDE0051 //Reviewed OK: unused private members are intentional in this test.
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 

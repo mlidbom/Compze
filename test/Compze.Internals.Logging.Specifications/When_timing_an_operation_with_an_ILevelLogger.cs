@@ -1,7 +1,3 @@
-// ReSharper disable InconsistentNaming
-
-
-
 namespace Compze.Internals.Logging.Specifications;
 
 public class When_timing_an_operation_with_an_ILevelLogger

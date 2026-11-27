@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 #pragma warning disable CS0108 //Hides inherited member.
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
-// ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
 class RootTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;

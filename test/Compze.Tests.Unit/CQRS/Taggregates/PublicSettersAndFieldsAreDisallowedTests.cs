@@ -13,7 +13,6 @@ using static Compze.Must.MustActions;
 // ReSharper disable UnusedMember.Global
 #pragma warning disable IDE0051
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable UnusedMember.Local

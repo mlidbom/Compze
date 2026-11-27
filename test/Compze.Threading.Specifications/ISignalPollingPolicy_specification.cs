@@ -6,8 +6,6 @@ using Compze.Threading.Interprocess;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications;
 
 public class ISignalPollingPolicy_specification : UniversalTestBase

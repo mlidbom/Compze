@@ -4,7 +4,6 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.InProcess;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Integration.Engine;

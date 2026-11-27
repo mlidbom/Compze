@@ -1,7 +1,3 @@
-// ReSharper disable InconsistentNaming
-
-
-
 namespace Compze.Internals.Logging.Specifications;
 
 public class When_a_property_name_is_captured_from_an_expression

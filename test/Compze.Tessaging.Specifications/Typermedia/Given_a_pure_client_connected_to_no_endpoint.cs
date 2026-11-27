@@ -8,7 +8,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1812  // Instantiated by the serializer / never instantiated test message types
 

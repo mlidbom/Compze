@@ -1,4 +1,3 @@
-// ReSharper disable InconsistentNaming
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Must.MustActions;
 

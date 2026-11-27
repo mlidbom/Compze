@@ -4,7 +4,6 @@ using Compze.Tessaging.Validation;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1040 //The deliberately ill-designed fixture tessages below are empty marker interfaces on purpose
 #pragma warning disable CA1812 //The fixture tessages exist as types for the rules to judge - nothing ever instantiates them

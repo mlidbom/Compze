@@ -8,7 +8,6 @@ using Compze.Must;
 using Compze.Teventive;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
 // ReSharper disable ImplicitlyCapturedClosure
 
 // ReSharper disable MemberHidesStaticFromOuterClass

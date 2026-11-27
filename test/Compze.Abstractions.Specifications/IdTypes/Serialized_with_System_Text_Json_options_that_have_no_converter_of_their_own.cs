@@ -6,7 +6,6 @@ using Compze.Tessaging;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052 //I should make an inherited class static? Really?
 
 namespace Compze.Abstractions.Specifications.IdTypes;

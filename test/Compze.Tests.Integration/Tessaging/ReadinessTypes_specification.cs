@@ -4,7 +4,6 @@ using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_teve
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Integration.Tessaging;

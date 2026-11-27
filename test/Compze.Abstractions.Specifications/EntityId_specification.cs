@@ -2,7 +2,6 @@ using Compze.Must;
 using Compze.Tessaging;
 using Compze.xUnitBDD;
 // ReSharper disable SuspiciousTypeConversion.Global
-// ReSharper disable InconsistentNaming
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
 #pragma warning disable CA1052 //I should make an inherited class static? Really?

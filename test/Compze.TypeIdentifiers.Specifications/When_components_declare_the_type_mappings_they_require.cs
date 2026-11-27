@@ -6,7 +6,6 @@ using Compze.TypeIdentifiers.DependencyInjection;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
 namespace Compze.TypeIdentifiers.Specifications;

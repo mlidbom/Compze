@@ -13,7 +13,6 @@ namespace Compze.Threading.Specifications;
 
 ///<summary>ICriticalSection ContentionCount is tested in ICriticalSection_specification via [ICriticalSectionMatrix]. IThreadShared is tested in IThreadShared_specification. This file covers IAwaitableCriticalSection and IAwaitableThreadShared ContentionCount.</summary>
 [Collection(nameof(NonParallelCollection))]
-// ReSharper disable once InconsistentNaming
 public class ContentionCount_specification : UniversalTestBase
 {
    readonly IAwaitableCriticalSectionMatrixAttribute.Factory<ContentionCount_specification> _factory = new();

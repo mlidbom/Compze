@@ -2,7 +2,6 @@ using Compze.Must;
 
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
 namespace Compze.TypeIdentifiers.Specifications;

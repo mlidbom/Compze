@@ -1,7 +1,4 @@
-
-
 // ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
 
 
 

@@ -9,7 +9,6 @@ using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Xunit;
 using static Compze.Must.MustActions;
-// ReSharper disable InconsistentNaming
 
 namespace Compze.Threading.Specifications.IAwaitableShared_;
 

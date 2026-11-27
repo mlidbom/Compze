@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Internals.Logging.Specifications;
 
 ///<summary>The plain-message and template-plus-values <see cref="ILogger"/> overloads, called through the interface — the forms<br/>

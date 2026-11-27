@@ -9,7 +9,6 @@ using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Integration.CQRS.TeventStore;

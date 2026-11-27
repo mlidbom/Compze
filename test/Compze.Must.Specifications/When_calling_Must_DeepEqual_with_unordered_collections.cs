@@ -1,9 +1,3 @@
-
-
-// ReSharper disable InconsistentNaming
-
-
-
 namespace Compze.Must.Specifications;
 
 public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalTestBase

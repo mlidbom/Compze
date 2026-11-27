@@ -4,7 +4,6 @@ using Compze.Must;
 using Compze.xUnitBDD;
 using Compze.TypeIdentifiers._private;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 #pragma warning disable CS8981 // BDD-style specification class names describe context using lowercase ASCII (e.g. `validation`, `with_invalid_data`); the language-reserved-name risk is acceptable in test code.
 #pragma warning disable CA1724 // BDD-style spec class names like `validation` may incidentally clash with framework namespace names; the spec context is local to the test file and renaming would damage spec readability.

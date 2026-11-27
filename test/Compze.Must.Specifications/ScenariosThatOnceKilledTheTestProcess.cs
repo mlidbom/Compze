@@ -1,6 +1,5 @@
 using System.Reflection;
 
-// ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 

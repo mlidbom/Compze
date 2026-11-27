@@ -3,8 +3,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading.Specifications.IProcessLock_.Infrastructure;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IProcessLock_;
 
 ///<summary>On Unix .NET locks files with <c>flock</c>, unless its file locking is turned off: then a lock file keeps no second holder out, and taking<br/>

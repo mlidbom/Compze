@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 ///<summary>The <c>Func&lt;Task&gt;</c>/<c>Func&lt;Task&lt;T&gt;&gt;</c> <c>Must()</c> overloads: the sugar that lets an async lambda<br/>

@@ -2,8 +2,6 @@ using Compze.Must;
 using Compze.Threading.Interprocess;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IProcessLock_;
 
 public class When_a_hold_is_disposed : ProcessLockSpecification

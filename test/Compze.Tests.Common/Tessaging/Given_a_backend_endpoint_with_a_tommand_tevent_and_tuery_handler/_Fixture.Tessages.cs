@@ -8,7 +8,6 @@ using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
 
 // ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable InconsistentNaming for testing
 // ReSharper disable once UnusedAutoPropertyAccessor.Local
 
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles

@@ -4,8 +4,6 @@ using Compze.Must;
 
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.DependencyInjection.Specifications.UnitOfWork_execution;
 
 public class When_executing_a_unit_of_work
