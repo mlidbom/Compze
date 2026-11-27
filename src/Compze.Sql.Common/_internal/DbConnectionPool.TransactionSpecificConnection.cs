@@ -41,11 +41,44 @@ partial class DbConnectionPool<TConnection, TCommand>
 
       ///<summary>Takes the lock, opens the connection if none has opened, and passes it to <paramref name="func"/>.</summary>
       internal TResult Locked<TResult>(Func<TConnection, TResult> func) =>
-         _serializedAccess.Locked(() => func(_connection ?? TheTransactionsConnection(_pool.OpenConnection())));
+         _serializedAccess.Locked(() => ProbeUse(() => func(_connection ?? TheTransactionsConnection(_pool.OpenConnection()))));
 
       ///<summary>Awaits the lock, opens the connection if none has opened, and passes it to <paramref name="func"/>.</summary>
       internal async Task<TResult> LockedAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
-         await _serializedAccess.LockedAsync(async () => await func(_connection ?? TheTransactionsConnection(await _pool.OpenConnectionAsync().caf())).caf()).caf();
+         await _serializedAccess.LockedAsync(() => ProbeUseAsync(async () => await func(_connection ?? TheTransactionsConnection(await _pool.OpenConnectionAsync().caf())).caf())).caf();
+
+      //PROBE, experiment only: records each use that enters while another use of this connection, on its flow or the flow it
+      //was started on, is still in progress.
+      sealed class ProbeMarker { internal volatile bool Ended; }
+      readonly AsyncLocal<ProbeMarker?> _probeUseOfThisFlow = new();
+
+      TResult ProbeUse<TResult>(Func<TResult> use)
+      {
+         var outer = _probeUseOfThisFlow.Value;
+         if(outer is { Ended: false })
+         {
+            ConnectionLockReentryProbeLog.Record("sync");
+            return use();
+         }
+         var marker = new ProbeMarker();
+         _probeUseOfThisFlow.Value = marker;
+         try { return use(); }
+         finally { marker.Ended = true; _probeUseOfThisFlow.Value = outer; }
+      }
+
+      async Task<TResult> ProbeUseAsync<TResult>(Func<Task<TResult>> use)
+      {
+         var outer = _probeUseOfThisFlow.Value;
+         if(outer is { Ended: false })
+         {
+            ConnectionLockReentryProbeLog.Record("async");
+            return await use().caf();
+         }
+         var marker = new ProbeMarker();
+         _probeUseOfThisFlow.Value = marker;
+         try { return await use().caf(); }
+         finally { marker.Ended = true; }
+      }
 
       ///<summary>Keeps <paramref name="opened"/>, which has opened and taken part in the transaction, as the transaction's connection,<br/>
       /// and disposes it as the transaction completes.</summary>
