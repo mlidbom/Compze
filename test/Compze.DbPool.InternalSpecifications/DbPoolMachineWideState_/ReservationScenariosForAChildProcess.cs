@@ -3,8 +3,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.xUnitBDD;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.DbPool.InternalSpecifications.DbPoolMachineWideState_;
 
 ///<summary>What the specifications of <see cref="DbPoolMachineWideState"/> have another process do, through <see cref="ExplicitTestInAChildProcess"/>.<br/>
