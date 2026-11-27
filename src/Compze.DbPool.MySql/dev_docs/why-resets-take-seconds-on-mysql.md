@@ -74,10 +74,17 @@ Magnus's to decide: threadripper's MySQL is a test server, and these trade crash
 On this machine's drive, with 16 workers: 4.0–4.2 database uses a second became 19–20, and the reset's median 1.6 s
 became 0.19 s; the suite, 150 s became 78 s. Not yet measured on threadripper.
 
-CI's MySQL container gets the same three settings, from `.github/actions/mysql-skips-crash-durability`, since
-2026-11-27. There they made no difference the runs could show: Compze.Tests.Integration on the two MySql jobs took 159
-and 129 s with them, against 137, 184, 223 and 112 s in two runs without. CI's MySQL isn't held up by its flushes: its
-jobs take about as long as PgSql's and MsSql's.
+**CI's MySQL isn't held up by its flushes,** so CI keeps the stock `mysql:8` as it is. The three settings were tried
+there on 2026-11-27, with `SET GLOBAL` in a step before the tests (`f2c02798b`), and removed again, since they made no
+difference the runs could show. Compze.Tests.Integration on the two MySql jobs:
+
+| Run | AspNetCore | NamedPipes |
+|---|---|---|
+| main, `966e54b96` | 137 s | 184 s |
+| this branch, without the settings, `85b11f7d2` | 223 s | 112 s |
+| this branch, with them, `f2c02798b` | 159 s | 129 s |
+
+The same code varies from 112 to 223 s, and CI's MySql jobs take about as long as its PgSql and MsSql jobs.
 
 The system tablespace, `ibdata1`, 12 MB on threadripper now, grows to hold the tables and never shrinks; for 100
 databases of 15 small tables, by an estimate, tens of megabytes, and what a drop frees is reused. Settings like these can't come from Compze's code: each is
