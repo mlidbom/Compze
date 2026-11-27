@@ -15,7 +15,7 @@ function ConvertFromPackageManifestXml([string]$ManifestXml) {
     #
     # A Compze package names a version with no upper bound for most of its Compze dependencies, so a floor of 0.7.2 means
     # 0.7.2 or newer. For each Compze package whose internals it uses, it names an exact version instead, [0.7.2], which
-    # is that dependency's floor too: see dev_docs/WIP/exact-versions-on-internals.md. CompzeExactVersionDependencies maps the id of each
+    # is that dependency's floor too: see ExactVersionDependencies.ps1. CompzeExactVersionDependencies maps the id of each
     # such dependency to its version. Older releases predate exact versions, so it may be empty.
     [xml]$manifest = $ManifestXml
     $metadata = $manifest.package.metadata

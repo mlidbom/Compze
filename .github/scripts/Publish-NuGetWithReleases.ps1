@@ -9,6 +9,10 @@
 #   2. Detect which packages are new by checking for existing git tags ({PackageName}/v{Version})
 #   3. Validate that every new package has a CHANGELOG.md entry for its version, and that the entry states the dependency
 #      floors the version raises across a minor version over the previous version on nuget.org (lib/DependencyFloors.ps1)
+#      and the exact-version dependencies it changes (lib/ExactVersionDependencies.ps1); and that the packages' exact-version
+#      dependencies hold: each requires an exact version of exactly the packages whose internals it uses, each of those
+#      versions is published by the release or is nuget.org's newest, and no package the release leaves behind uses the
+#      internals of one it publishes (lib/ExactVersionDependencies.ps1)
 #   4. Run the post-release binding check (Invoke-PostReleaseBindingCheck.ps1): the new packages and nuget.org's newest
 #      version of every other package must not fail at runtime against each other
 #   5. For each new package: push to NuGet, create GitHub release, create and push git tag
@@ -36,6 +40,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/Changelogs.ps1"
 . "$scriptDir/lib/PackageManifests.ps1"
 . "$scriptDir/lib/DependencyFloors.ps1"
+. "$scriptDir/lib/ExactVersionDependencies.ps1"
 . "$scriptDir/lib/ReleaseDetails.ps1"
 . "$scriptDir/lib/ReleaseSelection.ps1"
 . "$scriptDir/lib/NuGetPublishing.ps1"
@@ -78,6 +83,10 @@ if ($newPackages.Count -eq 0) {
     Write-Host "`nNew packages to release:"
     foreach ($pkg in $newPackages) {
         Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
+        $exactVersionDependencies = (ReadNupkgManifest (Join-Path $nupkgsPath "$($pkg.PackageName).$($pkg.Version).nupkg")).CompzeExactVersionDependencies
+        if ($exactVersionDependencies.Count -gt 0) {
+            Write-Host "    requires exactly: $(($exactVersionDependencies.Keys | ForEach-Object { "$_ $($exactVersionDependencies[$_])" }) -join ', ')"
+        }
     }
 
     & "$scriptDir/Invoke-PostReleaseBindingCheck.ps1" -NupkgsPath $nupkgsPath

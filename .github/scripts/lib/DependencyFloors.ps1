@@ -24,9 +24,11 @@ function TestCrossesAMinorVersion([string]$FromVersion, [string]$ToVersion) {
 function GetDependencyFloorsRaisedAcrossAMinorVersion($PreviousManifest, $Manifest) {
     # The Compze dependency floors of the manifest that are a minor version or more above the previous version's, as
     # objects with PackageId, PreviousFloor and Floor, ordered by package id. A dependency the previous version didn't
-    # have raises no floor.
+    # have raises no floor. Nor does an exact-version dependency here: the line of its own that names those
+    # (ExactVersionDependencies.ps1) says it, so that no dependency is named twice in a section.
     foreach ($packageId in $Manifest.CompzeDependencyFloors.Keys) {
         if (-not $PreviousManifest.CompzeDependencyFloors.Contains($packageId)) { continue }
+        if ($Manifest.CompzeExactVersionDependencies.Contains($packageId)) { continue }
         $previousFloor = $PreviousManifest.CompzeDependencyFloors[$packageId]
         $floor = $Manifest.CompzeDependencyFloors[$packageId]
         if (([semver]$floor -gt [semver]$previousFloor) -and (TestCrossesAMinorVersion $previousFloor $floor)) {
