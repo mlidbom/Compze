@@ -31,8 +31,8 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
 - **What would cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run starts every test assembly
   at once, each running a test class per logical processor, and other sessions' runs add theirs. The server's DDL
   throughput stops rising at about 8 at once; past that, each statement only waits longer. [Emptying the tables
-  instead of dropping them](#emptying-the-tables-instead-of-dropping-them) was declined, and [Windows' write-cache
-  buffer flushing](#windows-write-cache-buffer-flushing) isn't decided.
+  instead of dropping them](#emptying-the-tables-instead-of-dropping-them) and [Windows' write-cache buffer
+  flushing](#windows-write-cache-buffer-flushing) were declined.
 
 ## What was measured
 
@@ -227,6 +227,9 @@ keeps its durability protocol and its settings, and a sync costs what it costs o
 such as a server's. What it gives up is the drive's guarantee across a power loss, for everything on the disk. It is
 off, Windows' default, on every disk of both machines (2026-11-27). Magnus thinks he may have turned it on under
 threadripper's earlier Windows 10 installation. Its effect here is not measured.
+
+**Declined,** Magnus, 2026-11-27, for this and for MySQL settings other than the defaults: "Nah, let's stay with normal
+configs. Realistic testing is good".
 
 ## Measuring again
 
