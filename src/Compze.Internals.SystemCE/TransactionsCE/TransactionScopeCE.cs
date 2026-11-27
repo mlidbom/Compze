@@ -1,5 +1,6 @@
 using System.Transactions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.TransactionsCE._private;
 using Compze.SystemCE;
 using JetBrains.Annotations;
 
@@ -7,6 +8,10 @@ namespace Compze.Internals.SystemCE.TransactionsCE;
 
 public static class TransactionScopeCe
 {
+   //review: DefaultTimeout, the backstop that every unit of work but those of ExecuteAsync(action, timeout) carries, is .NET's own
+   //   timeout alone, which .NET 11.0.0 can lose (dotnet/runtime#136986): an abandoned unit of work it should end then holds its
+   //   connection and its locks for ever. TransactionTimeoutTimer would make it hold, at the cost of a timer for each unit of work.
+   //   Left on .NET's timeout for the release of 2026-11-27, on compze-agent-rep's word.
    ///<summary>The backstop timeout carried by every unit of work created here that isn't given one of its own.</summary>
    ///<remarks>A <see cref="TransactionScope"/> only reaches a terminal state — the moment its connection is disposed and every<br/>
    /// enlisted <see cref="System.Transactions.IEnlistmentNotification"/> participant gets its commit/rollback callback — when the<br/>
@@ -46,9 +51,12 @@ public static class TransactionScopeCe
    ///<summary>The form of <see cref="ExecuteAsync(Func{Task},TransactionScopeOption)"/> whose transaction times out after<br/>
    /// <paramref name="timeout"/> instead of <see cref="DefaultTimeout"/>: for work that runs longer by design, or must end sooner.<br/>
    /// <see cref="TransactionManager.MaximumTimeout"/> silently shortens a longer one.</summary>
+   ///<remarks>The timeout holds even where .NET 11.0.0 loses a transaction's own, as it can when threads start transactions at the<br/>
+   /// same moment: a timer of its own rolls the transaction back at its timeout, as .NET's would.</remarks>
    public static async Task ExecuteAsync([InstantHandle] Func<Task> action, TimeSpan timeout, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option, UnitOfWorkTransactionOptionsTimingOutAfter(timeout), TransactionScopeAsyncFlowOption.Enabled);
+      using var timeoutTimer = TransactionTimeoutTimer.For(Transaction.Current, timeout);
       await action().caf();
       transactionScope.Complete();
    }

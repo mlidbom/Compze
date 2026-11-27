@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.14.0-internal
 
 - **`TransactionScopeCe.DefaultTimeout`, the 45-second backstop every unit of work created there carries, and `TransactionScopeCe.ExecuteAsync(Func<Task> action, TimeSpan timeout, TransactionScopeOption option = Required)`, whose transaction times out after the timeout given instead:** for work that runs longer by design, or must end sooner. `TransactionManager.MaximumTimeout` silently shortens a longer one, as .NET does.
+- **`TransactionScopeCe.ExecuteAsync(action, timeout)`'s timeout holds even where .NET 11.0.0 loses a transaction's own,** as it can when threads start transactions with new timeouts at the same moment ([dotnet/runtime#136986](https://github.com/dotnet/runtime/issues/136986)): a timer of its own rolls the transaction back at its timeout, with a `TimeoutException` as the cause, as .NET's would. `DefaultTimeout`, on the other units of work, is still .NET's timeout alone.
 
 ## 0.13.0-internal
 
