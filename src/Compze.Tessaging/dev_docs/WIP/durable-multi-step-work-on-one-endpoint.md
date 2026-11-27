@@ -211,6 +211,9 @@ needs nothing more of it but the reserved place: today an entry is ready when it
 
 ## 2. At-least-once tommands, handled outside any transaction
 
+No longer recommended: see decision 2. With SQLite left behind and a registration's own transaction timeout, a long
+step is an ordinary handler in a transaction of its own, and this rung has hardly any motivation left (Magnus, topic 1).
+
 Magnus, on topic 1, 2026-11-27: "A handler outside any transactions is not an ExactlyOnceTommandHandler." The first draft
 registered such a handler on the exactly-once registrar. The type hierarchy already has the rung that tells the truth:
 `IAtLeastOnceTessage`, "delivered until it arrives, and whose handling is retried while it fails", without the
@@ -448,13 +451,16 @@ predecessor's release (below).
      `IStrictlyLocalTessage`, the type-level promise in the other direction. Tevents can't have it: a publisher mustn't
      decide what its subscribers need.
    - **(c) No:** the law stays, and multi-step flows ping-pong between two endpoints.
-2. **A long outside effect, such as a git step** (rewritten after Magnus's objection on topic 1):
-   - **(a) An at-least-once tommand:** a rung of its own, which `IAtLeastOnceTessage` already names. Its type declares
-     at least once, so its sender sees it, and its handler registers through a registrar of its own, outside any
-     transaction: the effect at least once, its outcome recorded exactly once with the mark. Recommended, if Compze is to
-     carry the hub's long steps.
-   - **(b) None:** Compze runs every handler in a transaction, and the hub runs its long effects outside any handler,
-     recording each outcome with a tommand. Resuming an effect a restart cut off is then the hub's own machinery.
+2. **A long outside effect, such as a git step** (rewritten twice after Magnus's objections on topic 1: that a handler
+   outside any transaction isn't exactly-once handling, then that SQLite should go and a registration could set its
+   timeout):
+   - **(a) A handler's registration sets its transaction timeout,** and no at-least-once tommands. On a server engine a
+     long step is then an ordinary handler in a transaction of its own (change 1), its order given up (change 3), and its
+     claim locks only its own inbox row. What the long transaction still costs, a pooled connection, its locks and on
+     PostgreSQL an old snapshot, doesn't matter at the hub's scale. Today's timeout is one 45-second backstop for every
+     unit of work (`TransactionScopeCE.TransactionTimeout`); above 10 minutes, `TransactionManager.MaximumTimeout` must be
+     raised too, process-wide. For the hub this means leaving SQLite (the tooling's topic 26). Recommended.
+   - **(b) At-least-once tommands,** as change 2 sketches.
 3. **Where the order is given up:**
    - **(a) Per handler registration.** Recommended.
    - **(b) For the endpoint as a whole.**
