@@ -46,8 +46,8 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
       ResetConnectionPool(db);
       //I experimented with dropping objects like for the other databases, but it was not faster than just dropping and recreating the database.
       //performance: in a full suite run, this waits seconds for the server, which the suite saturates with DDL: with
-      //   InnoDB's defaults, a pool database's use, a test's CREATE TABLE statements and this drop, is about 500 fsyncs.
-      //   Measured, and the test server settings that cut it five times, in dev_docs/why-resets-take-seconds-on-mysql.md.
+      //   InnoDB's defaults, a pool database's use, a test's CREATE TABLE statements and this drop, is about 440 syncs
+      //   to disk. Measured in dev_docs/why-resets-take-seconds-on-mysql.md.
       _masterConnectionPool.ExecuteNonQuery($"""
                                              DROP DATABASE IF EXISTS {db.Name};
                                              CREATE DATABASE {db.Name};
