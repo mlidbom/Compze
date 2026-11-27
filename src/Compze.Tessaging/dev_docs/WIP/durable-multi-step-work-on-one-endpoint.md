@@ -93,8 +93,8 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
           await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new RemoveTheWorktreesFiles(start.RemovalId, start.Worktree), cancellation);
        });
 
-   //Independent: never in the sender's unit of work, but in one of its own, through the inbox, after the sender commits.
-   protected override void RegisterIndependentTommandHandlers(IIndependentTommandHandlerRegistrar handle) => handle
+   //Deferred: never in the sender's unit of work, but in one of its own, through the inbox, after the sender commits.
+   protected override void RegisterDeferredTommandHandlers(IDeferredTommandHandlerRegistrar handle) => handle
       //The 60-second git step: given its order up, allowed 3 minutes (change 2).
       .ForTommand<RemoveTheWorktreesFiles>(async (step, unitOfWork, cancellation) =>
        {
@@ -137,33 +137,33 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
 
 ### Public API (sketch)
 
-A registration surface of its own, as observation has (`ObserveTevents`): Magnus's shape, on topic 6, so that the
+A registration surface of its own, as observation has (`ObserveTevents`), named Deferred: Magnus's shape and his choice
+of name, on topic 6, so that the
 distinct semantics show where the handlers are declared. Only the exactly-once endpoint has it, since only it has an
 inbox: a plain container or a best-effort endpoint can't express it.
 
 ```csharp
 public sealed class ExactlyOnceEndpointBuilder
 {
-   //review-naming: Independent, the word IIndependentTommandSender uses for a unit of work of its own, never the caller's.
    ///Declares handlers that never run in their sender's or publisher's unit of work: the inbox handles each tessage in one
    ///of its own, after the sender commits, wherever it was sent from.
-   public ExactlyOnceEndpointBuilder RegisterIndependentTessageBusHandlers(Action<IndependentTessageBusHandlerRegistrar> register);
+   public ExactlyOnceEndpointBuilder RegisterDeferredTessageBusHandlers(Action<DeferredTessageBusHandlerRegistrar> register);
 }
 
 public abstract class ExactlyOnceEndpointDeclaration<TIdentity>
 {
-   protected virtual void RegisterIndependentTommandHandlers(IIndependentTommandHandlerRegistrar handle) {}
+   protected virtual void RegisterDeferredTommandHandlers(IDeferredTommandHandlerRegistrar handle) {}
 }
 
-public interface IIndependentTommandHandlerRegistrar
+public interface IDeferredTommandHandlerRegistrar
 {
-   IIndependentTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
+   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
                                                             HandlingOrder order = HandlingOrder.AsAdmitted,
                                                             TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand;
 }
 ```
 
-A tommand type has one handler, independent or not: registering a second explodes at registration, as today. The tevent
+A tommand type has one handler, deferred or not: registering a second explodes at registration, as today. The tevent
 verb, `ForTevent`, comes with the tevent counterparts below.
 
 ### Mechanism: admitted to the inbox in the sender's transaction
@@ -230,12 +230,12 @@ needs nothing else.
 ### Public API (sketch)
 
 ```csharp
-public interface IIndependentTommandHandlerRegistrar
+public interface IDeferredTommandHandlerRegistrar
 {
    //review-naming: transactionTimeout
    ///transactionTimeout: how long the inbox's handling transaction may run before it is rolled back; null keeps the unit of
    ///work's 45-second backstop.
-   IIndependentTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
+   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
                                                             HandlingOrder order = HandlingOrder.AsAdmitted,
                                                             TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand;
 }
@@ -407,7 +407,7 @@ environment serves it and its process's other endpoints alike.
 
 ## The tevent counterparts
 
-`ForTevent` on the independent registrar, with a declaration override `RegisterIndependentTeventHandlers`, would follow
+`ForTevent` on the deferred registrar, with a declaration override `RegisterDeferredTeventHandlers`, would follow
 the same design:
 
 - **A local publish** admits the tevent to the inbox in the publisher's transaction when such a handler matches it. Its row
@@ -473,8 +473,8 @@ predecessor's release (below).
      other endpoints have one gets an environment of its own, through `IEndpointHost.RegisterEndpoint(declaration,
      environment)`. Recommended: it is only an absence, and needs no new abstraction.
 
-The names marked `review-naming:` above are chosen, not decisions: `RegisterIndependentTessageBusHandlers` and the
-independent registrars,
+The names marked `review-naming:` above are chosen, not decisions: `RegisterDeferredTessageBusHandlers` and the
+deferred registrars,
 `transactionTimeout`, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
 
 ## Not in this design
