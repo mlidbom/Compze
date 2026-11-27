@@ -34,6 +34,10 @@ function C-Test {
     Runs at most this many test collections at once within each test assembly (xUnit's MaxParallelThreads), where by
     default xUnit runs one for each logical processor.
 
+    .PARAMETER KeepResultsIn
+    Keeps each test run's TRX files, the test results with each failure's message and stack trace, in a folder of its own
+    under this folder, where by default they are deleted once counted.
+
     .PARAMETER Iterations
     Run the test suite multiple times and display a summary of results across all iterations
 
@@ -104,6 +108,7 @@ function C-Test {
         [switch]$SingleThreadedTesting,
         [int]$MaxParallelAssemblies,
         [int]$MaxParallelThreads,
+        [string]$KeepResultsIn,
         [int]$Iterations = 1,
         [string[]]$Combinations,
         [string]$Filter
@@ -141,7 +146,7 @@ function C-Test {
             }
             
             # Run tests
-            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -MaxParallelAssemblies $MaxParallelAssemblies -MaxParallelThreads $MaxParallelThreads -Filter $Filter
+            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -MaxParallelAssemblies $MaxParallelAssemblies -MaxParallelThreads $MaxParallelThreads -KeepResultsIn $KeepResultsIn -Filter $Filter
             
             # Collect failed tests from this iteration
             if ($testRunResult.FailedTests -and $testRunResult.FailedTests.Count -gt 0) {
