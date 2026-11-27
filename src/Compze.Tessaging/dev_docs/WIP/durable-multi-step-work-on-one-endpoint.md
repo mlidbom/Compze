@@ -179,6 +179,10 @@ own, hands it to the inbox instead of running it:
 3. **The inbox handles it as any tessage it received:** in a unit of work that claims the row, runs the handler and marks
    it succeeded, tried again while it fails for as long as the endpoint's `RetryPolicy` allows.
 
+Any unit of work in the endpoint's container can send one: a TessageBus or Typermedia handler's, such as a strictly-local
+typermedia tommand's executed through `IIndependentLocalTypermediaNavigator`, or the one `IIndependentTommandSender` begins.
+What the deferred handler publishes is observed at its unit of work's commit, as any unit of work's tevents are.
+
 The inbox refuses such a send before it has run its recovery scan at start, and after the endpoint has stopped. Before the
 scan, the recovered tessages must enter the line first, being older. After the stop, the endpoint's next process may
 already own its inbox.
@@ -261,6 +265,12 @@ sender's timeout.
   old snapshot that holds back vacuum. On a server engine, the claim locks only the tessage's own inbox row.
 - **On SQLite,** a long transaction holds the one write lock and stops every other write: the hub's long steps need a
   server engine.
+- **The memory image state store waits 30 seconds, fixed,** which a long handler can outlast (found by
+  tessaging-and-taggregates). `TaggregateUpdateLocks` waits that long for a taggregate another unit of work holds for
+  update, then fails; `UnitsOfWorkAndReloadsGate` makes a reload wait that long for every open unit of work, holding new
+  ones back meanwhile. So a long handler gets its taggregates for update last, after its outside work, as the hub's steps
+  do. Better, those waits follow the transaction's timeout: with the todo on `TaggregateUpdateLocks` (Magnus, 2026-11-17)
+  to replace its `SemaphoreSlim` with a lock a transaction owns.
 - **A stop cancels it** through the stopping token, and it rolls back: as for any handling.
 - **Its effect outside the database is at least once,** as any handler's is: a step that rolls back after the effect runs
   it again.
@@ -370,8 +380,7 @@ its questions to settle first: whose token handlers receive, and what cancelling
    increment 1. What the endpoint sends itself during the drain waits for the next start: otherwise a flow whose steps
    each send the next would keep the drain going.
 3. **Stop handling:** cancel the running handlers. Wait for the transactional ones up to the drain's patience, as today:
-   a successor that tries one again waits at the row's claim until the predecessor's transaction ends. Wait for the
-   outside effects until they end (decision 4).
+   a successor that tries one again waits at the row's claim until the predecessor's transaction ends.
 4. Release the process lock: as today.
 
 ## 5. An endpoint that converses with no other
@@ -404,6 +413,43 @@ environment serves it and its process's other endpoints alike.
 - **Guarantees: unchanged.** Nothing crosses the boundary.
 - **The start's cost:** measured in its increment, the hub's composition today (named pipes, the registry, three SQLite
   databases) against one that converses with no other endpoint.
+
+## 6. Hearing that a deferred tessage was marked failed
+
+Found by tessaging-and-taggregates: a flow whose step keeps failing stops "visibly, until an administrator retries it",
+and the hub has no administrator. Whatever waits for the flow's end would wait for ever. The flow needs to hear of it, in a
+unit of work of its own, to end its taggregate. Without that, a handler catches its own failure and records the flow's end,
+giving up the retry policy's retries.
+
+### Public API (sketch)
+
+```csharp
+public interface IDeferredTommandHandlerRegistrar
+{
+   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
+                                                        HandlingOrder order = HandlingOrder.AsAdmitted,
+                                                        TimeSpan? transactionTimeout = null,
+                                                        //review-naming:
+                                                        Func<TTommand, Exception, IUnitOfWorkResolver, CancellationToken, Task>? whenMarkedFailed = null)
+      where TTommand : IExactlyOnceTommand;
+}
+```
+
+The same on `ForTommand` of the exactly-once registrar, for tommands that arrive from other endpoints: it applies wherever
+the inbox handles the tessage.
+
+### Mechanism, and the guarantee
+
+- **When the retry policy gives up,** the inbox marks the tessage failed in a unit of work that also runs `whenMarkedFailed`,
+  with the last try's exception: the mark and what the failure handler does commit together. So the flow hears of it
+  exactly once, by construction.
+- **A failure handler that throws** rolls back with the mark: the inbox tries the marking again, with the growing delay it
+  uses when it can't record, and logs each failure loudly. The tessage keeps its place meanwhile: an ordered one holds the
+  ordered line, as a tessage being retried does.
+- **Restarts:** a tessage whose marking didn't commit is still UnHandled, and its retries go on from its recorded failing
+  time, so it is marked again, and its failure handler run, in the next process.
+- **Administration:** a tessage marked failed and later retried by an administrator (`TODO/failed-tessage-administration.md`)
+  is handled again; its failure handler has run already, so the flow must expect that.
 
 ## The tevent counterparts
 
@@ -464,6 +510,7 @@ predecessor's release (below).
    - **(a) `StopAsync(CancellationToken)`:** the drain as today, ended at once by the token. Recommended: the .NET
      convention, and each caller chooses.
    - **(b) The stop always cancels running handlers,** without a drain.
+7. **How a flow hears that its deferred tessage was marked failed (change 6):** put to Magnus on a topic.
 6. **How an endpoint that converses with no other is declared** (on hold with change 5; Magnus leans to (b), topic 4):
    - **(a) By the endpoint,** `ConverseWithNoOtherEndpoint()` in its declaration, the environment's transport and
      discovery left unused.
