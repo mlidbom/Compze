@@ -24,6 +24,7 @@ $FilesCiDoesNotTest = @(
     '.vscode/*'
     '.serena/*'
     '.mcp.json'
+    '.royder.json'       # Which solution Royder, the code-analysis MCP server, opens for this repository's files.
     '.github/scripts/AcknowledgedUnreleasedChanges.txt'  # Read only by the release scripts, never by the build or the tests.
     '*.DotSettings'
     '*.ncrunchsolution'
