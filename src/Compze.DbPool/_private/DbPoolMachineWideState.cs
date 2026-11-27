@@ -19,11 +19,17 @@ class DbPoolMachineWideState
                                                                           .GetOrCreateDirectory("Compze")
                                                                           .GetOrCreateDirectory("SharedFiles"));
 
+   ///<summary>The version of the form the reservations are stored in, part of both the machine-wide state's name and the pool databases' names.<br/>
+   /// A pool of an older version can't read the reservations a newer one stores, and replaces what it can't read with no reservations at all.<br/>
+   /// So pools of different versions, as in two checkouts of different ages on one machine, must share neither the state nor the databases.<br/>
+   /// Raise it whenever <see cref="DbPoolState"/> or <see cref="DbPoolDatabase"/> changes what it stores.</summary>
+   internal const string FormatVersion = "v2";
+
    readonly IInterprocessObject<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
       _shared = IInterprocessObject.NewGlobal(
-         uniqueName,
+         $"{uniqueName}_{FormatVersion}",
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),
          CorruptionAction.ReplaceContentWithDefaultAndThrow,

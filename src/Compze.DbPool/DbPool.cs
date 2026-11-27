@@ -82,11 +82,18 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
 
+   ///<summary>Releases the pool's databases for other pools to reserve. Throws if the pool held any of them past the end of its reservation,<br/>
+   /// since another pool may then have reset it while it was still in use.</summary>
    public override void Dispose() => _reservedDatabases.Locked(reservedDatabases =>
    {
       if(Disposed) return;
       base.Dispose();
       _sqlLayer.Dispose(reservedDatabases);
       _machineWideState.ReleaseReservationsFor(_poolId);
+
+      var disposedAt = DateTime.UtcNow;
+      var databasesHeldPastTheirReservation = reservedDatabases.Where(db => db.ReservationHasExpired).ToList();
+      if(databasesHeldPastTheirReservation.Any())
+         throw new DatabaseHeldPastItsReservationException(databasesHeldPastTheirReservation, _reservationLength, disposedAt);
    });
 }
