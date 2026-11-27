@@ -12,15 +12,18 @@ public interface IDeferredTommandHandlerRegistrar
    //review-naming: IDeferredTommandHandlerRegistrar, after Magnus's choice of Deferred (2026-11-27).
 
    ///<summary>Registers the deferred handler for <typeparamref name="TTommand"/>: see<br/>
-   /// <see cref="DeferredTessageBusHandlerRegistrar.ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/>.</summary>
+   /// <see cref="DeferredTessageBusHandlerRegistrar.ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder,Nullable{TimeSpan})"/>.</summary>
    ///<param name="handler">The handler: the tommand, the unit of work, and the token of the inbox's handling, cancelled when the<br/>
    /// endpoint's stop no longer waits for its inbox (<see cref="Endpoints.IEndpoint.StopAsync"/>).</param>
    ///<param name="order">Whether the tommands keep their place in the order the endpoint's inbox handles tessages in: see<br/>
    /// <see cref="HandlingOrder"/>.</param>
-   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand;
+   ///<param name="transactionTimeout">How long the inbox's handling transaction may run before it times out and rolls back:<br/>
+   /// null keeps the default of 45 seconds. See<br/>
+   /// <see cref="DeferredTessageBusHandlerRegistrar.ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder,Nullable{TimeSpan})"/>.</param>
+   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted, TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand;
 
-   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/><br/>
+   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder,Nullable{TimeSpan})"/><br/>
    /// for a handler that waits on nothing it could give up.</summary>
-   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand
-      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork), order);
+   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted, TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand
+      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork), order, transactionTimeout);
 }

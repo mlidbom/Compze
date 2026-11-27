@@ -5,14 +5,14 @@ using Compze.Tessaging.TessageTypes;
 namespace Compze.Tessaging.Engine.HandlerRegistration._private;
 
 ///<summary>The handler of a tommand type that declares no result, as the <see cref="TessageHandlerRoster"/> holds it: the handler,<br/>
-/// whether it is deferred, and its <see cref="HandlingOrder"/>.</summary>
+/// whether it is deferred, and how the endpoint's inbox handles its tommands.</summary>
 sealed class VoidTommandHandlerRegistration
 {
-   internal VoidTommandHandlerRegistration(Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task> handle, bool isDeferred, HandlingOrder order)
+   internal VoidTommandHandlerRegistration(Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task> handle, bool isDeferred, InboxHandlingChoices inboxHandling)
    {
       Handle = handle;
       IsDeferred = isDeferred;
-      Order = order;
+      InboxHandling = inboxHandling;
    }
 
    internal Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task> Handle { get; }
@@ -21,6 +21,6 @@ sealed class VoidTommandHandlerRegistration
    /// once the sender has committed: see <see cref="DeferredTessageBusHandlerRegistrar"/>.</summary>
    internal bool IsDeferred { get; }
 
-   ///<summary>Whether the tommands keep their place in the order the endpoint's inbox handles tessages in.</summary>
-   internal HandlingOrder Order { get; }
+   ///<summary>How the endpoint's inbox handles the tommands, where it handles them.</summary>
+   internal InboxHandlingChoices InboxHandling { get; }
 }

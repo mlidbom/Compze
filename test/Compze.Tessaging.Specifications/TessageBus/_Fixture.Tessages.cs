@@ -101,3 +101,64 @@ public class TeventOneOfWhoseHandlersKeepsItsPlace : ITeventOneOfWhoseHandlersKe
    public int Number { get; set; }
    // ReSharper restore PropertyCanBeMadeInitOnly.Global
 }
+
+///<summary>A tessage of the transaction timeout's specifications, named by the specification so that its handler can tell how<br/>
+/// many tries it has had.</summary>
+public interface INamedTessage
+{
+   string Name { get; }
+}
+
+///<summary>A step whose deferred handler's registration chooses a transaction timeout of a second.</summary>
+public class StepWithATransactionTimeoutOfASecond : Remotable.ExactlyOnce.Tommand, INamedTessage
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public StepWithATransactionTimeoutOfASecond() {}
+   public StepWithATransactionTimeoutOfASecond(string name) => Name = name;
+
+   // ReSharper disable once PropertyCanBeMadeInitOnly.Global serialization...
+   public string Name { get; set; } = "";
+}
+
+///<summary>An exactly-once tommand whose handler, which isn't deferred, has a registration that chooses a transaction timeout<br/>
+/// of a second.</summary>
+public class TommandWithATransactionTimeoutOfASecond : Remotable.ExactlyOnce.Tommand, INamedTessage
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TommandWithATransactionTimeoutOfASecond() {}
+   public TommandWithATransactionTimeoutOfASecond(string name) => Name = name;
+
+   // ReSharper disable once PropertyCanBeMadeInitOnly.Global serialization...
+   public string Name { get; set; } = "";
+}
+
+///<summary>An exactly-once tevent every handler of which has a registration that chooses a transaction timeout of a second.</summary>
+public interface ITeventWhoseHandlersAllHaveATransactionTimeoutOfASecond : IExactlyOnceTevent, INamedTessage;
+
+public class TeventWhoseHandlersAllHaveATransactionTimeoutOfASecond : ITeventWhoseHandlersAllHaveATransactionTimeoutOfASecond
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TeventWhoseHandlersAllHaveATransactionTimeoutOfASecond() {}
+   public TeventWhoseHandlersAllHaveATransactionTimeoutOfASecond(string name) => Name = name;
+
+   // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+   public TessageId Id { get; set; } = TessageId.New();
+   public string Name { get; set; } = "";
+   // ReSharper restore PropertyCanBeMadeInitOnly.Global
+}
+
+///<summary>An exactly-once tevent one of whose handlers has a registration that chooses a transaction timeout of a second, and<br/>
+/// the other a registration that chooses none.</summary>
+public interface ITeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond : IExactlyOnceTevent, INamedTessage;
+
+public class TeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond : ITeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond() {}
+   public TeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond(string name) => Name = name;
+
+   // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+   public TessageId Id { get; set; } = TessageId.New();
+   public string Name { get; set; } = "";
+   // ReSharper restore PropertyCanBeMadeInitOnly.Global
+}

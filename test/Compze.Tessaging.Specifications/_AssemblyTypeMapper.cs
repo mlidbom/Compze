@@ -32,7 +32,13 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<TessageBus.ITeventWhoseHandlersAllGiveUpTheirPlace>("15f99cbf-77d1-4234-9d2f-edff852829d1")
             .Map<TessageBus.TeventWhoseHandlersAllGiveUpTheirPlace>("5e55310c-b25a-4214-bce1-5a9fcabea642")
             .Map<TessageBus.ITeventOneOfWhoseHandlersKeepsItsPlace>("f9118d8f-1274-431f-8719-a60e5f2378a3")
-            .Map<TessageBus.TeventOneOfWhoseHandlersKeepsItsPlace>("b7c62b65-2d64-4309-ae6e-0be750bdaf6f");
+            .Map<TessageBus.TeventOneOfWhoseHandlersKeepsItsPlace>("b7c62b65-2d64-4309-ae6e-0be750bdaf6f")
+            .Map<TessageBus.StepWithATransactionTimeoutOfASecond>("f4d27090-4584-4f44-8d06-f4d81957268c")
+            .Map<TessageBus.TommandWithATransactionTimeoutOfASecond>("77a6f7a8-bc82-4218-82ea-56cd628848f0")
+            .Map<TessageBus.ITeventWhoseHandlersAllHaveATransactionTimeoutOfASecond>("1dbab4ad-b678-417d-bab3-9f7146bf4b49")
+            .Map<TessageBus.TeventWhoseHandlersAllHaveATransactionTimeoutOfASecond>("22ab50b9-8f43-456e-9157-c8018fae3801")
+            .Map<TessageBus.ITeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond>("066e0844-517e-4d5a-949b-240b04b5ff22")
+            .Map<TessageBus.TeventOneOfWhoseHandlersHasATransactionTimeoutOfASecond>("190892b5-f650-4d7e-9529-440585254f99");
 }
 #pragma warning restore CA1812
 

@@ -6,6 +6,7 @@ using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine.HandlerRegistration;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -133,14 +134,14 @@ partial class Inbox
          }
 
          HandlerExecutionTask NewHandlerExecutionTask(TransportTessage.InComing tessage, TimeSpan failingTime, bool sentByTheEndpointToItself) =>
-            new(tessage, HandlingOrderOf(tessage), failingTime, sentByTheEndpointToItself, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token);
+            new(tessage, InboxHandlingOf(tessage), failingTime, sentByTheEndpointToItself, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token);
 
          //Refactor: Switching should not be necessary. See also inbox.
-         HandlingOrder HandlingOrderOf(TransportTessage.InComing tessage) =>
+         InboxHandlingChoices InboxHandlingOf(TransportTessage.InComing tessage) =>
             tessage.TessageTypeEnum switch
             {
-               TransportTessageType.ExactlyOnceTevent  => _roster.HandlingOrderOfTheTevent(tessage.TessageTypeId.Type),
-               TransportTessageType.ExactlyOnceTommand => _roster.HandlingOrderOfTheTommand(tessage.TessageTypeId.Type),
+               TransportTessageType.ExactlyOnceTevent  => _roster.InboxHandlingOfTheTevent(tessage.TessageTypeId.Type),
+               TransportTessageType.ExactlyOnceTommand => _roster.InboxHandlingOfTheTommand(tessage.TessageTypeId.Type),
                TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(nameof(tessage), "The inbox handles no best-effort tevent."),
                _                                     => throw new ArgumentOutOfRangeException(nameof(tessage))
             };

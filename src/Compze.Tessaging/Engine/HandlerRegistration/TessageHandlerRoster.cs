@@ -101,20 +101,16 @@ public class TessageHandlerRoster
    /// <see cref="DeferredTessageBusHandlerRegistrar"/>.</summary>
    internal bool DefersTheHandlingOf(Type tommandType) => _voidTommandHandlers.TryGetValue(tommandType, out var registration) && registration.IsDeferred;
 
-   ///<summary>Whether the tommands of the type <paramref name="tommandType"/> keep their place in the order the endpoint's inbox<br/>
-   /// handles tessages in, as their handler's registration chose. A tommand with no handler keeps its place: each try of its<br/>
-   /// handling fails with the <see cref="NoHandlerException"/> until it is marked failed.</summary>
-   internal HandlingOrder HandlingOrderOfTheTommand(Type tommandType) =>
-      _voidTommandHandlers.TryGetValue(tommandType, out var registration) ? registration.Order : HandlingOrder.AsAdmitted;
+   ///<summary>How the endpoint's inbox handles the tommands of the type <paramref name="tommandType"/>, as their handler's<br/>
+   /// registration chose. A tommand with no handler is handled as by default: each try of its handling fails with the<br/>
+   /// <see cref="NoHandlerException"/> until it is marked failed.</summary>
+   internal InboxHandlingChoices InboxHandlingOfTheTommand(Type tommandType) =>
+      _voidTommandHandlers.TryGetValue(tommandType, out var registration) ? registration.InboxHandling : InboxHandlingChoices.Default;
 
-   ///<summary>Whether a tevent whose wrapper is of <paramref name="wrapperTeventType"/> keeps its place in the order the endpoint's<br/>
-   /// inbox handles tessages in. Its handlers run together, in one unit of work, so it gives up its place only when every handler<br/>
-   /// it runs gives it up. One that runs none keeps it: what observers see of it follows the order its handlings commit in.</summary>
-   internal HandlingOrder HandlingOrderOfTheTevent(Type wrapperTeventType)
-   {
-      var registrations = _teventHandlers.Where(it => it.MatchesTeventsWrappedAs(wrapperTeventType)).ToList();
-      return registrations.Count > 0 && registrations.All(it => it.Order == HandlingOrder.None) ? HandlingOrder.None : HandlingOrder.AsAdmitted;
-   }
+   ///<summary>How the endpoint's inbox handles a tevent whose wrapper is of <paramref name="wrapperTeventType"/>: its handlers run<br/>
+   /// together, in one unit of work — see <see cref="InboxHandlingChoices.OfATeventRunning"/>.</summary>
+   internal InboxHandlingChoices InboxHandlingOfTheTevent(Type wrapperTeventType) =>
+      InboxHandlingChoices.OfATeventRunning([.._teventHandlers.Where(it => it.MatchesTeventsWrappedAs(wrapperTeventType)).Select(it => it.InboxHandling)]);
 
    ///<summary>Whether this roster holds a handler for the single-handler tessage type <paramref name="tessageType"/> — a<br/>
    /// tommand of either shape, or a tuery. What readiness asks about the endpoint's own half: a type the endpoint itself<br/>

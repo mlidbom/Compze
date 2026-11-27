@@ -40,19 +40,24 @@ public sealed class DeferredTessageBusHandlerRegistrar : IDeferredTommandHandler
    /// they do: the inbox handles them one at a time, in the order their senders committed. With <see cref="HandlingOrder.None"/>,<br/>
    /// it handles each as soon as it has capacity, at the same time as anything else: such as the independent steps of<br/>
    /// several flows, none of which should wait for another.</param>
-   public DeferredTessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand
+   ///<param name="transactionTimeout">How long the inbox's handling transaction may run before it times out and rolls back,<br/>
+   /// which counts as a failed try: null keeps the default of 45 seconds. A step that waits longer on something outside the<br/>
+   /// database, such as a git worktree removal that takes a minute, needs a longer one. At most<br/>
+   /// <see cref="System.Transactions.TransactionManager.MaximumTimeout"/>, 10 minutes unless the process raises it: a longer one<br/>
+   /// explodes here. A long transaction holds its connection and its locks for as long as it runs: on SQLite, the one writer.</param>
+   public DeferredTessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted, TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand
    {
       AssertUsedOnlyInsideItsCallback();
-      _registrations.AddDeferredTommandHandler(handler, order);
+      _registrations.AddDeferredTommandHandler(handler, order, transactionTimeout);
       return this;
    }
 
-   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/><br/>
+   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder,Nullable{TimeSpan})"/><br/>
    /// for a handler that waits on nothing it could give up.</summary>
-   public DeferredTessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand
-      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork), order);
+   public DeferredTessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted, TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand
+      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork), order, transactionTimeout);
 
-   IDeferredTommandHandlerRegistrar IDeferredTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order) => ForTommand(handler, order);
+   IDeferredTommandHandlerRegistrar IDeferredTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order, TimeSpan? transactionTimeout) => ForTommand(handler, order, transactionTimeout);
 
    internal void EndCallback() => _callbackHasEnded = true;
 

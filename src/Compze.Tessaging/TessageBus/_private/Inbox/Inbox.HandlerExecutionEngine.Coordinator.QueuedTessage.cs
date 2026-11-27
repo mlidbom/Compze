@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.TessageHandling;
@@ -38,6 +39,10 @@ partial class Inbox
             readonly TessageHandlerExecutor _executor;
             readonly RetryPolicy _retryPolicy;
             readonly CancellationToken _stopping;
+
+            ///<summary>How long the transaction of a try of the tessage's handling may run before it times out, as its handlers'<br/>
+            /// registrations chose.</summary>
+            readonly TimeSpan _transactionTimeout;
             readonly HandlingRetrySchedule _handlerFailures = new();
             readonly HandlingRetrySchedule _endpointFailures = new();
 
@@ -144,7 +149,7 @@ partial class Inbox
                      }
                      await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork, _stopping).caf();
                      await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
-                  }).caf();
+                  }, _transactionTimeout).caf();
                }
 #pragma warning disable CA1031 //Whatever a try fails with, the tessage is tried again or marked failed: see HandleTryingAgainWhileItFailsAsync.
                catch(Exception exception)
@@ -239,11 +244,12 @@ partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, HandlingOrder order, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, InboxHandlingChoices inboxHandling, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
-               KeepsItsPlaceInTheOrder = order == HandlingOrder.AsAdmitted;
+               KeepsItsPlaceInTheOrder = inboxHandling.Order == HandlingOrder.AsAdmitted;
+               _transactionTimeout = inboxHandling.TransactionTimeout;
                IsSentByTheEndpointToItself = sentByTheEndpointToItself;
                AwaitsItsSendersCommit = sentByTheEndpointToItself;
                _failingTime = failingTime;
