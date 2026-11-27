@@ -40,9 +40,9 @@ public sealed class HandlingRetries
 
    internal bool AreExhaustedAfterFailingFor(TimeSpan failingTime) => _failingTimeAllowed is {} allowed && failingTime >= allowed;
 
-   ///<summary><paramref name="delay"/>, shortened so that the next try is made no later than when the retries run out.</summary>
-   internal TimeSpan ShortenedToTheTimeLeft(TimeSpan delay, TimeSpan failingTime) =>
-      _failingTimeAllowed is {} allowed && allowed - failingTime < delay ? allowed - failingTime : delay;
+   ///<summary>How long a tessage whose handling has failed for <paramref name="failingTime"/> may go on failing before its<br/>
+   /// retries run out; null for <see cref="UntilHandled"/>.</summary>
+   internal TimeSpan? TimeLeftAfterFailingFor(TimeSpan failingTime) => _failingTimeAllowed - failingTime;
 
    public override string ToString() => _failingTimeAllowed is {} allowed ? $"for {allowed} of failing" : "until handled";
 }

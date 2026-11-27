@@ -48,6 +48,11 @@ partial class Inbox
             /// last failed try was recorded, or when a wait for the endpoint ended. A <see cref="Stopwatch"/> timestamp.</summary>
             long _failingClockStartedAt;
 
+            ///<summary>True once the next try is the one made as the tessage's retries run out: after it fails, the tessage is<br/>
+            /// marked failed, however close to the limit the clock then reads. A wait ends a little early or late by the<br/>
+            /// stopwatch, and the last try is decided, not measured.</summary>
+            bool _theNextTryIsTheLast;
+
             internal TessageId TessageId { get; }
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
@@ -86,7 +91,7 @@ partial class Inbox
                      continue;
                   }
 
-                  if(_handlingRetries.AreExhaustedAfterFailingFor(_failingTime))
+                  if(_theNextTryIsTheLast || _handlingRetries.AreExhaustedAfterFailingFor(_failingTime))
                   {
                      await MarkFailedAsync(failure).caf();
                      return;
@@ -164,7 +169,13 @@ partial class Inbox
 
             async Task WaitBeforeTryingAgainAsync(Exception failure)
             {
-               var delay = _handlingRetries.ShortenedToTheTimeLeft(_handlerFailures.DelayAfterAnotherFailure(), _failingTime);
+               var delay = _handlerFailures.DelayAfterAnotherFailure();
+               if(_handlingRetries.TimeLeftAfterFailingFor(_failingTime) is {} timeLeft && timeLeft <= delay)
+               {
+                  delay = timeLeft;
+                  _theNextTryIsTheLast = true;
+               }
+
                this.Log().Warning(failure, $"Handling tessage {TessageId} failed. It is tried again in {delay}: its handling has failed for {_failingTime}, and the endpoint tries {_handlingRetries}.");
                _coordinator.StartedWaitingToBeTriedAgain();
                try
