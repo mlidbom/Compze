@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
+  </ItemGroup>
+  <!-- Compze.DbPool — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
+    <PackageReference Include="Compze.DbPool" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DbPool\Compze.DbPool.csproj" />
+  </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tests.Infrastructure — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
+    <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
+    <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using JetBrains.Annotations;
 using MemoryPack;
@@ -19,7 +20,7 @@ namespace Compze.DbPool;
 
    public bool TryReserve(string reservationName, Guid poolId, TimeSpan reservationLength, [NotNullWhen(true)] out DbPoolDatabase? reserved)
    {
-      CollectGarbage();
+      ReleaseTheReservationsThatHaveEnded();
 
       reserved = UnReserved.FirstOrDefault();
       if(reserved == null && Databases.Count < DbPool.NumberOfDatabases)
@@ -32,15 +33,26 @@ namespace Compze.DbPool;
       return reserved != null;
    }
 
-   void CollectGarbage() => Databases.Where(db => db.ShouldBeReleased)
-                                     .ForEach(db => db.Release());
+   ///<summary>Releases the reservations that have expired, and those of the processes that have exited.</summary>
+   void ReleaseTheReservationsThatHaveEnded()
+   {
+      var exitedProcesses = Reserved.Select(db => db.ReservedInProcess._assert().NotNull())
+                                    .Distinct()
+                                    .Where(process => process.HasExited)
+                                    .ToHashSet();
+
+      Reserved.Where(db => db.ReservationHasExpired || exitedProcesses.Contains(db.ReservedInProcess._assert().NotNull()))
+              .ToList()
+              .ForEach(db => db.Release());
+   }
+
+   IEnumerable<DbPoolDatabase> Reserved => Databases.Where(db => db.IsReserved);
 
    public void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
 
-   public DateTime EarliestReservationExpiration => Databases.Where(db => db.IsReserved)
-                                                             .Select(db => db.ReservationExpirationTime)
-                                                             .DefaultIfEmpty(DateTime.MaxValue)
-                                                             .Min();
+   public DateTime EarliestReservationExpiration => Reserved.Select(db => db.ReservationExpirationTime)
+                                                            .DefaultIfEmpty(DateTime.MaxValue)
+                                                            .Min();
 
-   IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(Guid poolId) => Databases.Where(db => db.IsReserved && db.ReservedByPoolId == poolId).ToList();
+   IReadOnlyList<DbPoolDatabase> DatabasesReservedBy(Guid poolId) => [..Reserved.Where(db => db.ReservedByPoolId == poolId)];
 }

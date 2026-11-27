@@ -8,7 +8,7 @@ namespace Compze.DbPool._private;
 
 ///<summary>Which of the <see cref="DbPool"/>'s databases are reserved, and by whom,<br/>
 /// kept in an <see cref="IInterprocessObject{T}"/> that every process on this machine shares.</summary>
-class DbPoolMachineWideState
+class DbPoolMachineWideState : IDisposable
 {
    //todo: (Magnus, 2026-11-17) This class is to be replaced by a pool service that every machine shares: machines that use
    //   the same database servers reset each other's databases today. See
@@ -19,11 +19,17 @@ class DbPoolMachineWideState
                                                                           .GetOrCreateDirectory("Compze")
                                                                           .GetOrCreateDirectory("SharedFiles"));
 
+   ///<summary>The version of the form the reservations are stored in, part of both the machine-wide state's name and the pool databases' names.<br/>
+   /// A pool of an older version can't read the reservations a newer one stores, and replaces what it can't read with no reservations at all.<br/>
+   /// So pools of different versions, as in two checkouts of different ages on one machine, must share neither the state nor the databases.<br/>
+   /// Raise it whenever <see cref="DbPoolState"/> or <see cref="DbPoolDatabase"/> changes what it stores.</summary>
+   internal const string FormatVersion = "v2";
+
    readonly IInterprocessObject<DbPoolState> _shared;
 
    internal DbPoolMachineWideState(string uniqueName) =>
       _shared = IInterprocessObject.NewGlobal(
-         uniqueName,
+         $"{uniqueName}_{FormatVersion}",
          MemoryPackDbPoolStateSerializer.Instance,
          () => new DbPoolState(),
          CorruptionAction.ReplaceContentWithDefaultAndThrow,
@@ -57,4 +63,7 @@ class DbPoolMachineWideState
    }
 
    internal void ReleaseReservationsFor(Guid poolId) => _shared.Update(state => state.ReleaseReservationsFor(poolId));
+
+   ///<summary>Releases this instance's hold on the shared state: its mapping of the file and its handles to the lock. The reservations stay.</summary>
+   public void Dispose() => _shared.Dispose();
 }
