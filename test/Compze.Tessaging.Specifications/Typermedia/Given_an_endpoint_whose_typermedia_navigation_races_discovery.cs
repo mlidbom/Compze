@@ -34,7 +34,7 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
       public static string Name => "Navigator";
       public static EndpointId Id => new(Guid.Parse("3E1B7A64-92D4-4B08-8E15-6C0A9F27D3B1"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
    }
 
    class LateHandlerEndpointDeclaration : BestEffortEndpointDeclaration<LateHandlerEndpointDeclaration>, IEndpointIdentity
@@ -42,7 +42,7 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
       public static string Name => "LateHandler";
       public static EndpointId Id => new(Guid.Parse("A7C25E90-14FB-4D67-B3A8-0D5E96C1F482"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
          .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" });

@@ -39,7 +39,7 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
       public static string Name => "Navigator";
       public static EndpointId Id => new(Guid.Parse("B4F07D28-5E91-4C36-A0D7-92E8B1C5F6A3"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
       protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(100);
@@ -49,7 +49,7 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
    /// contested tuery type, answering under the identity's own name.</summary>
    abstract class HandlerEndpointDeclaration<TIdentity> : BestEffortEndpointDeclaration<TIdentity> where TIdentity : IEndpointIdentity
    {
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
          .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {TIdentity.Name}" });

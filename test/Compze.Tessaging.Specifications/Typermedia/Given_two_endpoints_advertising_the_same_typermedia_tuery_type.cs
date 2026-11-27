@@ -39,7 +39,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
       public static string Name => "FirstHandler";
       public static EndpointId Id => new(Guid.Parse("07500559-DE01-4EBA-A1C5-71B0FFBAA0C0"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
          .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" });
@@ -50,7 +50,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
       public static string Name => "SecondHandler";
       public static EndpointId Id => new(Guid.Parse("D5A0272D-CE21-476F-8ADE-B0AF5FB1DC01"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
          .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
@@ -60,7 +60,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectToAsync(_firstEndpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectToAsync(_firstEndpoint.Address!, registrar => registrar.RequireTessagingSpecificationTypeMappings()).caf();
       await _client.AlsoConnectToAsync(_secondEndpoint.Address!).caf();
    }
 
