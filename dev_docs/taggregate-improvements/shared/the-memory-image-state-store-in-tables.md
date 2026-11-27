@@ -96,6 +96,14 @@ storage holds it until disposed.** The lock is the one an exactly-once endpoint 
 - **A lost lock stops the commits:** should the session holding the lock die under a live holder, as when the database
   becomes unreachable, another memory image may take the tables. The store logs it, and every unit of work that changes it,
   and `WriteAllToStorage`, fails from then on.
+- **Disposing releases the lock only once no write can still land** (2026-11-27), for files and tables alike, through the
+  storages' shared `StorageLock`: every load, write of everything anew, and unit of work's write is a use of the storage, a
+  unit of work's from its preparing until its transaction has completed. Disposing refuses every use that begins after it,
+  waits at most a minute for those under way, and only then releases the lock: should one still be under way, it throws, and
+  the lock stays held until the process ends. A unit of work under way that hasn't prepared its write fails at its next use of
+  the store, or as it prepares, and rolls back. Before this, a store disposed while a unit of work still ran released the lock
+  at once, and the unit of work's write landed after the next memory image had taken the storage, over what that one wrote.
+  On SQLite only, its connection pool's own disposal refused the write by chance.
 
 ## Writing
 
