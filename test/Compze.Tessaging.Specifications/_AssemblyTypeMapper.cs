@@ -24,7 +24,8 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<RememberNumberTommand>("f27a061b-9e34-4c85-b1d0-58e63a2790cf")
             .Map<NumberedExactlyOnceTommand>("5c9e1f74-3a28-4b6d-9e05-b7d41a26c83f")
             .Map<TessageBus.TommandWhoseHandlerWaitsForItsCancellation>("6560d06b-b249-4f51-916b-ec0386e77808")
-            .Map<TessageBus.TommandNoEndpointHandles>("d9bed99c-017b-4b48-a973-755a614a4f92");
+            .Map<TessageBus.TommandNoEndpointHandles>("d9bed99c-017b-4b48-a973-755a614a4f92")
+            .Map<TessageBus.DeferredStep>("3b1f6c2e-8d47-4a95-b0e3-6f24c9a81d57");
 }
 #pragma warning restore CA1812
 

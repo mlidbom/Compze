@@ -20,6 +20,7 @@ partial class Inbox
    partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
+      // ReSharper disable once ArrangeTypeMemberModifiers ReSharper is confused: a nested class is private without it, and the engine hands out an AdmissionOfATessageSentToItself.
       internal partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
       {
          readonly ITaskRunner _taskRunner = taskRunner;

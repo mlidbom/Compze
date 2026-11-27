@@ -5,6 +5,7 @@ using Compze.Tessaging._private.EndpointCatalog;
 using Compze.Tessaging.TessageBus._private.Inbox;
 using Compze.Tessaging.TessageBus._private.Outbox;
 using Compze.Tessaging._internal.SqlLayer;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus._private;
 
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
@@ -30,6 +31,20 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
       AssertStillComposing();
       State.Assert(_retryPolicy is null, () => "The endpoint already declared its retry policy — an endpoint has exactly one.");
       _retryPolicy = policy;
+      return this;
+   }
+
+   ///<summary>Declares deferred tommand handlers through the <see cref="DeferredTessageBusHandlerRegistrar"/>: handlers that never<br/>
+   /// run in their sender's unit of work. The endpoint's inbox handles each tommand sent to one in a unit of work of its own,<br/>
+   /// once the sender has committed, whether this endpoint sent it or another did. Only an exactly-once endpoint has them,<br/>
+   /// since only it has an inbox.</summary>
+   public ExactlyOnceEndpointBuilder RegisterDeferredTessageBusHandlers(Action<DeferredTessageBusHandlerRegistrar> register)
+   {
+      //review-naming: RegisterDeferredTessageBusHandlers, after Magnus's choice of Deferred (2026-11-27).
+      AssertStillComposing();
+      var registrar = new DeferredTessageBusHandlerRegistrar(HandlerRegistrations);
+      register(registrar);
+      registrar.EndCallback();
       return this;
    }
 

@@ -14,3 +14,21 @@ public class TeventWhoseHandlerWaitsForItsCancellation : ITeventWhoseHandlerWait
 
 ///<summary>An exactly-once tommand no endpoint handles: a send of it waits for a receiver to bind it to.</summary>
 public class TommandNoEndpointHandles : Remotable.ExactlyOnce.Tommand;
+
+///<summary>A step of a flow, handled by a deferred handler: its number, and how many steps its handler sends after it, one at<br/>
+/// a time, each to the endpoint itself.</summary>
+public class DeferredStep : Remotable.ExactlyOnce.Tommand
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public DeferredStep() {}
+   public DeferredStep(int number, int stepsAfterIt = 0)
+   {
+      Number = number;
+      StepsAfterIt = stepsAfterIt;
+   }
+
+   // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+   public int Number { get; set; }
+   public int StepsAfterIt { get; set; }
+   // ReSharper restore PropertyCanBeMadeInitOnly.Global
+}

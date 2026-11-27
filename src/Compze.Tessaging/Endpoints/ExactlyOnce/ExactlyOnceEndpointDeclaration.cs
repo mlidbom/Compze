@@ -5,9 +5,10 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
 ///<summary>
 /// The declaration a concrete <see cref="ExactlyOnceEndpoint"/> inherits — see <see cref="EndpointDeclaration{TIdentity}"/>
-/// for the declaration model. This tier adds the two exactly-once registration overrides: handlers for exactly-once tommands
-/// (<see cref="RegisterExactlyOnceTommandHandlers"/>) and for tevent subscriptions demanding exactly-once delivery
-/// (<see cref="RegisterExactlyOnceTeventHandlers"/>). The best-effort tier deliberately lacks both — an endpoint that
+/// for the declaration model. This tier adds the exactly-once registration overrides: handlers for exactly-once tommands
+/// (<see cref="RegisterExactlyOnceTommandHandlers"/>), deferred handlers for them, which never run in their sender's unit of
+/// work (<see cref="RegisterDeferredTommandHandlers"/>), and handlers for tevent subscriptions demanding exactly-once delivery
+/// (<see cref="RegisterExactlyOnceTeventHandlers"/>). The best-effort tier deliberately lacks them — an endpoint that
 /// cannot honor a guarantee offers no way to register handlers demanding it.
 ///</summary>
 public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclaration<TIdentity>, IExactlyOnceEndpointDeclaration where TIdentity : IEndpointIdentity
@@ -18,6 +19,13 @@ public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclar
 
    ///<summary>Override to register exactly-once tommand handlers — see <see cref="IExactlyOnceTommandHandlerRegistrar"/>.</summary>
    protected virtual void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) {}
+
+   ///<summary>Override to register deferred tommand handlers, which never run in their sender's unit of work: the endpoint's<br/>
+   /// inbox runs each in one of its own, once the sender has committed — see <see cref="DeferredTessageBusHandlerRegistrar"/>.</summary>
+   protected virtual void RegisterDeferredTommandHandlers(IDeferredTommandHandlerRegistrar handle)
+   {
+      //review-naming: RegisterDeferredTommandHandlers, after Magnus's choice of Deferred (2026-11-27).
+   }
 
    ///<summary>Override to register tevent subscriptions demanding exactly-once delivery — see <see cref="IExactlyOnceTeventHandlerRegistrar"/>.</summary>
    protected virtual void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle) {}
@@ -40,6 +48,7 @@ public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclar
          RegisterExactlyOnceTommandHandlers(handle);
          RegisterExactlyOnceTeventHandlers(handle);
       });
+      builder.RegisterDeferredTessageBusHandlers(handle => RegisterDeferredTommandHandlers(handle));
       Declare(builder);
       return builder.Build();
    }
