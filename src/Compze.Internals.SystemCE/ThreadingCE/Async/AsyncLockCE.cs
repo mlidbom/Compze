@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Compze.Internals.SystemCE.ThreadingCE.Async._private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 using Compze.Threading;
@@ -34,21 +34,11 @@ public interface IAsyncLockCE
       ///<summary>The hold this flow took, or inherited from the flow it was started on. A flow carries the hold rather than a<br/>
       /// count of entrances: work started while the lock was held inherits it, and once the hold has ended it lets no one in.</summary>
       readonly AsyncLocal<Hold?> _holdOfThisFlow = new();
-      readonly LockTimeout _timeout;
-      readonly Lock _timeoutLock = new();
+      readonly AsyncLockTimeouts _timeouts;
 
-      static readonly WaitTimeout DefaultTimeToWaitForStackTrace = WaitTimeout.Seconds(10);
+      internal AsyncLockCE(LockTimeout timeout) => _timeouts = new AsyncLockTimeouts(timeout);
 
-      WaitTimeout _stackTraceFetchTimeout;
-      IReadOnlyList<AsyncLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<AsyncLockTimeoutException>();
-
-      internal AsyncLockCE(LockTimeout timeout)
-      {
-         _timeout = timeout;
-         _stackTraceFetchTimeout = DefaultTimeToWaitForStackTrace;
-      }
-
-      public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _stackTraceFetchTimeout = timeToWaitForStackTrace;
+      public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) => _timeouts.SetTimeToWaitForStackTrace(timeToWaitForStackTrace);
 
       public async Task<Unit> LockedAsync(Func<Task> lockedAction) => await LockedAsync(lockedAction.ToAsyncFunc()).caf();
 
@@ -57,9 +47,9 @@ public interface IAsyncLockCE
          var hold = _holdOfThisFlow.Value;
          if(hold?.TryEnterAgain() != true)
          {
-            if(!await _semaphore.WaitAsync(_timeout).caf())
+            if(!await _semaphore.WaitAsync(_timeouts.Timeout).caf())
             {
-               throw RegisterTimeoutException();
+               throw _timeouts.TimedOut();
             }
 
             hold = new Hold();
@@ -78,9 +68,9 @@ public interface IAsyncLockCE
          var hold = holdBefore;
          if(hold?.TryEnterAgain() != true)
          {
-            if(!_semaphore.Wait(_timeout))
+            if(!_semaphore.Wait(_timeouts.Timeout))
             {
-               throw RegisterTimeoutException();
+               throw _timeouts.TimedOut();
             }
 
             hold = new Hold();
@@ -102,7 +92,7 @@ public interface IAsyncLockCE
       {
          if(hold.Leave())
          {
-            UpdateAnyRegisteredTimeoutExceptions();
+            _timeouts.TheHolderReleases();
             _semaphore.Release();
          }
       }
@@ -128,36 +118,6 @@ public interface IAsyncLockCE
 
          ///<summary>Leaves the hold, returning whether that ended it.</summary>
          internal bool Leave() => Interlocked.Decrement(ref _entrances) == 0;
-      }
-
-      Exception RegisterTimeoutException()
-      {
-         //refactor: _timeoutLock is a raw lock, here and in UpdateAnyRegisteredTimeoutExceptions, where the locking standard asks for
-         //   Compze.Threading's primitives, such as IMonitor, which this package already builds on.
-         lock(_timeoutLock)
-         {
-            var exception = new AsyncLockTimeoutException(_timeout, _stackTraceFetchTimeout);
-            Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, [.._timeOutExceptionsOnOtherThreads, exception]);
-            return exception;
-         }
-      }
-
-      void UpdateAnyRegisteredTimeoutExceptions()
-      {
-         // ReSharper disable once InconsistentlySynchronizedField
-         if(_timeOutExceptionsOnOtherThreads.Count > 0)
-         {
-            lock(_timeoutLock)
-            {
-               var stackTrace = new StackTrace(fNeedFileInfo: true);
-               foreach(var exception in _timeOutExceptionsOnOtherThreads)
-               {
-                  exception.SetBlockingThreadsDisposeStackTrace(stackTrace);
-               }
-
-               Interlocked.Exchange(ref _timeOutExceptionsOnOtherThreads, new List<AsyncLockTimeoutException>());
-            }
-         }
       }
    }
 }

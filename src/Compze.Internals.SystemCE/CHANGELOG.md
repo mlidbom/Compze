@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.12.1-internal
 
 - **`IAsyncLockCE` let work started while it was held enter it later, while another flow held it.** Such work, a task say, inherits the holder's flow, and the lock counted a flow's entrances in it, so the work found itself counted in and entered without waiting, even after the hold had ended. A lock meant to keep two flows apart let them in at once. The work may still enter while the hold lasts, and the lock stays held until it leaves too; once the hold has ended, it takes its turn as any other flow does.
+- **`IThrowOnReentrancyAsyncLock`: a lock held across awaits that throws at once when it is taken from inside its own hold,** by a nested use on the flow that holds it, or by work started inside the hold while the hold lasts, where `IAsyncLockCE` lets both in. It's for what only one may use at a time, such as a database connection, which children that a holder of `IAsyncLockCE` starts and awaits together would use at once. Its `IsHeldOnThisFlow` says whether taking it would throw.
 - **Requires newer minor versions of other Compze packages:** Compze.Threading 0.14.0-alpha (was 0.13.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.12.0-internal
