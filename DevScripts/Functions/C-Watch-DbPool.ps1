@@ -6,11 +6,16 @@ function C-Watch-DbPool {
 
     .DESCRIPTION
     Every pool on the machine that uses the same SQL layer shares one machine-wide state: the pool's databases, and which
-    pool, in which process, holds each. A test that waits too long for a free database fails with "Timed out waiting for
-    database". This shows why: once a second, how many databases are reserved, by how many pools, how many databases each
-    pool holds, the oldest reservation's age, and the reservations per test project. Each reservation and release goes to
-    the log, and at the end a summary: the most reserved at once, how long every database was reserved, how long the
-    reservations were held, the longest held, and those still held.
+    pool, in which process, holds each. A test that waits too long for a free database fails with "Timed out after 45
+    seconds waiting for a free pool database". This shows why: once a second, how many of the databases the pools have
+    created are reserved, by how many pools, how many databases each pool holds, the oldest reservation's age, and the
+    reservations per test project. Each reservation and release goes to the log, and at the end a summary: the most
+    reserved at once, how many databases were created, how long every one of them was reserved, how long the reservations
+    were held, the longest held, and those still held.
+
+    The state keeps every database the pools have created, so a pool may reserve as many as were ever reserved at once on
+    this machine, whatever the most its SQL layer allows: a pool that the state's history has made larger passes a run
+    that a fresh state would fail.
 
     It reads the state's file without taking its lock, so watching changes nothing in what it watches. It reads the state
     with the Compze.DbPool.dll this checkout built, so build first. Start it, then start the test run in another shell.

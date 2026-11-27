@@ -44,8 +44,8 @@ Console.CancelKeyPress += (_, eventArgs) =>
 };
 
 using var log = new StreamWriter(logPath, append: false) { AutoFlush = true };
-var watch = new Watch(dbPool, reservationLength, log);
-log.WriteLine($"Watching {stateFile.FullName}, a sample every {sampleInterval.TotalMilliseconds} ms, the pool's cap {dbPool.NumberOfDatabases} databases.");
+var watch = new Watch(reservationLength, log);
+log.WriteLine($"Watching {stateFile.FullName}, a sample every {sampleInterval.TotalMilliseconds} ms.");
 Console.WriteLine($"Watching {stateFile.Name}; the log: {logPath}");
 
 var startedAt = DateTime.UtcNow;
@@ -59,9 +59,9 @@ while(!stopRequested)
 
    if(StateFileContent.TryRead(stateFile) is {} content)
    {
-      var reservations = dbPool.ReservationsIn(content);
-      watch.Sample(now, reservations);
-      if(Watch.AnyIsForARunningProcess(reservations)) lastReservationSeenAt = now;
+      var sample = dbPool.SampleOf(content);
+      watch.Take(now, sample);
+      if(Watch.AnyIsForARunningProcess(sample.Reservations)) lastReservationSeenAt = now;
       if(now - lastReportAt >= TimeSpan.FromSeconds(1))
       {
          Console.WriteLine(watch.DescribeNow(now));
@@ -141,9 +141,6 @@ sealed class DbPoolAssembly
                                   .GetField("FormatVersion", BindingFlags.NonPublic | BindingFlags.Static)
                                  ?.GetRawConstantValue();
       StateNameSuffix = formatVersion is null ? "" : $"_{formatVersion}";
-      NumberOfDatabases = (int)assembly.GetType("Compze.DbPool.DbPool", throwOnError: true)!
-                                       .GetField("NumberOfDatabases", BindingFlags.NonPublic | BindingFlags.Static)!
-                                       .GetRawConstantValue()!;
    }
 
    ///<summary>Loads the assembly at <paramref name="path"/>, resolving the Compze assemblies it uses from its folder, from their bytes too.</summary>
@@ -161,13 +158,12 @@ sealed class DbPoolAssembly
    ///<summary>What follows the SQL layer's name in the machine-wide state's name: the format version, which DbPool 0.4.0 introduced, nothing<br/>
    /// before it.</summary>
    internal string StateNameSuffix { get; }
-   internal int NumberOfDatabases { get; }
 
-   internal IReadOnlyList<Reservation> ReservationsIn(byte[] stateFileContent)
+   internal Sample SampleOf(byte[] stateFileContent)
    {
       var state = MemoryPackSerializer.Deserialize(_stateType, stateFileContent)!;
-      var databases = (System.Collections.IEnumerable)_databases.GetValue(state)!;
-      return [..databases.Cast<object>().Select(ReservationOf).OfType<Reservation>()];
+      var databases = ((System.Collections.IEnumerable)_databases.GetValue(state)!).Cast<object>().ToList();
+      return new Sample([..databases.Select(ReservationOf).OfType<Reservation>()], databases.Count);
    }
 
    static Reservation? ReservationOf(object database)
@@ -189,6 +185,25 @@ sealed class DbPoolAssembly
       var process = database.GetType().GetProperty("ReservedInProcess", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(database);
       return process is null ? Reservation.UnknownProcessId : (int)process.GetType().GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(process)!;
    }
+}
+
+///<summary>What one reading of the state showed: its reservations, and how many databases the pools have created.</summary>
+sealed class Sample
+{
+   internal Sample(IReadOnlyList<Reservation> reservations, int createdDatabases)
+   {
+      Reservations = reservations;
+      CreatedDatabases = createdDatabases;
+   }
+
+   internal IReadOnlyList<Reservation> Reservations { get; }
+
+   ///<summary>How many databases the pools have created: as many as were ever reserved at once, up to the SQL layer's maximum. The state keeps<br/>
+   /// every one, so the pools may reserve as many as this, whatever the maximum of the code they run.</summary>
+   internal int CreatedDatabases { get; }
+
+   ///<summary>Whether a reservation would have to wait, unless the SQL layer allows it to create another database.</summary>
+   internal bool EveryCreatedDatabaseIsReserved => CreatedDatabases > 0 && Reservations.Count >= CreatedDatabases;
 }
 
 ///<summary>Reads the machine-wide state's file as the pools last wrote it, without its lock.</summary>
@@ -218,13 +233,11 @@ static class StateFileContent
 ///<summary>What the samples have shown so far: the reservations held now, and those that have ended.</summary>
 sealed class Watch
 {
-   readonly DbPoolAssembly _dbPool;
    readonly TimeSpan _reservationLength;
    readonly StreamWriter _log;
 
-   internal Watch(DbPoolAssembly dbPool, TimeSpan reservationLength, StreamWriter log)
+   internal Watch(TimeSpan reservationLength, StreamWriter log)
    {
-      _dbPool = dbPool;
       _reservationLength = reservationLength;
       _log = log;
    }
@@ -233,12 +246,13 @@ sealed class Watch
    readonly List<EndedReservation> _ended = [];
    readonly Dictionary<int, string> _processes = [];
    int _mostReserved;
+   int _createdDatabases;
    TimeSpan _timeWithEveryDatabaseReserved;
    DateTime? _lastSampleAt;
 
-   internal void Sample(DateTime now, IReadOnlyList<Reservation> reservations)
+   internal void Take(DateTime now, Sample sample)
    {
-      var current = reservations.ToHashSet();
+      var current = sample.Reservations.ToHashSet();
       foreach(var started in current.Where(it => !_heldSince.ContainsKey(it)))
       {
          _heldSince[started] = started.ReservedAt(_reservationLength);
@@ -254,7 +268,8 @@ sealed class Watch
       }
 
       _mostReserved = Math.Max(_mostReserved, current.Count);
-      if(current.Count >= _dbPool.NumberOfDatabases && _lastSampleAt is {} lastSampleAt) _timeWithEveryDatabaseReserved += now - lastSampleAt;
+      _createdDatabases = sample.CreatedDatabases;
+      if(sample.EveryCreatedDatabaseIsReserved && _lastSampleAt is {} lastSampleAt) _timeWithEveryDatabaseReserved += now - lastSampleAt;
       _lastSampleAt = now;
    }
 
@@ -264,7 +279,7 @@ sealed class Watch
       var byProcess = held.GroupBy(it => ProcessName(it.ProcessId)).OrderByDescending(it => it.Count()).Select(it => $"{it.Key} {it.Count()}");
       var perPool = held.GroupBy(it => it.PoolId).GroupBy(it => it.Count()).OrderBy(it => it.Key).Select(it => $"{it.Key}:{it.Count()}");
       var oldest = held.Count == 0 ? "" : $"; oldest held {(now - held.Min(it => _heldSince[it])).TotalSeconds:0.0} s";
-      var line = $"{Time(now)} reserved {held.Count}/{_dbPool.NumberOfDatabases} by {held.Select(it => it.PoolId).Distinct().Count()} pools (databases per pool, pools: {string.Join(" ", perPool)}){oldest}; {string.Join(", ", byProcess)}";
+      var line = $"{Time(now)} reserved {held.Count} of {_createdDatabases} created by {held.Select(it => it.PoolId).Distinct().Count()} pools (databases per pool, pools: {string.Join(" ", perPool)}){oldest}; {string.Join(", ", byProcess)}";
       _log.WriteLine(line);
       return line;
    }
@@ -277,7 +292,7 @@ sealed class Watch
       var stillHeld = _heldSince.Select(it => $"   held {(now - it.Value).TotalSeconds:0.0} s so far: database {it.Key.DatabaseId}, {ProcessName(it.Key.ProcessId)}, the {it.Key.Kind} {it.Key.Name}");
       return $"""
               Summary:
-                 most reserved at once: {_mostReserved} of {_dbPool.NumberOfDatabases}; every database reserved for {_timeWithEveryDatabaseReserved.TotalSeconds:0.0} s in all
+                 most reserved at once: {_mostReserved}; databases created: {_createdDatabases}; every database created reserved for {_timeWithEveryDatabaseReserved.TotalSeconds:0.0} s in all
                  reservations ended: {holds.Count}; held for: median {Percentile(holds, 0.5):0.0} s, 90th percentile {Percentile(holds, 0.9):0.0} s, 99th {Percentile(holds, 0.99):0.0} s, longest {holds.LastOrDefault():0.0} s
                  the longest held:
               {string.Join(Environment.NewLine, longest)}
