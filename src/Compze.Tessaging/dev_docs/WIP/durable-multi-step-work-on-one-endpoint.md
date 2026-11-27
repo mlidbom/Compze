@@ -2,7 +2,20 @@
 
 ## Status
 
-A design, 2026-11-27, awaiting Magnus's decisions at its end. Nothing is built.
+A design, 2026-11-27, with Magnus's decisions at its end being put to him one at a time.
+
+- **Decision 1** is settled by Magnus's words on topic 27: at the registration. Increment 2 waits for him to see the
+  design.
+- **Decision 2** was rewritten after Magnus's objection on topic 1, that a handler outside any transaction isn't an
+  exactly-once handler: it now chooses between at-least-once tommands and none.
+- **Decision 5** is settled by compze-agent-rep's judgment, which Magnus can overrule on his topic 73:
+  `StopAsync(CancellationToken)`, keeping today's drain.
+- **Increment 1 is built** (cancellation, and the stop that lets go), in three steps, with one change to the design
+  below: the stop's token stops the inbox's handling the moment it is cancelled, in whichever phase the stop then is,
+  not only in the drain. Stopping the listening waits for the requests in flight, and a running handler can hold one up:
+  on SQLite, its transaction holds the one write lock that an arriving tessage's admission waits for, and the ASP.NET
+  Core transport then waits out its 30-second shutdown timeout. A best-effort arrival's handlers get a token that is
+  never cancelled, for now.
 
 Asked for by the Claude tooling's hub: on topic 27 of its session, Magnus chose that the hub drives its long operations
 through one exactly-once endpoint of its own, each operation's next step a tommand to that same endpoint. Forwarded by
@@ -324,7 +337,8 @@ public interface IEndpoint
 - **Participation,** an inline tommand handler or a tevent handler in its publisher's unit of work: the token of the
   execution it takes part in. That is the stopping token inside a handling by the inbox, and otherwise the token the
   caller passed to the send or the publish.
-- **Best-effort arrivals:** the endpoint's stopping token.
+- **Best-effort arrivals:** the endpoint's stopping token. Not built in increment 1: their handlers get a token that is
+  never cancelled, since nothing yet tells the best-effort dispatch that the endpoint is stopping.
 - **Typermedia handlers:** unchanged here. [Remote typermedia calls: deadlines, cancellation and
   stopping](../TODO/remote-typermedia-calls-deadlines-cancellation-and-stopping.md) would give them the caller's token,
   carried across the wire, together with the endpoint's stop.
@@ -345,7 +359,8 @@ its questions to settle first: whose token handlers receive, and what cancelling
 
 1. Retract the address, stop sending, stop listening: as today.
 2. **The drain:** the inbox handles what it has received until all of it is handled, 30 seconds have passed, or the token
-   is cancelled. What the endpoint sends itself during the drain waits for the next start: otherwise a flow whose steps
+   is cancelled. Cancelling the token stops the inbox's handling at once, whichever step the stop is at, as built in
+   increment 1. What the endpoint sends itself during the drain waits for the next start: otherwise a flow whose steps
    each send the next would keep the drain going.
 3. **Stop handling:** cancel the running handlers. Wait for the transactional ones up to the drain's patience, as today:
    a successor that tries one again waits at the row's claim until the predecessor's transaction ends. Wait for the
