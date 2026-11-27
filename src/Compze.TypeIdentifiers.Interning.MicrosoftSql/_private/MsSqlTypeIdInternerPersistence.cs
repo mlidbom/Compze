@@ -10,9 +10,21 @@ using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
 
 namespace Compze.TypeIdentifiers.Interning.MicrosoftSql._private;
 
-partial class MsSqlTypeIdInternerPersistence(IMsSqlConnectionPool connectionPool, MsSqlSqlLayerSchemaManager schemaManager) : ITypeIdInternerPersistence
+partial class MsSqlTypeIdInternerPersistence(IMsSqlConnectionPool databasesConnectionPool, MsSqlSqlLayerSchemaManager schemaManager) : ITypeIdInternerPersistence
 {
-   readonly IMsSqlConnectionPool _connectionPool = connectionPool;
+   ///<summary>The interner's pool of its own on the database, of at most <see cref="MaxConnectionsOfItsPool"/> connections: its probes,<br/>
+   /// mints and loads commit on their own, outside any ambient transaction, and run inside units of work, when a unit of work stores a<br/>
+   /// type new to the database. From the pool of the units of work, a unit of work that holds a taggregate's lock and mints would wait<br/>
+   /// for a connection while the units of work waiting for that lock hold every one: see <see cref="PoolsOfTheirOwn"/>.</summary>
+   readonly IMsSqlConnectionPool _connectionPool = databasesConnectionPool.APoolOfItsOwn(ApplicationNameOfItsPool, MaxConnectionsOfItsPool);
+
+   ///<summary>The name the database server shows for the connections of the interner's pool.</summary>
+   const string ApplicationNameOfItsPool = "Compze type id interner";
+
+   ///<summary>The size of the interner's pool: one connection holding the interner's write lock while it mints, and one for the probes<br/>
+   /// meanwhile.</summary>
+   const int MaxConnectionsOfItsPool = 2;
+
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
    // The application-lock resource serialising interner writes across every process pointed at this database.
