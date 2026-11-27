@@ -141,6 +141,10 @@ public class TestingEndpointHost : EndpointHost
          }
       }
 
+      //bug: The tracker's exceptions are collected before the endpoints stop, so a failure reported while an endpoint's inbox
+      //   drains is lost: such as an exactly-once tessage marked failed during the drain, which a recovered tessage, untracked
+      //   and so not awaited at rest, always is. Collect them again after base.DisposeAsync, once nothing more is handled.
+      //   (exactly-once-retries, 2026-11-27)
       unobservedExceptions.AddRange(_tessagesInFlightTracker.GetExceptions());
 
       try
