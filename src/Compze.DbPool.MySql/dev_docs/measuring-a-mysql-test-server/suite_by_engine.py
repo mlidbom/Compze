@@ -35,9 +35,11 @@ def main():
     parser.add_argument("machine")
     parser.add_argument("output_folder")
     parser.add_argument("--engines", default=",".join(all_engines))
-    parser.add_argument("c_test_arguments", nargs=argparse.REMAINDER)
-    arguments = parser.parse_args()
-    c_test_arguments = [it for it in arguments.c_test_arguments if it != "--"]
+    own_arguments, c_test_arguments = sys.argv[1:], []
+    if "--" in own_arguments:
+        separator = own_arguments.index("--")
+        own_arguments, c_test_arguments = own_arguments[:separator], own_arguments[separator + 1:]
+    arguments = parser.parse_args(own_arguments)
     out = os.path.abspath(arguments.output_folder)
     os.makedirs(out, exist_ok=True)
     repository = subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=here, capture_output=True, text=True,
