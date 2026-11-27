@@ -50,6 +50,16 @@ public static class IScopeFactoryUnitOfWorkRunner
          await TransactionScopeCe.ExecuteAsync(async () => await action(UnitOfWorkIn(scope, beginsATransaction)).caf()).caf();
       }
 
+      ///<summary>Runs <paramref name="action"/> as its own unit of work, whose transaction times out after<br/>
+      /// <paramref name="transactionTimeout"/> instead of <see cref="TransactionScopeCe.DefaultTimeout"/>: for Compze.Tessaging's inbox,<br/>
+      /// which handles a tessage in the transaction timeout its handler's registration chose.</summary>
+      internal async Task ExecuteUnitOfWorkAsync([InstantHandle]Func<IUnitOfWorkResolver, Task> action, TimeSpan transactionTimeout)
+      {
+         using var scope = @this.BeginScope();
+         var beginsATransaction = Transaction.Current == null;
+         await TransactionScopeCe.ExecuteAsync(async () => await action(UnitOfWorkIn(scope, beginsATransaction)).caf(), transactionTimeout).caf();
+      }
+
       ///<summary>Runs <paramref name="function"/> in a fresh <see cref="IScope"/> with no transaction of its own — the async<br/>
       /// form of <see cref="ExecuteInIsolatedScope{TResult}"/>: an ambient transaction, when the caller has one, flows across<br/>
       /// the function's awaits and is left as it is.</summary>
