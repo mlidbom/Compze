@@ -28,7 +28,7 @@ public class Given_an_exactly_once_tommand_whose_handler_fails_while_its_receive
 
       var disposal = DisposeHostWithoutWaitingForItsEndpointsToBeAtRestAsync();
       //The try fails only once the Receiver has begun stopping, so only after the host has begun disposing its endpoints.
-      await ReceiverStopsGate.AwaitPassedThroughCountEqualToAsync(1, HandlingTimeout);
+      await AwaitTheReceiverHasBegunStoppingAsync(HandlingTimeout);
       TriesGate.Open();
       _hostDisposalException = await disposal;
    }

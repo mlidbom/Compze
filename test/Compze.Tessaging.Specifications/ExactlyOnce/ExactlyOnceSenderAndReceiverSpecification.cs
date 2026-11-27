@@ -6,7 +6,6 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.TessageBus;
@@ -37,10 +36,6 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    ///<summary>Passed through once by each tommand handled.</summary>
    protected IThreadGate HandledGate { get; } = IThreadGate.NewOpen(GateTimeout, nameof(HandledGate));
 
-   ///<summary>Passed through once by each stop of the Receiver, as the stop begins: when the Receiver retracts its address,<br/>
-   /// before it stops sending, stops listening and drains its inbox.</summary>
-   protected IThreadGate ReceiverStopsGate { get; } = IThreadGate.NewOpen(GateTimeout, nameof(ReceiverStopsGate));
-
    ///<summary>How many tries of the first tommand's handling fail, from the first try on: <see cref="int.MaxValue"/> keeps failing.</summary>
    protected int TriesOfTheFirstTommandThatFail { get; set; }
 
@@ -59,6 +54,7 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    protected IReadOnlyList<HandlerTry> TriesOf(int tommandNumber) => [.. _tries.Where(it => it.TommandNumber == tommandNumber)];
 
    ExactlyOnceEndpoint Sender { get; set; } = null!;
+   ExactlyOnceEndpoint Receiver { get; set; } = null!;
 
    ///<summary>Builds a host of the Sender and the Receiver over the endpoints' databases, starts it, and awaits the endpoints<br/>
    /// meeting, so that a tommand the Sender sends binds to the Receiver at once.</summary>
@@ -66,9 +62,22 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    {
       _host = TestingEndpointHost.Create(_rootContainer);
       Sender = _host.RegisterEndpoint(new SenderDeclaration());
-      _host.RegisterEndpoint(new ReceiverDeclaration(this));
+      Receiver = _host.RegisterEndpoint(new ReceiverDeclaration(this));
       await _host.StartAsync();
       await _host.AwaitEndpointsHaveMetEachOtherAsync();
+   }
+
+   ///<summary>Completes once the Receiver has begun stopping: its <see cref="Endpoint.IsRunning"/> turns false as its stop<br/>
+   /// begins, before it stops sending, stops listening and drains its inbox. Throws a <see cref="TimeoutException"/> if the<br/>
+   /// Receiver is still running after <paramref name="timeout"/>.</summary>
+   protected async Task AwaitTheReceiverHasBegunStoppingAsync(WaitTimeout timeout)
+   {
+      var waitStartedAt = Stopwatch.GetTimestamp();
+      while(Receiver.IsRunning)
+      {
+         if(Stopwatch.GetElapsedTime(waitStartedAt) > timeout) throw new TimeoutException($"The Receiver was still running {timeout} after the wait for its stop began.");
+         await Task.Delay(TimeSpan.FromMilliseconds(1));
+      }
    }
 
    protected async Task SendAsync(int tommandNumber) =>
@@ -160,19 +169,5 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
          .ForTommand((NumberedExactlyOnceTommand tommand, IUnitOfWorkResolver _) => _specification.HandleAsync(tommand));
-
-      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.AnnounceAddressTo(new AnnouncerPassingTheStopsGateAtRetraction(_specification.ReceiverStopsGate));
-   }
-
-   ///<summary>An address announcer that announces nothing, and passes <see cref="ReceiverStopsGate"/> as the Receiver retracts<br/>
-   /// its address: the first act of the Receiver's stop.</summary>
-   class AnnouncerPassingTheStopsGateAtRetraction : IEndpointAddressAnnouncer
-   {
-      readonly IThreadGate _receiverStopsGate;
-      internal AnnouncerPassingTheStopsGateAtRetraction(IThreadGate receiverStopsGate) => _receiverStopsGate = receiverStopsGate;
-
-      public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address) {}
-
-      public void RetractEndpointAddress(EndpointId endpointId) => _receiverStopsGate.AwaitPassThrough();
    }
 }
