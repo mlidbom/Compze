@@ -7,8 +7,8 @@
 # named here, they look only at the changes after the later of its release tag and the commit named here.
 #
 # One line per package: <PackageId> <full commit id> <reason>, the commit being the one up to which the package's
-# changes are acknowledged. C-Prepare-Release or C-SimulateRelease -Acknowledge <PackageId> -Reason '<why>' writes the
-# line for HEAD, and C-Prepare-Release removes it when it prepares the package's release. Comments go here, above the
+# changes are acknowledged. C-Acknowledge-UnreleasedChanges <PackageId> -Reason '<why>' writes the line for HEAD, and
+# C-Prepare-Release removes it when it prepares the package's release. Comments go here, above the
 # lines. .github/scripts/lib/UnreleasedChanges.ps1 reads the file.
 
 Compze.Contracts aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.

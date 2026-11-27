@@ -26,10 +26,8 @@ function C-Prepare-Release {
     CHANGELOG.md and its _docs and dev_docs folders. The release would leave such a package at its released version, and a
     package released beside it that needs what changed would fail against it. The refusal names each package and its
     changed files. Either give the package a changelog entry, so that it is prepared, or, when its changes ship nothing a
-    consumer sees, acknowledge them with -Acknowledge and -Reason. The acknowledgement is recorded in
-    .github/scripts/AcknowledgedUnreleasedChanges.txt, which must be committed with the release, and lasts until the
-    package is next released: only the changes after the commit it names count. Preparing a package's release removes its
-    acknowledgement, which the release makes moot. With nothing to release, it reports that and refuses nothing.
+    consumer sees, acknowledge them with C-Acknowledge-UnreleasedChanges, then run this again. Preparing a package's release
+    removes its acknowledgement, which the release makes moot. With nothing to release, it reports that and refuses nothing.
 
     Returns what it prepared in this run: each package, and its version before and after. Review the changes with git diff, then run
     C-SimulateRelease, which checks them as the release will.
@@ -44,19 +42,8 @@ function C-Prepare-Release {
     Bump the patch version of these packages, and the minor version of the others it prepares: for a release that mixes
     the two. Each must be one it prepares in this run; it refuses otherwise, changing nothing.
 
-    .PARAMETER Acknowledge
-    Packages whose changes since their release, up to HEAD, ship nothing a consumer sees, such as comments only, or build
-    settings that produce the same result: records them in .github/scripts/AcknowledgedUnreleasedChanges.txt, with -Reason,
-    before preparing.
-
-    .PARAMETER Reason
-    Why the changes of the -Acknowledge packages ship nothing a consumer sees: one line.
-
     .EXAMPLE
     C-Prepare-Release
-
-    .EXAMPLE
-    C-Prepare-Release -Acknowledge Compze.Sql.Sqlite -Reason 'An InternalsVisibleTo for a test project.'
 
     .EXAMPLE
     C-Prepare-Release -PackageId Compze.Tessaging -Patch
@@ -69,9 +56,7 @@ function C-Prepare-Release {
     param(
         [string[]]$PackageId,
         [switch]$Patch,
-        [string[]]$PatchPackageId = @(),
-        [string[]]$Acknowledge,
-        [string]$Reason
+        [string[]]$PatchPackageId = @()
     )
 
     $ErrorActionPreference = 'Stop'
@@ -212,8 +197,6 @@ function C-Prepare-Release {
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/DependencyFloors.ps1")
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/PackageManifests.ps1")
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
-
-    if ($Acknowledge -or $Reason) { AcknowledgeUnreleasedChanges $Acknowledge $Reason }
 
     $fetchResult = git -C $script:CompzeRoot fetch --all --tags --quiet 2>&1
     if ($LASTEXITCODE -ne 0) {

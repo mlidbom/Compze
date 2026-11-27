@@ -2,7 +2,8 @@
 # doesn't release the package leaves them behind: consumers keep the released version, and a package released beside it
 # that needs what changed fails against it. So C-Prepare-Release, C-SimulateRelease and the Create Releases workflow
 # (Publish-NuGetWithReleases.ps1) refuse while a package has unreleased changes, unless the changes are acknowledged:
-# recorded in AcknowledgedUnreleasedChanges.txt as shipping nothing a consumer sees, such as comments only.
+# recorded in AcknowledgedUnreleasedChanges.txt as shipping nothing a consumer sees, such as comments only, which
+# C-Acknowledge-UnreleasedChanges does.
 #
 # A package's shipped files are those of its project folder, src/<PackageId>, but for its CHANGELOG.md and its _docs and
 # dev_docs folders, which its package doesn't ship.
@@ -43,7 +44,7 @@ function GetUnreleasedChangesStart([string]$ReleaseTag, $Acknowledgement) {
     if (-not $Acknowledgement) { return $ReleaseTag }
     git -C $RepositoryRoot merge-base --is-ancestor $Acknowledgement.Commit HEAD 2>$null
     if ($LASTEXITCODE -ne 0) {
-        throw "$AcknowledgedUnreleasedChangesFile acknowledges the changes to $($Acknowledgement.PackageId) up to the commit $($Acknowledgement.Commit), which isn't in HEAD's history. Acknowledge them again: C-SimulateRelease -Acknowledge $($Acknowledgement.PackageId) -Reason '<why>'."
+        throw "$AcknowledgedUnreleasedChangesFile acknowledges the changes to $($Acknowledgement.PackageId) up to the commit $($Acknowledgement.Commit), which isn't in HEAD's history. Acknowledge them again: C-Acknowledge-UnreleasedChanges $($Acknowledgement.PackageId) -Reason '<why>'."
     }
     git -C $RepositoryRoot merge-base --is-ancestor $ReleaseTag $Acknowledgement.Commit
     if ($LASTEXITCODE -eq 0) { return $Acknowledgement.Commit }
@@ -85,7 +86,7 @@ function FormatUnreleasedChangesRefusal($UnreleasedChanges) {
     }
     $lines += "For each package, either:"
     $lines += "  - release it: add an entry describing the change to its changelog, src/<PackageId>/CHANGELOG.md, and run C-Prepare-Release, which bumps its version;"
-    $lines += "  - or, when the change ships nothing a consumer sees, such as comments only, acknowledge it: C-Prepare-Release or C-SimulateRelease -Acknowledge <PackageId> -Reason '<why>'."
+    $lines += "  - or, when the change ships nothing a consumer sees, such as comments only, acknowledge it: C-Acknowledge-UnreleasedChanges <PackageId> -Reason '<why>'."
     $lines += "    That records it in $AcknowledgedUnreleasedChangesFile, to commit with the release."
     return $lines -join "`n"
 }
@@ -108,11 +109,11 @@ function ReadUnreleasedChangeAcknowledgements {
 function AcknowledgeUnreleasedChanges([string[]]$PackageId, [string]$Reason) {
     # Records that the changes to these packages' shipped files, up to HEAD, ship nothing a consumer sees, for $Reason.
     if (-not $PackageId -or -not $Reason -or $Reason -match '[\r\n]') {
-        throw "-Acknowledge <PackageId> and -Reason '<why>' go together, the reason being one line that says why the changes ship nothing a consumer sees."
+        throw "Acknowledging unreleased changes takes the packages and a reason, one line that says why their changes ship nothing a consumer sees."
     }
     $publishablePackageIds = @(GetPublishablePackagesUnderSrc | ForEach-Object { $_.PackageId })
     foreach ($id in $PackageId) {
-        if ($publishablePackageIds -notcontains $id) { throw "-Acknowledge: $id isn't a package under src that is published to nuget.org." }
+        if ($publishablePackageIds -notcontains $id) { throw "Can't acknowledge unreleased changes to $($id): it isn't a package under src that is published to nuget.org." }
     }
     $head = git -C $RepositoryRoot rev-parse HEAD
     $acknowledgements = ReadUnreleasedChangeAcknowledgements
