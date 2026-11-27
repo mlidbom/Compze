@@ -279,6 +279,10 @@ function C-Get-CompzeUpgradeReport {
                     "  A direct reference to $newerVersion raises it in those projects; central package management with transitive pinning would in all of them."
                 }
                 foreach ($holder in @($holdersBuiltAgainstAnOlderVersion | Where-Object { $_.Name -like 'Compze.*' } | Sort-Object Name, Version -Unique)) {
+                    # bug: calls a pair unchecked that a release did check, when the holder was its package's newest
+                    #   version as the newer version was released, and isn't any more: that release checked the version
+                    #   of the holder it had. WriteLeftBehind reads that at the release's build commit (FindBuildCommit,
+                    #   ReadProjectAtRevision); this should too, from the newer version's manifest.
                     $whyUnchecked = @(foreach ($pairedVersion in @(@{ PackageId = $holder.Name; Version = $holder.Version }, @{ PackageId = $usedPackage.PackageId; Version = $newerVersion })) {
                         if (-not (TestIsCheckedByEveryRelease $pairedVersion.PackageId $pairedVersion.Version)) { DescribeWhyEveryReleaseDoesNotCheck $pairedVersion.PackageId $pairedVersion.Version }
                     })
