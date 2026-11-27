@@ -1,14 +1,22 @@
-using Compze.DependencyInjection;
+using Compze.DbPool._private;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.xUnitBDD;
 using Xunit;
 
-namespace Compze.DbPool.Tests.Reservations;
+namespace Compze.DbPool.InternalSpecifications.DbPoolMachineWideState_;
 
+///<remarks>Internal, because only a machine-wide state of its own makes it deterministic. Through the public API, its pools would share their<br/>
+/// reservations with every other pool on the machine on the same SQL layer, and the next reservation could be given a database another test<br/>
+/// had just released.</remarks>
 public class After_a_process_holding_a_reservation_is_killed : UniversalTestBase
 {
+   ///<summary>The name of the machine-wide state this specification and the other process reserve in, which nothing else reserves in: the database<br/>
+   /// the other process held is then the one reserved last, which the next reservation is given first once it is released.</summary>
+   internal const string StateName = "Compze.DbPool.InternalSpecifications.After_a_process_holding_a_reservation_is_killed";
+
+   internal static readonly TimeSpan ReservationLength = TimeSpan.FromSeconds(65);
    static readonly TimeSpan PatienceWithTheOtherProcess = TimeSpan.FromSeconds(60);
 
    string _databaseTheKilledProcessHeld = null!;
@@ -18,15 +26,13 @@ public class After_a_process_holding_a_reservation_is_killed : UniversalTestBase
    {
       _databaseTheKilledProcessHeld = await TheDatabaseAnotherProcessHeldWhenItWasKilledAsync();
 
-      await using var container = DatabaselessSqlLayer.ContainerWithAPoolOn<SqlLayer>();
-      _databaseTheNextReservationGot = container.Resolve<DbPool>().ConnectionStringFor("the next reservation");
+      var poolId = Guid.NewGuid();
+      var state = new DbPoolMachineWideState(StateName);
+      _databaseTheNextReservationGot = state.ReserveDatabase("the next reservation", poolId, ReservationLength).Name;
+      state.ReleaseReservationsFor(poolId);
    }
 
    [XF] public void the_next_reservation_is_given_the_database_it_held() => _databaseTheNextReservationGot.Must().Be(_databaseTheKilledProcessHeld);
-
-   ///<summary>The SQL layer of this specification's pools and of the other process's, so that no other pool's reservations come between theirs:<br/>
-   /// the database the other process held is then the one reserved last, which a reservation is given first once it is released.</summary>
-   internal sealed class SqlLayer : DatabaselessSqlLayer;
 
    static async Task<string> TheDatabaseAnotherProcessHeldWhenItWasKilledAsync()
    {

@@ -7,5 +7,6 @@
   <Folder Name="/Tests/">
     <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
     <Project Path="test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
+    <Project Path="test/Compze.DbPool.InternalSpecifications/Compze.DbPool.InternalSpecifications.csproj" />
   </Folder>
 </Solution>

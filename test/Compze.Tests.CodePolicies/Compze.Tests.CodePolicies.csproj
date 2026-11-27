@@ -6,6 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Compze.Abstractions.Specifications\Compze.Abstractions.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Contracts.Specifications\Compze.Contracts.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.DbPool.InternalSpecifications\Compze.DbPool.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.DbPool.Tests\Compze.DbPool.Tests.csproj" />
     <ProjectReference Include="..\Compze.DependencyInjection.MsDiCompliance\Compze.DependencyInjection.MsDiCompliance.csproj" />
     <ProjectReference Include="..\Compze.DependencyInjection.Specifications\Compze.DependencyInjection.Specifications.csproj" />
