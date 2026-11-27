@@ -23,6 +23,9 @@ function C-Run-TestRun {
     Runs at most this many test collections at once within each test assembly (xUnit's MaxParallelThreads, as a RunSettings
     argument). Ignored with SingleThreaded.
 
+    .PARAMETER KeepResultsIn
+    Moves the run's TRX files into a folder of their own under this folder once counted, where by default they are deleted.
+
     .PARAMETER Filter
     Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores"
 
@@ -66,6 +69,8 @@ function C-Run-TestRun {
         [int]$MaxParallelAssemblies,
 
         [int]$MaxParallelThreads,
+
+        [string]$KeepResultsIn,
 
         [string]$Filter,
 
@@ -124,6 +129,10 @@ function C-Run-TestRun {
                     default { $failed++ }
                 }
             }
+        }
+        if ($KeepResultsIn) {
+            New-Item -ItemType Directory -Force -Path $KeepResultsIn | Out-Null
+            Copy-Item -LiteralPath $resultsDirectory -Destination $KeepResultsIn -Recurse
         }
         Remove-Item -LiteralPath $resultsDirectory -Recurse -Force
     }

@@ -38,6 +38,9 @@ Then reload: `. $PROFILE`
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
+  - `-MaxParallelAssemblies <n>` - Run at most this many test assemblies at once, where by default it runs one for each logical processor
+  - `-MaxParallelThreads <n>` - Run at most this many test classes at once within each test assembly. By default 8 when the run includes a MySql combination, since MySQL's DDL throughput stops rising at about 8 at once, and xUnit's own, one for each logical processor, otherwise; 0 leaves it to xUnit
+  - `-KeepResultsIn <folder>` - Keep each run's TRX files, with each failure's message and stack trace, under this folder
   - `-Iterations <n>` - Run suite multiple times and show summary
   - `-Combinations <combination>, ...` - Run on these combinations of pluggable components instead of those in `src/TestUsingPluggableComponentCombinations`, such as `'PgSql:Microsoft:Newtonsoft:AspNetCore'`. Writes them into each test project's copy of the file after the build, and restores every copy to exactly what it was once the run is over, also when it fails or is interrupted; the file itself is never changed. Works with `-NoBuild`. Also puts them on the `dotnet test` command line, as the MSBuild property `CompzeCombinations`, which nothing reads, so that a list of processes shows them
   - `-Filter <filter>` - Run only the tests that match, passed to `dotnet test --filter`, such as `"FullyQualifiedName~CQRS.TaggregateStores"`. A filter that matches no test fails the run

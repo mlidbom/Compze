@@ -28,10 +28,12 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
   database uses a second, 8.0.44 4.0, 8.4.6 3.9, and the installed 9.7.0 4.2 to 4.5, the reset's median between 1.5
   and 1.7 s on each. Alone, each resets a database in 0.13 to 0.22 s. 5.7 syncs less, 177 times for the 15 tables'
   creation against 8.0 and later's 296 to 378, but runs less DDL at once.
-- **What would cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run starts every test assembly
-  at once, each running a test class per logical processor, and other sessions' runs add theirs. The server's DDL
-  throughput stops rising at about 8 at once; past that, each statement only waits longer. [Emptying the tables
-  instead of dropping them](#emptying-the-tables-instead-of-dropping-them) and [Windows' write-cache buffer
+- **What cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run started every test assembly at
+  once, each running a test class per logical processor, and other sessions' runs added theirs. The server's DDL
+  throughput stops rising at about 8 at once; past that, each statement only waits longer. Since 2026-11-27, C-Test
+  runs at most 8 test classes at once per assembly in a run that includes MySql (Magnus's choice): the reset averages
+  about 1 s, and the suite passes on threadripper, where 3 to 7 MySql tests failed in every run before. [Emptying the
+  tables instead of dropping them](#emptying-the-tables-instead-of-dropping-them) and [Windows' write-cache buffer
   flushing](#windows-write-cache-buffer-flushing) were declined.
 
 ## What was measured
@@ -192,6 +194,67 @@ to about 290 by 8, and no further.
 
 Fewer assemblies at once only lengthens the run: the assemblies that use the database most still run their classes 32 at
 once. A run with `-MaxParallelThreads 8` overlapped another session's test run and is left out.
+
+**The full suite on every engine, against threadripper's servers and this machine's** (`suite_by_engine.py`), 2026-11-27,
+14:03 to 14:54. No other session's suite ran meanwhile: from 14:28, `machine-stalls test-runs` lists only the tooling's
+own specifications, which use no database server, and before that no test host of another checkout was running when
+the runs began. Other sessions' builds shared this machine's processors. The MySql runs:
+
+| Servers | C-Test | Run | Failed | Reset average | Connections, max | Statements running, median / max |
+|---|---|---|---|---|---|---|
+| threadripper | as it is | 232 s, 222 s | 3, 3 | 5.3 s, 5.3 s | 262, 270 | 37 / 60, 35 / 57 |
+| threadripper | `-MaxParallelThreads 8` | 206 s | 0 | 1.36 s | 182 | 10 / 32 |
+| threadripper | `-MaxParallelThreads 4` | 234 s | 0 | 0.73 s | 131 | 6 / 20 |
+| this machine | as it is | 162 s, 132 s | 0, 0 | 3.65 s, 3.71 s | 247, 248 | 30 / 57, 40 / 58 |
+| this machine | `-MaxParallelThreads 8` | 128 s | 0 | 1.12 s | 176 | 10 / 32 |
+| this machine | `-MaxParallelThreads 4` | 152 s | 0 | 0.77 s | 121 | 6 / 24 |
+
+- **The same 3 tests failed in both of threadripper's runs as it is:** in Compze.Tests.Integration,
+  `Given_a_memory_image_state_store_kept_in_the_domain_database…the_next_memory_image_has_every_sentence`,
+  `Tommand_receiver_binding_tests.A_tommand_bound_to_its_known_receiver_waits_for_that_endpoint…` and
+  `Given_an_exactly_once_tommand_send_racing_discovery.A_send_while_several_remembered_peers…`. Their messages:
+  `DatabaseHeldPastItsReservationException` 2, "Unknown database" 2, `ServerErrorException` 1. The tests ran past their
+  reservations, and the DbPool reset their databases under them.
+- **The run is Compze.Tests.Integration's:** 3 m 43 s of threadripper's 232 s as it is, and 3 m 46 s with 4 classes at
+  once. With 4, it has too few classes running to keep the server busy; with 32, they queue for it.
+- **Left out:** a second run of this machine's `-MaxParallelThreads 4`, 380 s, during which this machine's disk took
+  1.6 ms a transfer at the median, against 0.5 to 0.7 ms in every other run, with the processors 11% busy. Its repeat
+  is in the table.
+- **The other engines, with 4 classes at once,** against threadripper's servers: MsSql 72 s became 87 s, as
+  Compze.Tests.Integration went from 35 s to 79 s; PgSql 73 s and 71 s, Sqlite 71 s and 72 s, SqliteMemory 71 s and 71
+  s. Against this machine's: MsSql 72 s and 74 s, PgSql 72 s and 72 s. All passed. Their floor, about 70 s, is
+  Compze.DbPool.Tests' 66 s and Compze.Threading.Specifications' 58 s.
+
+**All five layers in one run, against threadripper's servers** (`suite_by_engine.py --together`), 15:34 to 15:43, no
+other run meanwhile:
+
+| C-Test | Run | Failed | MySQL reset average | MySQL connections, max | MySQL statements running, median / max |
+|---|---|---|---|---|---|
+| as it is | 270 s | 7, all MySql | 5.3 s | 290 | 28 / 52 |
+| `-MaxParallelThreads 8` | 309 s | 0 | 1.35 s | 194 | 8 / 22 |
+
+- **The failures' messages:** `DatabaseHeldPastItsReservationException` 6, "Unknown database" 6, `TimeoutException` 3,
+  `AggregateException` 2, among them `Exactly_once_guarantee_tests.ExactlyOnceTommand_handler_executes_exactly_once`.
+- **The run is Compze.Tests.Integration's,** which holds every layer's tests: 4 m 17 s as it is, 4 m 54 s capped. Every
+  other assembly got faster with the cap: Compze.Tessaging.Specifications 2 m 58 s and 1 m 13 s, AccountManagement.Tests
+  2 m 50 s and 1 m 07 s, AccountManagement.Tests.PerformanceInternals 2 m 05 s and 53 s.
+- **xUnit's limit is per assembly,** and each layer's tests are cases of the same classes, so a run that includes MySql
+  runs every layer at the cap.
+- **The processors were not the limit:** this machine's ran at a median of 11% over the first two minutes, with
+  Compze.Tests.Performance.Internals at 1.6 cores at most; threadripper's peaked at 42% in the first 30 s, SQL Server's
+  7.8 cores, and then ran at 11 to 18%.
+
+**C-Test's default since, checked against threadripper's servers,** 15:48 to 16:01, no other run meanwhile, every run
+passing:
+
+| Run | Time | MySQL reset average | MySQL connections, max | MySQL statements running, median / max |
+|---|---|---|---|---|
+| MsSql, PgSql, Sqlite, SqliteMemory, each alone, uncapped | 72, 72, 71, 71 s | | | |
+| MySql alone, capped at 8 | 216 s | 1.38 s | 178 | 10 / 30 |
+| All five layers in one run, capped at 8 | 273 s | 1.01 s | 182 | 7 / 23 |
+
+The run of all five layers took 309 s in the earlier capped run and 270 s uncapped, so a mixed run's cost is within what
+one run varies by.
 
 ## Emptying the tables instead of dropping them
 
