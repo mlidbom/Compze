@@ -35,6 +35,8 @@ def main():
     parser.add_argument("machine")
     parser.add_argument("output_folder")
     parser.add_argument("--engines", default=",".join(all_engines))
+    parser.add_argument("--together", action="store_true",
+                        help="one run with every engine's combination in it, as the configuration file's matrix runs them")
     own_arguments, c_test_arguments = sys.argv[1:], []
     if "--" in own_arguments:
         separator = own_arguments.index("--")
@@ -47,8 +49,9 @@ def main():
     environment = environment_using_the_servers_of(arguments.machine)
     mysql_server = "127.0.0.1" if arguments.machine == "this-machine" else arguments.machine
 
-    runs = [run_engine(engine, repository, out, environment, c_test_arguments, mysql_server)
-            for engine in arguments.engines.split(",")]
+    engines = arguments.engines.split(",")
+    runs = [run_engines(it, repository, out, environment, c_test_arguments, mysql_server)
+            for it in ([engines] if arguments.together else [[engine] for engine in engines])]
 
     with open(os.path.join(out, "runs.json"), "w", encoding="utf-8") as file:
         json.dump(runs, file, indent=2)
@@ -68,14 +71,16 @@ def environment_using_the_servers_of(machine):
     return environment
 
 
-def run_engine(engine, repository, out, environment, c_test_arguments, mysql_server):
+def run_engines(engines, repository, out, environment, c_test_arguments, mysql_server):
+    engine = engines[0] if len(engines) == 1 else "+".join(engines)
+    combinations = ", ".join(f"'{it}:Microsoft:Newtonsoft:AspNetCore'" for it in engines)
     log = os.path.join(out, f"{engine}.log")
     c_test_script = os.path.join(out, f"c-test-{engine}.ps1")
     measure_script = os.path.join(out, f"measure-{engine}.ps1")
     module = f"{repository}/DevScripts/Compze.psm1"
     with open(c_test_script, "w", encoding="utf-8") as file:
         file.write(f"Import-Module '{module}' -DisableNameChecking\n"
-                   f"C-Test -NoBuild -Combinations '{engine}:Microsoft:Newtonsoft:AspNetCore'"
+                   f"C-Test -NoBuild -Combinations {combinations}"
                    f" -KeepResultsIn '{os.path.join(out, engine + '-results')}' {' '.join(c_test_arguments)}\n")
     with open(measure_script, "w", encoding="utf-8") as file:
         file.write(f"Import-Module '{module}' -DisableNameChecking\n"
@@ -84,7 +89,7 @@ def run_engine(engine, repository, out, environment, c_test_arguments, mysql_ser
 
     observer_folder = os.path.join(out, "mysql-observer")
     observer = None
-    if engine == "MySql":
+    if "MySql" in engines:
         os.makedirs(observer_folder, exist_ok=True)
         observer = subprocess.Popen([sys.executable, os.path.join(here, "observe_mysql.py"), mysql_server, observer_folder],
                                     stdout=open(os.path.join(observer_folder, "observer.out"), "w"),
@@ -98,7 +103,7 @@ def run_engine(engine, repository, out, environment, c_test_arguments, mysql_ser
     measurement = next((json.loads(line) for line in reversed(measured.stdout.splitlines()) if line.startswith("{")), None)
     run = {"engine": engine, "log": log, "measurement": measurement, "measure_errors": measured.stderr.strip()}
     run.update(outcome_of(log))
-    if engine == "MySql":
+    if "MySql" in engines:
         run["mysql"] = mysql_lines(os.path.join(observer_folder, "summary.txt"))
     print(f"{time.strftime('%H:%M:%S')} {engine}: {run['outcome']}", flush=True)
     return run
