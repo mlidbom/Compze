@@ -193,6 +193,36 @@ to about 290 by 8, and no further.
 Fewer assemblies at once only lengthens the run: the assemblies that use the database most still run their classes 32 at
 once. A run with `-MaxParallelThreads 8` overlapped another session's test run and is left out.
 
+**The full suite on every engine, against threadripper's servers and this machine's** (`suite_by_engine.py`), 2026-11-27,
+14:03 to 14:54. No other session's suite ran meanwhile: from 14:28, `machine-stalls test-runs` lists only the tooling's
+own specifications, which use no database server, and before that no test host of another checkout was running when
+the runs began. Other sessions' builds shared this machine's processors. The MySql runs:
+
+| Servers | C-Test | Run | Failed | Reset average | Connections, max | Statements running, median / max |
+|---|---|---|---|---|---|---|
+| threadripper | as it is | 232 s, 222 s | 3, 3 | 5.3 s, 5.3 s | 262, 270 | 37 / 60, 35 / 57 |
+| threadripper | `-MaxParallelThreads 8` | 206 s | 0 | 1.36 s | 182 | 10 / 32 |
+| threadripper | `-MaxParallelThreads 4` | 234 s | 0 | 0.73 s | 131 | 6 / 20 |
+| this machine | as it is | 162 s, 132 s | 0, 0 | 3.65 s, 3.71 s | 247, 248 | 30 / 57, 40 / 58 |
+| this machine | `-MaxParallelThreads 8` | 128 s | 0 | 1.12 s | 176 | 10 / 32 |
+| this machine | `-MaxParallelThreads 4` | 152 s | 0 | 0.77 s | 121 | 6 / 24 |
+
+- **The same 3 tests failed in both of threadripper's runs as it is:** in Compze.Tests.Integration,
+  `Given_a_memory_image_state_store_kept_in_the_domain_database…the_next_memory_image_has_every_sentence`,
+  `Tommand_receiver_binding_tests.A_tommand_bound_to_its_known_receiver_waits_for_that_endpoint…` and
+  `Given_an_exactly_once_tommand_send_racing_discovery.A_send_while_several_remembered_peers…`. Their messages:
+  `DatabaseHeldPastItsReservationException` 2, "Unknown database" 2, `ServerErrorException` 1. The tests ran past their
+  reservations, and the DbPool reset their databases under them.
+- **The run is Compze.Tests.Integration's:** 3 m 43 s of threadripper's 232 s as it is, and 3 m 46 s with 4 classes at
+  once. With 4, it has too few classes running to keep the server busy; with 32, they queue for it.
+- **Left out:** a second run of this machine's `-MaxParallelThreads 4`, 380 s, during which this machine's disk took
+  1.6 ms a transfer at the median, against 0.5 to 0.7 ms in every other run, with the processors 11% busy. Its repeat
+  is in the table.
+- **The other engines, with 4 classes at once,** against threadripper's servers: MsSql 72 s became 87 s, as
+  Compze.Tests.Integration went from 35 s to 79 s; PgSql 73 s and 71 s, Sqlite 71 s and 72 s, SqliteMemory 71 s and 71
+  s. Against this machine's: MsSql 72 s and 74 s, PgSql 72 s and 72 s. All passed. Their floor, about 70 s, is
+  Compze.DbPool.Tests' 66 s and Compze.Threading.Specifications' 58 s.
+
 ## Emptying the tables instead of dropping them
 
 `MySqlDbPoolSqlLayer.ResetDatabase` drops the database and creates it again. Its comment from 2020 says dropping the
