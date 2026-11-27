@@ -32,8 +32,9 @@ stops the release unless a CI run that covers the commit ran its test jobs and e
 A release goes in this order:
 
 1. **Prepare it.** First find what changed without entries: `C-Get-PackagesChangedSinceTheirRelease` lists each package
-   whose shipped files changed since its release tag, with whether its version is bumped and its changelog changed. A
-   package that changed needs its entries before the preparation, which takes only what changelogs gained.
+   whose shipped files changed since its release tag, with whether its version is bumped and its changelog changed, and
+   the packages its release releases as well (below). A package that changed needs its entries before the preparation,
+   which takes only what changelogs gained.
    - **A change that ships nothing a consumer sees** needs no release: comments only, or build settings that produce the
      same result. Check it against `git diff <release tag> HEAD -- src/<PackageId>`, then acknowledge it:
      `C-Acknowledge-UnreleasedChanges <PackageId>, ... -Reason '<why>'`. That records it in
@@ -48,7 +49,12 @@ A release goes in this order:
      release that mixes the two, `-PatchPackageId` names those that get a patch bump;
    - it splits each changelog's top section into the new version's section and the released one, restored from its tag;
    - it adds the line stating the Compze dependencies whose minimum version the release raises across a minor version,
-     which a consumer's upgrade brings along (`.github/scripts/lib/DependencyFloors.ps1` says why).
+     which a consumer's upgrade brings along (`.github/scripts/lib/DependencyFloors.ps1` says why);
+   - it also prepares each package at a released version that uses the internals of a package the release releases,
+     and so on for the packages that use its internals, whatever `-PackageId` names. Such a package requires the exact
+     version of each package whose internals it uses, so the release can't leave it behind
+     (`.github/scripts/lib/ExactVersionDependencies.ps1` says why). One that gained no entries gets a patch bump;
+   - it adds the line naming the exact-version dependencies a version changed, to each section that needs one.
 
    Then run `C-SimulateRelease`, which checks it all as the release will. Each section also becomes its package's
    release notes on nuget.org.
@@ -79,6 +85,13 @@ head would no longer be what consumers get.
 
 Decided 2026-11-24, on Magnus's leave to judge it ("Go with your best judgement"), after a patch of Compze.Sql.Sqlite and
 Compze.Sql.MySql had to wait for about fifteen packages that the unreleased move of `LazyCE` to Compze.Threading pulled in.
+
+**A change to a package whose internals other packages use is such a change.** Releasing it releases them too, since each
+requires its exact version: 28 more for Compze.Sql.Common, 31 for Compze.Internals.SystemCE (2026-11-27).
+`C-Get-PackagesChangedSinceTheirRelease` names them for each changed package, and `C-Prepare-Release` prepares them
+itself, so this costs releases, not hand work. Create Releases refuses to leave such a package behind, as it refuses to
+leave a changed one. A change acknowledged as shipping nothing a consumer sees keeps its package unreleased, and so
+releases none of them.
 
 ## Who carries it out: you, on one go-ahead per release
 
