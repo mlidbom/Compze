@@ -4,9 +4,12 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.14.0-alpha
+## 0.14.1-alpha
 
 - **`IAwaitableShared`'s synchronous members mark their delegates `[InstantHandle]`,** as `IShared.Locked` does: they run only during the call, so ReSharper no longer warns that one captures what the caller disposes after the call. Nothing else changes.
+
+## 0.14.0-alpha
+
 - **A condition wait's `WaitTimeout` is timed by `Stopwatch`, not by the system clock,** in `IAwaitableMonitor`'s synchronous and async waits alike: setting the clock, or its adjusting itself, no longer shortens or lengthens a wait.
 - **`WaitTimeout.Zero`:** a wait timeout of no time at all, for a wait that answers at once instead of waiting, as `LockTimeout.Zero` is for taking a lock. Compze.Threading.Interprocess's `IProcessLock.TryTake(purpose, WaitTimeout.Zero)` uses it.
 

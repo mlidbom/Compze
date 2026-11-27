@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive.MemoryImageStateStore will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.2-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.Tessaging.Abstractions 0.9.0-alpha (was 0.8.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha or newer), Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal or newer), Compze.Teventive 0.9.1-alpha (was 0.9.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.4.1-alpha
 
 - **A disposed store refuses every use, and releases its storage's lock only once no write of it can still land in the storage,** for files and tables alike. A store disposed while a unit of work still ran released the lock at once, and the unit of work's write landed after the next memory image had taken the storage, over what that one wrote: two memory images wrote the same storage, which the lock exists to prevent.

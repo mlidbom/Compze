@@ -4,6 +4,10 @@ All notable changes to Compze.DocumentDb.MySql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.DocumentDb 0.3.0-alpha (was 0.3.0-alpha or newer), Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.MySql 0.9.1-alpha (was 0.9.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.4.0-alpha
 
 - **Storing a document type new to the database no longer waits for a connection only other units of work can give back:** the type-id interner takes its connections from a pool of its own on the database, at most two, in Compze.TypeIdentifiers.Interning.MySql, which this version requires. It took them from the pool units of work hold their transactions' connections from, so with every connection held by units of work, the interning waited until the pool timed out.

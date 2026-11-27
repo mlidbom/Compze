@@ -4,6 +4,10 @@ All notable changes to Compze.Teventive.MemoryImageStateStore.MemoryPack will be
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.1.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Teventive.MemoryImageStateStore 0.4.2-alpha (was 0.1.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.1.0-alpha
 
 - **A MemoryPack cache for a memory image state store kept in JSON files,** declared with `files.StartingFromAMemoryPackCache().FolderOf<TTaggregate>(folder)`, so the store starts without reading every file.

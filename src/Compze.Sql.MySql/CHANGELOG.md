@@ -4,6 +4,10 @@ All notable changes to Compze.Sql.MySql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (was 0.9.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.9.0-alpha
 
 - **For Compze's SQL packages: a pool of its own on a database, which the server shows under an application name of its own,** for operations that commit on their own and may run inside a unit of work, such as Compze.TypeIdentifiers.Interning.MySql's. Nothing public changes.

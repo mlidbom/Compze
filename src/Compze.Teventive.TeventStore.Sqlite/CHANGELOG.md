@@ -4,6 +4,10 @@ All notable changes to Compze.Teventive.TeventStore.Sqlite will be documented in
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.Sqlite 0.8.1-alpha (was 0.8.0-alpha or newer), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.8.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 - **Reads a taggregate's history for update asynchronously,** for Compze.Teventive.TeventStore's part of `ITaggregateStoreUpdater.GetForUpdateAsync`: the database's write gate is waited for holding no thread. Requires the Compze.Teventive.TeventStore.Abstractions released with it, and the Compze.Sql.Sqlite.

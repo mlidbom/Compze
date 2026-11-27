@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.2.1-alpha</Version>
     <Description>The SQLite tables of Compze's memory image state store: SqliteMemoryImageStateStoreSqlLayer(), for a memory image state store kept in the tables of a SQLite domain database, which one memory image at a time uses.</Description>
     <PackageTags>compze;teventive;taggregates;memory-image;sqlite</PackageTags>
   </PropertyGroup>

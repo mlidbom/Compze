@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive.TeventStore will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.1-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha), Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal), Compze.Tessaging 0.15.0-alpha (was 0.14.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Teventive 0.9.1-alpha (was 0.9.0-alpha or newer), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.8.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.9.0-alpha
 
 - **`TeventStore.PersistMigrations` persists each taggregate's migrations in a transaction at `ReadCommitted`, as a unit of work runs,** rather than at `TransactionScope`'s default, `Serializable`, which it had used by omission since units of work moved to `ReadCommitted`. Compze.Teventive.TeventStore.PostgreSql now reads a taggregate's history for update in the transaction, and refuses a higher isolation level, at which the read would miss tevents committed while it waited for the taggregate's lock.

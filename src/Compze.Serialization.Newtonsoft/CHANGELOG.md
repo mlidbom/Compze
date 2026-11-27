@@ -4,6 +4,11 @@ All notable changes to Compze.Serialization.Newtonsoft will be documented in thi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.2-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.Teventive 0.9.1-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Abstractions 0.5.0-alpha (not required directly before), Compze.Tessaging 0.15.0-alpha (was 0.11.0-alpha or newer), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.6.1-alpha
 
 - **Built against `LazyCE` in Compze.Threading, where it moved from Compze.Internals.SystemCE:** the released version looks for it in Compze.Internals.SystemCE, and would fail beside the new one with a `TypeLoadException`. Nothing else changed.

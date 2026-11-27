@@ -4,6 +4,10 @@ All notable changes to Compze.Teventive.TeventStore.MySql will be documented in 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.MySql 0.9.1-alpha (was 0.9.0-alpha or newer), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.8.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.6.0-alpha
 
 - **Storing a tevent type new to the database no longer deadlocks a full pool:** the type-id interner takes its connections from a pool of its own on the database, at most two, in Compze.TypeIdentifiers.Interning.MySql, which this version requires. It took them from the pool units of work hold their transactions' connections from, so with as many units of work waiting for one taggregate's lock as the pool has connections, the lock's holder got none to intern the type with, and every one of them waited until the pool timed out.

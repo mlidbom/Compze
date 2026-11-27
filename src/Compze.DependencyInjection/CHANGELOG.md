@@ -4,10 +4,14 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.10.0-alpha
+## 0.11.0-alpha
 
 - **Internal support for Compze.Tessaging's inbox; nothing public changes:** a unit of work whose transaction times out after a timeout its caller gives, where every unit of work's times out after 45 seconds, for the handlers whose registrations choose their transaction timeout.
 - **Documentation: on Linux, the synchronous `ExecuteUnitOfWork` over a server database waits for a free thread-pool thread for each answer,** so synchronous units of work on pool threads that block, waiting for one another, can stall one another's database calls for seconds, on Linux only. Its remarks now say so, and to run such work with `ExecuteUnitOfWorkAsync` there.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.14.0-internal (was 0.9.0-internal), Compze.Threading 0.14.1-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.10.0-alpha
+
 - **Internal support for Compze.Teventive's units of work; nothing public changes:** a unit of work that `ExecuteUnitOfWork` begins a transaction for can be found from that transaction until it completes, so that a taggregate store reached through a reference a caller holds works in the unit of work's scope. Compze.Teventive's new version requires this one.
 - **Internal support for Compze.Teventive.MemoryImageStateStore; nothing public changes:** a component can declare the services it resolves from the container's root while it runs, and `Build()` refuses one that is scoped, or takes a scoped service directly or through the tracked transients it takes, with an `InvalidLifeStyleCombinationException` naming the component, the service and the scoped service, the same with every container. The memory image state store declares the taggregate classes it builds through the container. Compze.Teventive.MemoryImageStateStore requires this version.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.9.0-internal (was 0.8.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

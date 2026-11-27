@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.1-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.14.0-internal (was 0.12.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha or newer), Compze.Tessaging.Abstractions 0.9.0-alpha (was 0.7.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.9.0-alpha
 
 - **`ITaggregateStoreUpdater.GetForUpdateAsync` and `TryGetForUpdateAsync`,** for a unit of work that awaits while it holds taggregates, such as an asynchronous handler's: they wait while another unit of work holds the taggregate holding no thread. Through `GetForUpdate`, each unit of work waiting held a thread, and one holding the taggregate across an await needed a free thread to resume on: 128 such units of work at once, started on thread-pool threads, timed out waiting for each other after 30 seconds, and through `GetForUpdateAsync` completed in under 4 seconds. `TryGetForUpdateAsync` gives null where `TryGetForUpdate` returns false. With them there, the analyzers CA1849 and VSTHRD103 flag a call of `GetForUpdate` or `TryGetForUpdate` in asynchronous code. A class of a consumer's own that implements `ITaggregateStoreUpdater` must implement the two new methods.

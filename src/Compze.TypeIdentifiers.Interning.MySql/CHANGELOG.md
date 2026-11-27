@@ -4,6 +4,10 @@ All notable changes to Compze.TypeIdentifiers.Interning.MySql will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.MySql 0.9.1-alpha (was 0.9.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.4.0-alpha
 
 - **Storing a type the database hasn't stored before no longer deadlocks the connection pool.** The interner reads and mints type ids outside the unit of work's transaction, and took its connections from the pool units of work hold their transactions' connections from. A unit of work that held a taggregate's lock and stored a tevent of a new type, while units of work waiting for that lock held every connection of the pool, got no connection, and all of them waited until the pool timed out, 15 s by default: the MySQL tevent store's deadlock. The interner now takes its connections from a pool of its own on the database, of at most two connections, which the server shows as `Compze type id interner`'s: a database may have two connections more than before.

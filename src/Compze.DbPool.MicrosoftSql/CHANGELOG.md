@@ -4,6 +4,11 @@ All notable changes to Compze.DbPool.MicrosoftSql will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.DbPool 0.4.0-alpha (was 0.3.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.MicrosoftSql 0.8.1-alpha (was 0.8.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.4.0-alpha
 
 - **Resetting a test database clears the pools of their own that Compze keeps on it, such as the type-id interner's, with the pool of the database's connection string; nothing public changes.**

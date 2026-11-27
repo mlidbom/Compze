@@ -4,9 +4,12 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.13.0-internal
+## 0.14.0-internal
 
 - **`TransactionScopeCe.DefaultTimeout`, the 45-second backstop every unit of work created there carries, and `TransactionScopeCe.ExecuteAsync(Func<Task> action, TimeSpan timeout, TransactionScopeOption option = Required)`, whose transaction times out after the timeout given instead:** for work that runs longer by design, or must end sooner. `TransactionManager.MaximumTimeout` silently shortens a longer one, as .NET does.
+
+## 0.13.0-internal
+
 - **`IThrowOnReentrancyAsyncLock`: a lock held across awaits that throws at once when it is taken from inside its own hold,** by a nested use on the flow that holds it, or by work started inside the hold while the hold lasts, where `IAsyncLockCE` lets both in. It's for what only one may use at a time, such as a database connection, which children that a holder of `IAsyncLockCE` starts and awaits together would use at once. Its `IsHeldOnThisFlow` says whether taking it would throw.
 
 ## 0.12.1-internal

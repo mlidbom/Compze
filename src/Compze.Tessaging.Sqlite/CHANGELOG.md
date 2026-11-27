@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0-alpha
+## 0.7.0-alpha
 
 - **The inbox admits a tommand an endpoint sends a deferred handler of its own (Compze.Tessaging 0.14.0-alpha), within the sender's transaction:** the inbox's admissions table, `<endpoint name>_InboxDeliveryStreamAdmissions`, gets a row whose sender is the endpoint itself, created when the endpoint starts, whose lock makes the sends to the endpoint itself commit one after another.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.Sqlite 0.8.1-alpha (was 0.8.0-alpha or newer), Compze.Tessaging 0.15.0-alpha (was 0.14.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
+## 0.6.0-alpha
+
 - **The inbox table has a `FailingTimeMilliseconds` column:** how long a tessage's handling has been failing, recorded with each failed try, so that an exactly-once endpoint's retries carry across restarts. An existing database's inbox table, `<endpoint name>_InboxTessages`, lacks it: add it as `bigint NOT NULL DEFAULT 0` (`INTEGER` in SQLite), or recreate the database.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Sqlite 0.8.0-alpha (was 0.7.1-alpha), Compze.Tessaging 0.14.0-alpha (was 0.12.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -4,6 +4,11 @@ All notable changes to Compze.Tessaging.Hosting.Testing will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.2-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha), Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal), Compze.Tessaging.MicrosoftSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.MySql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.PostgreSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.Sqlite 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Tessaging 0.15.0-alpha (was 0.14.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.8.1-alpha
 
 - **Disposing the host reports a handler's failure that comes while an endpoint stops.** A stopping exactly-once endpoint lets a try of a tessage's handling that is still running end before it stops, and when that try marked the tessage failed, the host's disposal didn't report the failure: it had collected the failures before stopping its endpoints. A test then passed although a handler failed, such as one whose handler failed while the host was disposed with `DisposeWithoutWaitingForEndpointsToBeAtRestAsync`, or on a tessage that an endpoint recovered from its inbox at its start, which the host doesn't wait for. The host now collects the failures once its endpoints have stopped, and its disposal throws them with the others.

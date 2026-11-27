@@ -4,6 +4,11 @@ All notable changes to Compze.Sql.Common will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.1-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.9.0-alpha
 
 - **For Compze's SQL packages: pools of their own on a database,** beside the pool its units of work hold their transactions' connections from, for operations that commit on their own and may run inside a unit of work, such as the type-id interner's. It records the connection string of each, for what clears a database's pools, such as the DbPool. Nothing public changes.

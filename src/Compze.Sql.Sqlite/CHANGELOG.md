@@ -4,6 +4,10 @@ All notable changes to Compze.Sql.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (was 0.7.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.8.0-alpha
 
 - **A transaction whose first command is created asynchronously waits for the database's write gate holding no thread,** where it held its thread until the transaction before it completed.

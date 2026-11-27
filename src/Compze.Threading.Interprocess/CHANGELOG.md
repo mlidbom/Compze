@@ -4,6 +4,11 @@ All notable changes to Compze.Threading.Interprocess will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.11.1-alpha
+
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.14.0-internal (was 0.12.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Threading 0.14.1-alpha (was 0.14.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.11.0-alpha
 
 - **`IProcessSemaphore` and `IProcessSemaphoreHold` are gone.** The semaphore came in 0.9.0-alpha for the one program that used it, whose first real load found a flaw within the day: a take waited behind takes that were only finishing. Compze.Threading.Interprocess holds only synchronization primitives that are well thought out, stable and tested for every consumer, so that program now has a semaphore of its own, built on `IProcessLock` and `IInterprocessObject<T>`. To upgrade, build what you need on those two, as it did, or keep to 0.9.0-alpha or 0.10.0-alpha.

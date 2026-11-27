@@ -4,6 +4,10 @@ All notable changes to Compze.Teventive.MemoryImageStateStore.MicrosoftSql will 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.2.1-alpha
+
+- **Requires exact versions of the Compze packages whose internals it uses:** Compze.Sql.Common 0.9.1-alpha (not required directly before), Compze.Sql.MicrosoftSql 0.8.1-alpha (was 0.6.1-alpha or newer), Compze.Teventive.MemoryImageStateStore 0.4.2-alpha (was 0.3.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
+
 ## 0.2.0-alpha
 
 - **Registers the domain database's process locks,** which the store takes for its tables, and contributes their `DatabaseProcessLockHolder` table to the database's schema: see Compze.Teventive.MemoryImageStateStore's changelog.
