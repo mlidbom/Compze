@@ -8,6 +8,8 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
   design.
 - **Decision 2** was rewritten after Magnus's objection on topic 1, that a handler outside any transaction isn't an
   exactly-once handler: it now chooses between at-least-once tommands and none.
+- **Change 5 and decision 6 are dropped,** after Magnus's question on topic 2: an endpoint that converses with no other
+  was an unmeasured optimization.
 - **Decision 5** is settled by compze-agent-rep's judgment, which Magnus can overrule on his topic 73:
   `StopAsync(CancellationToken)`, keeping today's drain.
 - **Increment 1 is built** (cancellation, and the stop that lets go), in three steps, with one change to the design
@@ -24,7 +26,7 @@ need. Where this design departs from them, it says why.
 
 ## The headline
 
-An exactly-once endpoint can orchestrate durable multi-step work by sending each step to itself once it has five things.
+An exactly-once endpoint can orchestrate durable multi-step work by sending each step to itself once it has four things.
 Each is a choice made where a handler is registered, or where an endpoint is declared or stopped; the defaults stay as
 they are today:
 
@@ -36,8 +38,6 @@ they are today:
    capacity, at the same time as anything else.
 4. **Handlers receive a cancellation token, and an endpoint's stop can let go at once:** it cancels what its inbox is
    running, and leaves it for the endpoint's next start.
-5. **An exactly-once endpoint may converse with no other endpoint:** no transport, no discovery, no peer registry and no
-   database for one.
 
 The mechanism behind 1 and 2: **a tessage an endpoint sends itself needs no delivery.** It is admitted to the endpoint's
 own inbox inside the sender's transaction: no outbox row, no delivery stream, no transport.
@@ -79,8 +79,6 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
 {
    public static string Name => "Hub.Operations";
    public static EndpointId Id { get; } = new(Guid.Parse("..."));
-
-   protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.ConverseWithNoOtherEndpoint();
 
    protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
       //Sent by the hub's front: runs in the front's unit of work, so the operation and its first step commit together.
@@ -367,36 +365,14 @@ its questions to settle first: whose token handlers receive, and what cancelling
    outside effects until they end (decision 4).
 4. Release the process lock: as today.
 
-## 5. An endpoint that converses with no other
+## 5. Dropped: an endpoint that converses with no other
 
-### Public API (sketch)
-
-```csharp
-public sealed class ExactlyOnceEndpointBuilder
-{
-   //review-naming:
-   ///Declares that the endpoint converses with no other endpoint: it has no transport, discovers and announces nothing, and
-   ///remembers no peers. Every tessage it handles is one it sends itself.
-   public ExactlyOnceEndpointBuilder ConverseWithNoOtherEndpoint();
-}
-```
-
-Declared in the endpoint's declaration, through its `Declare` override: conversing with nobody is what the endpoint is,
-not a choice of its deployment. The environment's transport and discovery declarations are then left unused, so one
-environment serves it and its process's other endpoints alike.
-
-### What it leaves out, and what it keeps
-
-- **Left out:** the transport server and client, the router's connections, discovery and announcing, the durable peer
-  registry and its database (an empty process-lifetime registry instead), and the outbox with its tevent delivery legs:
-  nothing crosses the boundary, so publishing is participation alone, the deliberately in-process composition.
-- **Kept:** the engine, the inbox, the serializer and the type map, since the inbox stores serialized tessages, and the
-  type-id interner, with its database on SQLite.
-- **A tommand whose handler isn't in the roster fails at once,** saying that the endpoint converses with no other: no
-  30-second wait for a handler that can't appear.
-- **Guarantees: unchanged.** Nothing crosses the boundary.
-- **The start's cost:** measured in its increment, the hub's composition today (named pipes, the registry, three SQLite
-  databases) against one that converses with no other endpoint.
+Magnus, on topic 2, 2026-11-27: "Other than ( maybe ) not having to start up a transport, how is this different from an
+endpoint that just doesn't converse with others? Is this optimization important enough, and the need common enough, to
+build a whole new endpoint type?" It was an unmeasured optimization. It would have saved starting a transport that serves
+no one, the peer registry's own SQLite database, and the 30-second wait of a send whose handler can't be found. The hub
+uses an exactly-once endpoint with a transport and no discovery registry, as exists now, and its start is measured once
+the hub drives its operations through one.
 
 ## The tevent counterparts
 
@@ -417,8 +393,7 @@ Designed so that they fit, and built when a consumer needs them. The hub doesn't
   "It is not a mode, not an endpoint type, and has no opt-out" goes.
 - **[The tevent delivery model](../tevent-delivery-model.md), "Tommands are different":** the handler's registration now
   has a say. "Ordering" gains the handling order.
-- **The public `_docs`:** the new verbs, the handling order, the tokens, the stop and the endpoint that converses with no
-  other.
+- **The public `_docs`:** the new verbs, the handling order, the tokens and the stop.
 
 ## Increments
 
@@ -430,7 +405,6 @@ alone:
 2. **Tommand handlers in a transaction of their own:** change 1.
 3. **The handling order:** change 3.
 4. **At-least-once tommands, handled outside any transaction:** change 2.
-5. **The endpoint that converses with no other:** change 5, with the start's cost measured before and after.
 
 Later, when a consumer needs them: the tevent counterparts, the order by a key, and a successor's claim that waits for its
 predecessor's release (below).
@@ -464,21 +438,16 @@ predecessor's release (below).
    - **(a) `StopAsync(CancellationToken)`:** the drain as today, ended at once by the token. Recommended: the .NET
      convention, and each caller chooses.
    - **(b) The stop always cancels running handlers,** without a drain.
-6. **How an endpoint that converses with no other is declared:**
-   - **(a) By the endpoint,** `ConverseWithNoOtherEndpoint()` in its declaration, the environment's transport and
-     discovery left unused. Recommended: it is what the endpoint is.
-   - **(b) By the environment leaving out the transport:** absent means no wire, as an absent discovery registry means no
-     discovery today.
 
 The names marked `review-naming:` above are chosen, not decisions: `ForTommandInATransactionOfItsOwn`,
-`IAtLeastOnceTommand` with its registrar, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
+`IAtLeastOnceTommand` with its registrar, `HandlingOrder` with `AsAdmitted` and `None`.
 
 ## Not in this design
 
 - **A successor's claim that waits for its predecessor's release.** Today a claim finding the process lock held is refused
   at once. The hub starts the new endpoint once the old one's stop has returned, so it needs no wait; a claim that waits
   would let the two processes overlap.
-- **The type-id interner's database.** An endpoint that converses with no other still has it on SQLite, since the inbox
+- **The type-id interner's database.** An exactly-once endpoint on SQLite has it, since the inbox
   interns type ids. Interning every mapped type at start, before any transaction, could let it live in the domain
   database.
 - **Declaring how many tessages the inbox handles at once.** 20, fixed, suits the hub.

@@ -7,8 +7,8 @@ the completed ones.
 ## Ongoing work
 
 - **[Durable multi-step work on one endpoint](durable-multi-step-work-on-one-endpoint.md)** — handlers in a
-  transaction of their own or outside any, the handling order, handler cancellation and a stop that lets go, and an
-  endpoint that converses with no other. A design awaiting Magnus's decisions (2026-11-27), for the Claude tooling's hub.
+  transaction of their own, at-least-once tommands, the handling order, and handler cancellation and a stop that lets
+  go. A design with Magnus's decisions being put to him (2026-11-27), for the Claude tooling's hub; increment 1 is built.
 
 The Tessaging migration is executed in full — all ten phases of
 [the migration plan](../DONE/tessaging-migration-plan.md), the last (the Host demotion) on 2026-07-18 — and
