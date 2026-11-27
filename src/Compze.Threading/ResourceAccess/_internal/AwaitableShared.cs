@@ -1,6 +1,7 @@
 // ReSharper disable ConvertToPrimaryConstructor
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace Compze.Threading.ResourceAccess._internal;
 
@@ -18,25 +19,25 @@ class AwaitableShared<TShared> : IAwaitableShared<TShared>
 
    public IAwaitableCriticalSection CriticalSection { get; }
 
-   public TResult Read<TResult>(Func<TShared, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+   public TResult Read<TResult>([InstantHandle]Func<TShared, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
       CriticalSection.Read(() => read(_shared), cancellationToken, timeout);
 
-   public TResult ReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+   public TResult ReadWhen<TResult>([InstantHandle]Func<TShared, bool> condition, [InstantHandle]Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.ReadWhen(() => condition(_shared), () => read(_shared), cancellationToken, waitTimeout: timeout);
 
-   public TResult Update<TResult>(Func<TShared, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+   public TResult Update<TResult>([InstantHandle]Func<TShared, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
       CriticalSection.Update(() => update(_shared), cancellationToken, timeout);
 
-   public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+   public TResult UpdateWhen<TResult>([InstantHandle]Func<TShared, bool> condition, [InstantHandle]Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.UpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
 
-   public bool TryReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, [MaybeNullWhen(false)] out TResult result, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+   public bool TryReadWhen<TResult>([InstantHandle]Func<TShared, bool> condition, [InstantHandle]Func<TShared, TResult> read, [MaybeNullWhen(false)] out TResult result, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.TryReadWhen(() => condition(_shared), () => read(_shared), out result, cancellationToken, waitTimeout: timeout);
 
-   public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+   public bool TryUpdateWhen([InstantHandle]Func<TShared, bool> condition, [InstantHandle]Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
 
-   public bool TryAwait(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+   public bool TryAwait([InstantHandle]Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.TryAwait(() => condition(_shared), cancellationToken, waitTimeout: timeout);
 
    public Task<TResult> ReadWhenAsync<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
