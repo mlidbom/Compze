@@ -92,12 +92,24 @@ Where a handler lives decides when it runs:
 - **Within the endpoint, at once.** A tevent's handlers in the publishing endpoint participate in the publish, and a
   tommand whose handler is in the sending endpoint is handled at once, within the sender's unit of work: no outbox, no
   inbox, and exactly once because it is one transaction.
+- **Within the endpoint, after the sender commits, when the handler is deferred.** A tommand handler registered in an
+  exactly-once declaration's `RegisterDeferredTommandHandlers` is never run within its sender's unit of work. The
+  endpoint stores the tommand in its own inbox within the sender's transaction, and handles it in a unit of work of its
+  own once the sender has committed: exactly once, what the endpoint sends itself in the order the senders committed,
+  and tried again while it fails, as the endpoint's retry policy says. The sender neither waits for it nor sees it fail.
 - **In another endpoint, eventually,** with the guarantee its type declares.
 
-So moving a handler to another endpoint is a decision about consistency, and it is visible where it is made, in the
-declarations. The price of the boundary is that everything within it runs in one transaction: each participating
+So moving a handler to another endpoint, or deferring it, is a decision about consistency, and it is visible where it is
+made, in the declarations. The price of the boundary is that everything within it runs in one transaction: each participating
 handler adds to the time it holds its locks. When that costs too much, split the endpoint, observe instead of
-participating, or send a tommand to an endpoint that does the work later.
+participating, or send a tommand to a deferred handler, or to an endpoint, that does the work later.
+
+Work of several steps, each of which must be durable, runs on one endpoint as deferred handlers that each send the next
+step to the endpoint itself: once a step's sender has committed, the step is sure to be handled, across crashes and
+restarts. Sending one is refused before the endpoint has started and once its stop has ended; one sent while the
+endpoint stops is handled when it next starts.
+
+[!code-csharp[](delivery-guarantees.cs#deferring_a_tommand_handler)]
 
 ## What isn't there yet
 

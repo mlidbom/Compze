@@ -57,6 +57,7 @@ that can register only that kind, so a handler of the wrong kind can't be regist
 | Override | Registers | Endpoint |
 |---|---|---|
 | `RegisterExactlyOnceTommandHandlers` | handlers of exactly-once tommands | exactly-once |
+| `RegisterDeferredTommandHandlers` | handlers of exactly-once tommands that never run in their sender's unit of work: see [Delivery guarantees](delivery-guarantees.md) | exactly-once |
 | `RegisterExactlyOnceTeventHandlers` | handlers of exactly-once tevents | exactly-once |
 | `RegisterBestEffortTeventHandlers` | handlers of the other tevents | both |
 | `ObserveTevents` | [observers](observing-tevents.md) | both |

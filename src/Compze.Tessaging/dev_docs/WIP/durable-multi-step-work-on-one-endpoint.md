@@ -21,6 +21,14 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
   on SQLite, its transaction holds the one write lock that an arriving tessage's admission waits for, and the ASP.NET
   Core transport then waits out its 30-second shutdown timeout. A best-effort arrival's handlers get a token that is
   never cancelled, for now.
+- **Increment 2 is built** (deferred tommand handlers), on Magnus's go on topic 5, in four steps, as change 1 below
+  designs it, with three choices of the build's own:
+  - **A tessage sent once the stop has begun waits for the next start,** with no place in the line, so a chain of steps
+    can't keep the drain going.
+  - **Admission closes before the process lock is released,** waiting up to 30 seconds for the senders' transactions in
+    progress, so none commits once the next process may own the inbox.
+  - **The endpoint's stream to itself is opened at the inbox's start,** under the process lock, so no two first sends race
+    to create its row.
 - **Decision 7** is settled by Magnus on topic 7: hearing that a tessage was marked failed leaves this design for
   Tessaging's administration plane, designed by a helper of its own (2026-11-27).
 
@@ -189,9 +197,11 @@ Any unit of work in the endpoint's container can send one: a TessageBus or Typer
 typermedia tommand's executed through `IIndependentLocalTypermediaNavigator`, or the one `IIndependentTommandSender` begins.
 What the deferred handler publishes is observed at its unit of work's commit, as any unit of work's tevents are.
 
-The inbox refuses such a send before it has run its recovery scan at start, and after the endpoint has stopped. Before the
-scan, the recovered tessages must enter the line first, being older. After the stop, the endpoint's next process may
-already own its inbox.
+The inbox refuses such a send before it has run its recovery scan at start, and once the endpoint's stop has ended. Before
+the scan, the recovered tessages must enter the line first, being older. After the stop, the endpoint's next process may
+already own its inbox: the stop closes the admission, and waits for the admissions in progress, before it releases the
+process lock. A send once the stop has begun is admitted and takes no place in the line: it waits for the next start,
+behind everything in the line, so the drain ends.
 
 ### Exactly-once in order, walked through
 

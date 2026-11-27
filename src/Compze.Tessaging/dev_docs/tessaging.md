@@ -35,21 +35,30 @@ exactly-once; a tevent's type declares whether it is best-effort or exactly-once
 **The consistency boundary is the endpoint in space and the execution in time: after each completed
 execution, the endpoint is consistent. Not eventually consistent — consistent.**
 
-The law is definitional and universal. It is not a mode, not an endpoint type, and has no opt-out: every
-endpoint, of every tier, obeys it, which is what lets a reader determine the consistency model of any
-system by reading its topology and nothing else.
+The law is definitional and universal: every endpoint, of every tier, obeys it, which is what lets a
+reader determine the consistency model of any system by reading its topology and its handler registrations,
+and nothing else.
 
 What the law means concretely:
 
-- **Consistency is decided by one thing only: which side of the endpoint boundary a handler lives on.**
-  A tessage's kind decides the *shape* of the conversation — a fact fans out, an instruction has one
-  receiver, an ask returns a value. The handler's *home* decides the when and the atomicity.
+- **Consistency is decided by where a handler lives, and how it is registered there:** which side of the
+  endpoint boundary it lives on, and, on an exactly-once endpoint, whether its registration defers it. A
+  tessage's kind decides the *shape* of the conversation — a fact fans out, an instruction has one
+  receiver, an ask returns a value. The handler's *home* and *registration* decide the when and the
+  atomicity.
 - **In-boundary is immediate and transactional.** Every handler in the endpoint's roster that responds to
   something raised within an execution runs *inside* that execution: tevent handlers participate in the
   publisher's transaction; a tommand whose handler is in the roster executes inline, in the sender's
   execution. The endpoint's entire state — domain consequences, query models, tessaging bookkeeping —
   commits atomically, once, per execution. In-boundary failure fails the execution: everything rolls back
   together, which is precisely what the law demands.
+- **Unless the handler is deferred.** A deferred tommand handler (`RegisterDeferredTessageBusHandlers`, on
+  an exactly-once endpoint) never runs in its sender's execution. The endpoint admits the tommand to its
+  own inbox inside the sender's transaction — no outbox, no delivery stream, no transport — and handles it
+  in an execution of its own once the sender has committed: exactly once, the endpoint's sends to itself in
+  the order their senders committed, tried again while it fails as the endpoint's retry policy says. The
+  endpoint is consistent after each of the two executions, one after the other. It is how work of several
+  durable steps runs on one endpoint: each step's handler sends the next step to the endpoint itself.
 - **Cross-boundary is eventual, carried by the guarantee the tessage's type declares** and the delivery
   machinery the receiving tier provides. Cross-boundary failure retries at the receiver; the sender's
   execution is unaffected.
@@ -57,10 +66,11 @@ What the law means concretely:
   what crossing the boundary guarantees; the law governs what happens within. A best-effort endpoint with
   no durable state satisfies the law trivially — inline handling *is* its consistency.
 
-Because the roster is fixed per endpoint instance, a given tommand type is *always*-inline or
-*never*-inline for that instance — there is no per-send lottery. Moving a handler across an endpoint
-boundary is therefore the framework's one consistency lever, and it is deliberately visible: it is a real
-consistency refactoring, identical in meaning for tevents and tommands. `IStrictlyLocalTessage` kinds are
+Because the roster is fixed per endpoint instance, a given tommand type is *always*-inline,
+*always*-deferred or *never*-inline for that instance — there is no per-send lottery. Moving a handler
+across an endpoint boundary, and deferring a tommand handler, are therefore the framework's two consistency
+levers, and both are deliberately visible: in the topology, and where the handler is registered. Moving a
+handler is a real consistency refactoring, identical in meaning for tevents and tommands. `IStrictlyLocalTessage` kinds are
 the *pinned* ones — the type-level promise that their handlers may never leave the boundary at all — where
 an ordinary tommand is location-flexible and inherits whatever consistency its current home implies.
 
@@ -308,8 +318,9 @@ boundary guarantees:
 Both endpoint types serve **all four message kinds, unconditionally**. What an endpoint understands is its
 roster; what it tells peers is its advertisement; which machinery carries a given tessage is decided by the
 tessage's type *and the consistency law*: a send whose handler is in the roster executes inline, in the
-sender's execution — exactly-once by construction, no delivery machinery involved — and a send whose
-handler lives elsewhere crosses the boundary through the tier's machinery. Typermedia behaves identically
+sender's execution — exactly-once by construction, no delivery machinery involved — unless the handler is
+deferred, when the endpoint's own inbox handles it after the sender commits, and a send whose handler lives
+elsewhere crosses the boundary through the tier's machinery. Typermedia behaves identically
 on both tiers — request/response neither queues nor persists. A send whose guarantee the composition cannot
 honor fails loud, never silently downgrades.
 
