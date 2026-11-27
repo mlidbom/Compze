@@ -39,14 +39,17 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// execution, it is the token the publisher was given (<see cref="IUnitOfWorkTeventPublisher.PublishAsync"/>). A best-effort<br/>
    /// arrival's handlers receive a token that is never cancelled.</remarks>
    ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
-   public TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent
+   ///<param name="order">Whether the tevents keep their place in the order the endpoint's inbox handles tessages in, where the<br/>
+   /// inbox handles them: the exactly-once tevents published by another endpoint. A tevent gives up its place only when every<br/>
+   /// handler it runs gives it up. See <see cref="HandlingOrder"/>.</param>
+   public TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTevent : ITevent
    {
       AssertUsedOnlyInsideItsCallback();
-      _registrations.AddTeventHandler(handler);
+      _registrations.AddTeventHandler(handler, order);
       return this;
    }
 
-   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/> for a<br/>
    /// handler that waits on nothing it could give up.</summary>
    internal TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
       => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork));
@@ -76,30 +79,32 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// and the endpoint's next start handles the tommand again. When the tommand runs inline, in its sender's execution, it is<br/>
    /// the token the sender was given (<see cref="IUnitOfWorkTommandSender.SendAsync"/>).</remarks>
    ///<param name="handler">The handler: the tommand, the unit of work, and the token of the execution it serves.</param>
-   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : IExactlyOnceTommand
+   ///<param name="order">Whether the tommands keep their place in the order the endpoint's inbox handles tessages in, where the<br/>
+   /// inbox handles them: those sent from another endpoint. See <see cref="HandlingOrder"/>.</param>
+   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand
    {
       AssertUsedOnlyInsideItsCallback();
-      _registrations.AddVoidTommandHandler(handler);
+      _registrations.AddVoidTommandHandler(handler, order);
       return this;
    }
 
-   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
-   /// handler that waits on nothing it could give up.</summary>
-   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand
-      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork));
+   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/><br/>
+   /// for a handler that waits on nothing it could give up.</summary>
+   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand
+      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork), order);
 
    //The minimal registrars an endpoint-declaration's overrides receive - each showing only its facet of this registrar, with
    //the facet's guarantee-fit asserted at registration.
-   IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler)
+   IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order)
    {
-      ForTommand(handler);
+      ForTommand(handler, order);
       return this;
    }
 
-   IExactlyOnceTeventHandlerRegistrar IExactlyOnceTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler)
+   IExactlyOnceTeventHandlerRegistrar IExactlyOnceTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order)
    {
       AssertSubscriptionDemandsExactlyOnceDelivery<TTevent>();
-      ForTevent(handler);
+      ForTevent(handler, order);
       return this;
    }
 

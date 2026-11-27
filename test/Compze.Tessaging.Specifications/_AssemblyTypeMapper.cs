@@ -25,7 +25,14 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<NumberedExactlyOnceTommand>("5c9e1f74-3a28-4b6d-9e05-b7d41a26c83f")
             .Map<TessageBus.TommandWhoseHandlerWaitsForItsCancellation>("6560d06b-b249-4f51-916b-ec0386e77808")
             .Map<TessageBus.TommandNoEndpointHandles>("d9bed99c-017b-4b48-a973-755a614a4f92")
-            .Map<TessageBus.DeferredStep>("3b1f6c2e-8d47-4a95-b0e3-6f24c9a81d57");
+            .Map<TessageBus.DeferredStep>("3b1f6c2e-8d47-4a95-b0e3-6f24c9a81d57")
+            .Map<TessageBus.StepGivingUpItsPlace>("085b5d1b-3d83-4072-8517-66c8d44bdd0a")
+            .Map<TessageBus.StepKeepingItsPlace>("cb47dbf4-2fab-4f73-80e8-a098b6065f83")
+            .Map<TessageBus.TommandGivingUpItsPlace>("fae88462-9233-4f6a-b448-b106d49f7d75")
+            .Map<TessageBus.ITeventWhoseHandlersAllGiveUpTheirPlace>("15f99cbf-77d1-4234-9d2f-edff852829d1")
+            .Map<TessageBus.TeventWhoseHandlersAllGiveUpTheirPlace>("5e55310c-b25a-4214-bce1-5a9fcabea642")
+            .Map<TessageBus.ITeventOneOfWhoseHandlersKeepsItsPlace>("f9118d8f-1274-431f-8719-a60e5f2378a3")
+            .Map<TessageBus.TeventOneOfWhoseHandlersKeepsItsPlace>("b7c62b65-2d64-4309-ae6e-0be750bdaf6f");
 }
 #pragma warning restore CA1812
 

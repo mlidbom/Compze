@@ -7,6 +7,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -34,8 +35,8 @@ static class InboxRegistrar
                   .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer, EndpointConfiguration configuration)
                                 => new InboxTessageStorage(sqlLayer, configuration.Id)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, RetryPolicy retryPolicy, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, retryPolicy, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, TessageHandlerRoster roster, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, RetryPolicy retryPolicy, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, executor, roster, scopeFactory, storage, taskRunner, retryPolicy, configuration.Id)),
          Singleton.For<IInbox>()
                   .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher observationDispatcher, ITypeMap typeMap, ITessagingSerializer serializer)
                                 => new Inbox(handlerExecutionEngine, tessageStorage, observationDispatcher, typeMap, serializer))

@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -20,9 +21,10 @@ partial class Inbox
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
       // ReSharper disable once ArrangeTypeMemberModifiers ReSharper is confused: a nested class is private without it, and the engine hands out an AdmissionOfATessageSentToItself.
-      internal partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
+      internal partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, TessageHandlerRoster roster, RetryPolicy retryPolicy, EndpointId endpointId) : IDisposable
       {
          readonly ITaskRunner _taskRunner = taskRunner;
+         readonly TessageHandlerRoster _roster = roster;
          readonly ITessageStorage _tessageStorage = tessageStorage;
          readonly IScopeFactory _scopeFactory = scopeFactory;
          readonly TessageHandlerExecutor _executor = executor;
@@ -131,7 +133,17 @@ partial class Inbox
          }
 
          HandlerExecutionTask NewHandlerExecutionTask(TransportTessage.InComing tessage, TimeSpan failingTime, bool sentByTheEndpointToItself) =>
-            new(tessage, failingTime, sentByTheEndpointToItself, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token);
+            new(tessage, HandlingOrderOf(tessage), failingTime, sentByTheEndpointToItself, this, _taskRunner, _tessageStorage, _scopeFactory, _executor, _retryPolicy, _stopping.Token);
+
+         //Refactor: Switching should not be necessary. See also inbox.
+         HandlingOrder HandlingOrderOf(TransportTessage.InComing tessage) =>
+            tessage.TessageTypeEnum switch
+            {
+               TransportTessageType.ExactlyOnceTevent  => _roster.HandlingOrderOfTheTevent(tessage.TessageTypeId.Type),
+               TransportTessageType.ExactlyOnceTommand => _roster.HandlingOrderOfTheTommand(tessage.TessageTypeId.Type),
+               TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(nameof(tessage), "The inbox handles no best-effort tevent."),
+               _                                     => throw new ArgumentOutOfRangeException(nameof(tessage))
+            };
 
          void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));
 
@@ -156,6 +168,10 @@ partial class Inbox
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
             bool _dispatchingStopped;
             int _waitingToBeTriedAgainCount;
+
+            ///<summary>True while a tessage whose handlers keep their place in the order executes, waiting to be tried again<br/>
+            /// included: no other such tessage is dispatched meanwhile.</summary>
+            bool _aTessageKeepingItsPlaceExecutes;
             AdmissionOfTessagesSentToItself _admissionOfTessagesSentToItself = AdmissionOfTessagesSentToItself.NotYetOpen;
             bool _tessagesSentToItselfTakeAPlaceInTheLine = true;
 
@@ -166,10 +182,12 @@ partial class Inbox
             ///<summary>False once the endpoint has begun to stop: a tessage it sends itself then waits for its next start.</summary>
             internal bool TakesTessagesSentToItselfIntoTheLine => _tessagesSentToItselfTakeAPlaceInTheLine && !_dispatchingStopped;
 
-            ///<summary>True when nothing more will be handled before stopping: nothing is executing and nothing waits to<br/>
-            /// execute, or every executing tessage waits to be tried again. A tessage waiting to be tried again holds the line: no<br/>
-            /// tessage is dispatched while another executes.</summary>
-            internal bool IsDrained => ExecutingCount == 0 ? WaitingCount == 0 : ExecutingCount == _waitingToBeTriedAgainCount;
+            ///<summary>True when nothing more will be handled before stopping: every executing tessage, if any, waits to be<br/>
+            /// tried again, and no waiting tessage can be dispatched until one of them is. A tessage that keeps its place in the<br/>
+            /// order and waits to be tried again holds up the waiting tessages that keep theirs. A waiting tessage whose sender<br/>
+            /// hasn't committed counts as one that can be dispatched: its sender's end makes it ready, or withdraws it.</summary>
+            internal bool IsDrained => ExecutingCount == _waitingToBeTriedAgainCount
+                                    && (ExecutingCount >= MaxConcurrentlyExecutingHandlers || _tessagesWaitingToExecute.All(IsHeldUpByTheExecutingTessageKeepingItsPlace));
             internal int WaitingCount => _tessagesWaitingToExecute.Count;
             internal int ExecutingCount { get; private set; }
 
@@ -192,29 +210,33 @@ partial class Inbox
                return true;
             }
 
-            ///<summary>The first tessage in the line, once no tessage executes, passing over every tessage the endpoint sent itself<br/>
-            /// whose sender hasn't committed, and every tessage the endpoint sent itself behind such a one: the endpoint's stream to<br/>
-            /// itself is handled in the order its senders committed. Other streams don't wait for it.</summary>
+            ///<summary>The first tessage in the line that may be dispatched, passing over every tessage the endpoint sent itself<br/>
+            /// whose sender hasn't committed.</summary>
+            ///<remarks>One whose handlers gave up their place in the order may be dispatched at once. One that keeps its place may<br/>
+            /// be once no other such tessage executes, passing over every tessage the endpoint sent itself that keeps its place<br/>
+            /// behind such a one whose sender hasn't committed: the endpoint's stream to itself is handled in the order its senders<br/>
+            /// committed. Other streams don't wait for it.</remarks>
             HandlerExecutionTask? FirstDispatchableTessage()
             {
-               if(ExecutingCount > 0) return null;
-
-               var aTessageSentToItselfAwaitsItsSendersCommit = false;
+               var aTessageSentToItselfKeepingItsPlaceAwaitsItsSendersCommit = false;
                foreach(var waiting in _tessagesWaitingToExecute)
                {
                   if(waiting.AwaitsItsSendersCommit)
                   {
-                     aTessageSentToItselfAwaitsItsSendersCommit = true;
+                     if(waiting.KeepsItsPlaceInTheOrder) aTessageSentToItselfKeepingItsPlaceAwaitsItsSendersCommit = true;
                      continue;
                   }
 
-                  if(waiting.IsSentByTheEndpointToItself && aTessageSentToItselfAwaitsItsSendersCommit) continue;
-
-                  return waiting;
+                  if(!waiting.KeepsItsPlaceInTheOrder || ItsTurnHasCome(waiting)) return waiting;
                }
 
                return null;
+
+               bool ItsTurnHasCome(HandlerExecutionTask keepingItsPlace) =>
+                  !_aTessageKeepingItsPlaceExecutes && !(keepingItsPlace.IsSentByTheEndpointToItself && aTessageSentToItselfKeepingItsPlaceAwaitsItsSendersCommit);
             }
+
+            bool IsHeldUpByTheExecutingTessageKeepingItsPlace(HandlerExecutionTask waiting) => waiting.KeepsItsPlaceInTheOrder && _aTessageKeepingItsPlaceExecutes;
 
             internal void EnqueueTessageTask(HandlerExecutionTask tessage) => _tessagesWaitingToExecute.Add(tessage);
 
@@ -282,6 +304,12 @@ partial class Inbox
             {
                this.Log().Debug($"Dispatching {dispatchable.TransportTessage.TessageTypeEnum} tessage {dispatchable.TessageId} (executing: {ExecutingCount + 1}, waiting: {_tessagesWaitingToExecute.Count})");
                ExecutingCount++;
+               if(dispatchable.KeepsItsPlaceInTheOrder)
+               {
+                  State.Assert(!_aTessageKeepingItsPlaceExecutes);
+                  _aTessageKeepingItsPlaceExecutes = true;
+               }
+
                _tessagesWaitingToExecute.Remove(dispatchable);
             }
 
@@ -292,7 +320,11 @@ partial class Inbox
                _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
-            void StopExecuting(HandlerExecutionTask executing) => ExecutingCount--;
+            void StopExecuting(HandlerExecutionTask executing)
+            {
+               ExecutingCount--;
+               if(executing.KeepsItsPlaceInTheOrder) _aTessageKeepingItsPlaceExecutes = false;
+            }
          }
       }
    }

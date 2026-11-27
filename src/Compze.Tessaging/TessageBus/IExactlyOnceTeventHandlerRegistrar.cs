@@ -18,12 +18,15 @@ public interface IExactlyOnceTeventHandlerRegistrar
    /// type demands exactly-once delivery, asserted at declaration. The handler receives the <see cref="IUnitOfWorkResolver"/><br/>
    /// of the unit of work delivering the tevent. Async only, no synchronous form: exactly-once kinds are async end to end.</summary>
    ///<remarks>The handler also receives the token of the execution it serves: see<br/>
-   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/>.</remarks>
+   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/>.</remarks>
    ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
-   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent;
+   ///<param name="order">Whether the tevents keep their place in the order the endpoint's inbox handles tessages in, where the<br/>
+   /// inbox handles them: those published by another endpoint. A tevent gives up its place only when every handler it runs<br/>
+   /// gives it up. See <see cref="HandlingOrder"/>.</param>
+   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTevent : ITevent;
 
-   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
-   /// handler that waits on nothing it could give up.</summary>
-   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
-      => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork));
+   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder)"/><br/>
+   /// for a handler that waits on nothing it could give up.</summary>
+   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler, HandlingOrder order = HandlingOrder.AsAdmitted) where TTevent : ITevent
+      => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork), order);
 }

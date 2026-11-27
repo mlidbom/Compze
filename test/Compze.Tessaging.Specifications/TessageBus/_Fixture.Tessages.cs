@@ -32,3 +32,72 @@ public class DeferredStep : Remotable.ExactlyOnce.Tommand
    public int StepsAfterIt { get; set; }
    // ReSharper restore PropertyCanBeMadeInitOnly.Global
 }
+
+///<summary>A tessage of the handling order's specifications, numbered in the order the specification sends or publishes it.</summary>
+public interface INumberedTessage
+{
+   int Number { get; }
+}
+
+///<summary>A step whose deferred handler gives up its place in the handling order.</summary>
+public class StepGivingUpItsPlace : Remotable.ExactlyOnce.Tommand, INumberedTessage
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public StepGivingUpItsPlace() {}
+   public StepGivingUpItsPlace(int number) => Number = number;
+
+   // ReSharper disable once PropertyCanBeMadeInitOnly.Global serialization...
+   public int Number { get; set; }
+}
+
+///<summary>A step whose deferred handler keeps its place in the handling order.</summary>
+public class StepKeepingItsPlace : Remotable.ExactlyOnce.Tommand, INumberedTessage
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public StepKeepingItsPlace() {}
+   public StepKeepingItsPlace(int number) => Number = number;
+
+   // ReSharper disable once PropertyCanBeMadeInitOnly.Global serialization...
+   public int Number { get; set; }
+}
+
+///<summary>An exactly-once tommand whose handler, which isn't deferred, gives up its place in the handling order.</summary>
+public class TommandGivingUpItsPlace : Remotable.ExactlyOnce.Tommand, INumberedTessage
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TommandGivingUpItsPlace() {}
+   public TommandGivingUpItsPlace(int number) => Number = number;
+
+   // ReSharper disable once PropertyCanBeMadeInitOnly.Global serialization...
+   public int Number { get; set; }
+}
+
+///<summary>An exactly-once tevent every handler of which gives up its place in the handling order.</summary>
+public interface ITeventWhoseHandlersAllGiveUpTheirPlace : IExactlyOnceTevent, INumberedTessage;
+
+public class TeventWhoseHandlersAllGiveUpTheirPlace : ITeventWhoseHandlersAllGiveUpTheirPlace
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TeventWhoseHandlersAllGiveUpTheirPlace() {}
+   public TeventWhoseHandlersAllGiveUpTheirPlace(int number) => Number = number;
+
+   // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+   public TessageId Id { get; set; } = TessageId.New();
+   public int Number { get; set; }
+   // ReSharper restore PropertyCanBeMadeInitOnly.Global
+}
+
+///<summary>An exactly-once tevent one of whose handlers keeps its place in the handling order, and the other gives it up.</summary>
+public interface ITeventOneOfWhoseHandlersKeepsItsPlace : IExactlyOnceTevent, INumberedTessage;
+
+public class TeventOneOfWhoseHandlersKeepsItsPlace : ITeventOneOfWhoseHandlersKeepsItsPlace
+{
+   // ReSharper disable once UnusedMember.Global Used by the serializer.
+   public TeventOneOfWhoseHandlersKeepsItsPlace() {}
+   public TeventOneOfWhoseHandlersKeepsItsPlace(int number) => Number = number;
+
+   // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+   public TessageId Id { get; set; } = TessageId.New();
+   public int Number { get; set; }
+   // ReSharper restore PropertyCanBeMadeInitOnly.Global
+}
