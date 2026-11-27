@@ -90,6 +90,14 @@ the pool frees up, after the stall. `WaitAsyncDumpingTheProcessOnTimeout` has a 
 deadline since 2026-11-25; a test that dumps another way needs the same. Taking a dump freezes the process for
 seconds, so other tests of the run may fail beside the one that dumped.
 
+**A transaction that stays active long past its timeout, on an idle machine, is .NET 11.0.0 losing the timeout:**
+[dotnet/runtime#136986](https://github.com/dotnet/runtime/issues/136986). Threads starting transactions with new timeouts
+at the same moment can break the list `TransactionTable` keeps timeouts in, and every transaction beyond the break then
+runs on and commits. A test process, with its tests in parallel, does that now and then. The 2026-11-27 case, CI run
+46034651748: a tevent's handling with a timeout of a second ran ten seconds and committed. Late timer ticks under load
+were blamed for its first sighting, wrongly. `TransactionScopeCe.ExecuteAsync(action, timeout)` has a timer of its own
+since; the other units of work's 45-second backstop does not.
+
 **On SQL Server, a reader that throws from `TrySetMetaData` read two responses.** SqlClient reads on past a response's
 final DONE token when more bytes are already in its buffer, so an error followed by another result set in one
 `ExecuteReader` means two requests reached the server on one session before the reader read: two users of one physical
