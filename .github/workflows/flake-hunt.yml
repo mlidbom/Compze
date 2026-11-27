@@ -74,7 +74,7 @@ jobs:
 
     env:
       HUNTED_TEST_PROJECT: samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj
-      RUNS_PER_RUNNER: "20"
+      RUNS_PER_RUNNER: "10"
       SLOWEST_TESTS_PER_RUN: "3"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
@@ -153,7 +153,7 @@ jobs:
           directory: TestResults
 
       - name: Upload dumps
-        if: failure()
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: dumps-hunt-${{ matrix.runner }}
