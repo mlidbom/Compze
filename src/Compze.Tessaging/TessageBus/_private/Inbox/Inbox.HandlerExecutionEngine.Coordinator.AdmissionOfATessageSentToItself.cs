@@ -20,6 +20,7 @@ partial class Inbox
             readonly Coordinator _coordinator;
             HandlerExecutionTask? _placeInTheLine;
             bool _hasEnded;
+            bool _itsSenderCommitted;
 
             internal AdmissionOfATessageSentToItself(Coordinator coordinator) => _coordinator = coordinator;
 
@@ -27,7 +28,9 @@ partial class Inbox
             /// written, before its sender's transaction ends.</summary>
             internal void TakeAPlaceInTheLine(TransportTessage.InComing tessage) => _coordinator._implementation.Update(implementation =>
             {
-               State.Assert(!_hasEnded, () => $"The transaction that sent tessage {tessage.TessageId} to the endpoint itself ended before the send did: a send must be awaited before its unit of work ends.");
+               State.Assert(!_itsSenderCommitted, () => $"The transaction that sent tessage {tessage.TessageId} to the endpoint itself committed before the send had ended: a send must be awaited before its unit of work ends.");
+               //Its sender's transaction ended without committing, as when it timed out, and its row rolled back with it.
+               if(_hasEnded) return;
                if(!implementation.TakesTessagesSentToItselfIntoTheLine) return;
                _placeInTheLine = _coordinator.NewHandlerExecutionTask(tessage, failingTime: TimeSpan.Zero, sentByTheEndpointToItself: true);
                implementation.EnqueueTessageTask(_placeInTheLine);
@@ -36,6 +39,7 @@ partial class Inbox
             internal void ItsSenderCommitted() => _coordinator._implementation.Update(implementation =>
             {
                _hasEnded = true;
+               _itsSenderCommitted = true;
                implementation.AdmissionOfATessageSentToItselfCommitted(_placeInTheLine);
             });
 
