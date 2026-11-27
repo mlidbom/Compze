@@ -119,9 +119,8 @@ public partial class Given_a_tevent_store_and_a_memory_image_state_store
       }
 
       ///<summary>As for the deck above, with the user, which the tevent store keeps: eight units of work, more than a CI runner's pool<br/>
-      /// keeps threads at least, and fewer than a test database's pool has connections. With as many as the pool has connections, waiting<br/>
-      /// for one taggregate of a tevent store kept in PostgreSQL or MySQL, the pool deadlocks, waiting or not: the unit of work holding<br/>
-      /// the taggregate's lock needs a second connection, and those waiting for the lock hold every one (2026-11-26, found by this context).</summary>
+      /// keeps threads at least, and fewer than a test database's pool has connections. Each waiting for the user holds a connection of<br/>
+      /// the pool, so more than the pool has connections are <see cref="TeventStore.Given_a_tevent_store_holding_a_user"/>'s.</summary>
       public class and_eight_units_of_work_at_once_each_get_the_user_for_update_asynchronously_and_change_its_email_after_an_await : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          const int UnitsOfWork = 8;

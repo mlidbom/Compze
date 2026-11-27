@@ -62,26 +62,31 @@ public class Given_a_tevent_store_holding_a_user : UniversalTestBase
                                        user.ChangeEmail($"user{number}@example.com");
                                     }))));
 
-   public class and_more_units_of_work_at_once_than_the_connection_pool_has_connections_each_get_it_for_update_and_change_its_email : Given_a_tevent_store_holding_a_user
+   ///<summary>The user's email has never changed, so the first unit of work below to change it stores a type of tevent the store hasn't<br/>
+   /// stored before.</summary>
+   public class whose_email_has_never_changed : Given_a_tevent_store_holding_a_user
    {
-      protected override async Task InitializeAsyncInternal()
+      public class and_more_units_of_work_at_once_than_the_connection_pool_has_connections_each_get_it_for_update_and_change_its_email : whose_email_has_never_changed
       {
-         await base.InitializeAsyncInternal();
-         await EachGetTheUserForUpdateAndChangeItsEmailAtOnce();
+         protected override async Task InitializeAsyncInternal()
+         {
+            await base.InitializeAsyncInternal();
+            await EachGetTheUserForUpdateAndChangeItsEmailAtOnce();
+         }
+
+         [PCT] public void the_users_history_has_an_email_change_from_each_unit_of_work() => EmailChangesInTheUsersHistory.Must().Be(UnitsOfWork);
       }
 
-      [PCT] public void the_users_history_has_an_email_change_from_each_unit_of_work() => EmailChangesInTheUsersHistory.Must().Be(UnitsOfWork);
-   }
-
-   public class and_more_units_of_work_at_once_than_the_connection_pool_has_connections_each_get_it_for_update_asynchronously_and_change_its_email_after_an_await : Given_a_tevent_store_holding_a_user
-   {
-      protected override async Task InitializeAsyncInternal()
+      public class and_more_units_of_work_at_once_than_the_connection_pool_has_connections_each_get_it_for_update_asynchronously_and_change_its_email_after_an_await : whose_email_has_never_changed
       {
-         await base.InitializeAsyncInternal();
-         await EachGetTheUserForUpdateAsynchronouslyAndChangeItsEmailAfterAnAwaitAtOnce();
-      }
+         protected override async Task InitializeAsyncInternal()
+         {
+            await base.InitializeAsyncInternal();
+            await EachGetTheUserForUpdateAsynchronouslyAndChangeItsEmailAfterAnAwaitAtOnce();
+         }
 
-      [PCT] public void the_users_history_has_an_email_change_from_each_unit_of_work() => EmailChangesInTheUsersHistory.Must().Be(UnitsOfWork);
+         [PCT] public void the_users_history_has_an_email_change_from_each_unit_of_work() => EmailChangesInTheUsersHistory.Must().Be(UnitsOfWork);
+      }
    }
 
    ///<summary>The user's email has changed once, so the units of work below store no type of tevent that the store hasn't stored before.</summary>
