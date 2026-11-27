@@ -1,8 +1,4 @@
-
-
 // ReSharper disable NotAccessedPositionalProperty.Local
-
-// ReSharper disable InconsistentNaming
 
 
 

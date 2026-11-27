@@ -7,8 +7,6 @@ using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Threading.Testing;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IShared_;
 
 [Collection(nameof(NonParallelCollection))]

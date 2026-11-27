@@ -5,8 +5,6 @@ using Compze.Threading.Specifications.IAwaitableShared_.IAwaitableProcessShared_
 using Compze.Threading.Specifications.TestInfrastructure;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IAwaitableShared_.IAwaitableProcessShared_;
 
 [Collection(nameof(NonParallelCollection))]

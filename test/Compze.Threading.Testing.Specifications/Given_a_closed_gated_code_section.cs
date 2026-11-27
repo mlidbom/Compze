@@ -3,8 +3,6 @@ using Compze.Must;
 using Compze.xUnitBDD;
 using Xunit;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Testing.Specifications;
 
 [Collection(nameof(NonParallelCollection))]

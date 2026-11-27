@@ -6,8 +6,6 @@ using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.IProcessLock_.Infrastructure;
 
 ///<summary>What the specifications of <see cref="IProcessLock"/> have another process do with the lock, through <see cref="ExplicitTestInAChildProcess"/>.<br/>

@@ -9,7 +9,6 @@ using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tessaging.Specifications.Typermedia;

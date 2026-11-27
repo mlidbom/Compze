@@ -22,8 +22,6 @@ using JetBrains.Annotations;
 using Compze.Tests.Common;
 using Compze.Teventive.TaggregateStores;
 
-// ReSharper disable InconsistentNaming
-
 // ReSharper disable ImplicitlyCapturedClosure
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 

@@ -2,8 +2,6 @@ using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
 
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.DependencyInjection.Specifications.Transient_lifestyle;
 
 public class When_resolving_a_tracked_transient

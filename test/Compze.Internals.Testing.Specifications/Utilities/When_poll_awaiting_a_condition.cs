@@ -5,7 +5,6 @@ using Compze.Threading;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for specification naming
 #pragma warning disable IDE1006 //Reviewed OK: specification naming styles
 
 namespace Compze.Internals.Testing.Specifications.Utilities;

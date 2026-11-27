@@ -3,7 +3,6 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tessaging.Specifications.ExactlyOnce;

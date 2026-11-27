@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications.Nullability;
 
 /// <summary>

@@ -1,7 +1,5 @@
 using System.Runtime.CompilerServices;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 ///<summary>The custom-assertion extension point: an extension method on <see cref="IAssertionContext{T}"/> calling<br/>

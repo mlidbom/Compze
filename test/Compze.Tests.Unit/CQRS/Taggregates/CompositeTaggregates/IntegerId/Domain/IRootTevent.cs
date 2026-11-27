@@ -6,7 +6,6 @@ using Compze.Teventive.Taggregates.Tevents;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable RedundantNameQualifier
-// ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
 interface IRootTevent<out T> : ITaggregateTevent<T> where T : IRootTevent;

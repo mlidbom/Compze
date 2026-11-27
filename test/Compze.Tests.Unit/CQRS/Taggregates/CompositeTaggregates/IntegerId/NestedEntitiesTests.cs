@@ -6,8 +6,6 @@ using Compze.xUnitBDD;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-// ReSharper disable InconsistentNaming
-
 // ReSharper disable MemberHidesStaticFromOuterClass
 
 #pragma warning disable CA1724 // Type names should not match namespaces

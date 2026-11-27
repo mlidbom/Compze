@@ -3,7 +3,6 @@ using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.Allocation;

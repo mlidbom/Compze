@@ -4,7 +4,6 @@ using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 using Compze.TypeIdentifiers._private;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
 namespace Compze.TypeIdentifiers.InternalSpecifications;

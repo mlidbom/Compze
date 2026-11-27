@@ -3,3 +3,4 @@ configure_await_analysis_mode = ui # Rider IDE understands this
 dotnet_diagnostic.CA2007.severity = none # MSBuild/CLI requires this explicit diagnostic suppression
 dotnet_diagnostic.CA1052.severity = none # BDD-style nested specification classes cannot be static in xUnit
 dotnet_diagnostic.VSTHRD200.severity = none # The Async suffix: a specification's name says what it specifies, not that it returns a task (Magnus, 2026-11-24).
+resharper_inconsistent_naming_highlighting = none # Specification names are sentences, such as When_calling_Must_BeEmpty: no ReSharper naming style accepts them

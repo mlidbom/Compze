@@ -1,7 +1,3 @@
-// ReSharper disable InconsistentNaming
-
-
-
 namespace Compze.Internals.Logging.Specifications;
 
 public class When_logging_within_an_activity

@@ -9,8 +9,6 @@ using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Threading.Specifications.Async;
 
 [Collection(nameof(NonParallelCollection))]

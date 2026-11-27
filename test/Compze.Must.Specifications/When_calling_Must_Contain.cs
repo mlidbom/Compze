@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 public class When_calling_Must_Contain : UniversalTestBase

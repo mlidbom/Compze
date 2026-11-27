@@ -5,7 +5,6 @@ using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 using Compze.TypeIdentifiers._private;
 
-// ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 #pragma warning disable CS8981 // BDD-style spec class names describe context using lowercase ASCII.
 

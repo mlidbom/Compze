@@ -1,2 +1,3 @@
 [*.cs]
 dotnet_diagnostic.VSTHRD200.severity = none # The Async suffix: a specification's name says what it specifies, not that it returns a task (Magnus, 2026-11-24).
+resharper_inconsistent_naming_highlighting = none # Specification names are sentences, such as When_calling_Must_BeEmpty: no ReSharper naming style accepts them

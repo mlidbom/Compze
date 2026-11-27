@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Internals.SystemCE.Tests;
 
 /// <summary>

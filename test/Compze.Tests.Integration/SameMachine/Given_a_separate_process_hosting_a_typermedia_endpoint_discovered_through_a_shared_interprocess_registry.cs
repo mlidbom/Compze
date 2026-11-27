@@ -18,7 +18,6 @@ using Compze.xUnitMatrix;
 //The unqualified name Program silently resolves to the entry point xUnit v3 generates into THIS test assembly, not to the endpoint host process's class.
 using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.Program;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 using Compze.TypeIdentifiers.DependencyInjection;

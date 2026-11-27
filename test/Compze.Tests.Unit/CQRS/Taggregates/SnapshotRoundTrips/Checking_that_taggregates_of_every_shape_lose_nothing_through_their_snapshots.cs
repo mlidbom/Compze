@@ -8,7 +8,6 @@ using Compze.Tests.Unit.CQRS.Taggregates.SharedTomponents;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;

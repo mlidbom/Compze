@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Internals.Logging.Specifications;
 
 ///<summary>

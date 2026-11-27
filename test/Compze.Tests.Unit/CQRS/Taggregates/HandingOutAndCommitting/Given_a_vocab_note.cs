@@ -5,7 +5,6 @@ using Compze.Teventive.Taggregates.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.PerClassTeventRouting;
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.HandingOutAndCommitting;

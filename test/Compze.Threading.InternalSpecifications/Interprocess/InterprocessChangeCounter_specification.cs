@@ -7,7 +7,6 @@ using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
 using Compze.Threading.Interprocess._private;
-// ReSharper disable InconsistentNaming
 
 namespace Compze.Threading.InternalSpecifications.Interprocess;
 

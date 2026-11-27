@@ -7,7 +7,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.xUnitMatrix;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Sql.InternalSpecifications.ConnectionPoolDisposal;

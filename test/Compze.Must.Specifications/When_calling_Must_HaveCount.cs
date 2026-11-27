@@ -1,8 +1,4 @@
-
-
 #pragma warning disable CA1861
-
-// ReSharper disable InconsistentNaming
 
 namespace Compze.Must.Specifications;
 

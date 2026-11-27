@@ -2,8 +2,6 @@ using Compze.Internals.Logging.Serilog;
 using Serilog;
 using static Compze.Internals.Logging.Specifications.When_logging_to_a_Serilog_backend;
 
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Internals.Logging.Specifications;
 
 ///<summary>

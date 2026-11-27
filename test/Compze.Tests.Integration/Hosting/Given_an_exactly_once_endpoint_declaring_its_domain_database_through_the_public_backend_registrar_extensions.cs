@@ -31,7 +31,6 @@ using Compze.Teventive.TeventStore.PostgreSql.Wiring;
 using Compze.Teventive.TeventStore.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tests.Integration.Hosting;

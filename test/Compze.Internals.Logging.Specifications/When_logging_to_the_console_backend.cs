@@ -1,7 +1,3 @@
-// ReSharper disable InconsistentNaming
-
-
-
 namespace Compze.Internals.Logging.Specifications;
 
 // These redirect Console.Out, which the whole process shares; the assembly runs its specifications one at a time (SpecificationsShareTheProcessWideLogBackend.cs).

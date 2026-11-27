@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 ///<summary>The extension point for a custom assertion that needs a value to check: an extension method on an<br/>

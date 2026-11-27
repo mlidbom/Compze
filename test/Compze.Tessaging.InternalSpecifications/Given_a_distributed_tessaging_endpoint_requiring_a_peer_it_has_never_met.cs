@@ -18,7 +18,6 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Underscore;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tessaging.InternalSpecifications;

@@ -13,7 +13,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.TypeIdentifiers;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 using Compze.Tessaging._private.Transport.Advertisement;

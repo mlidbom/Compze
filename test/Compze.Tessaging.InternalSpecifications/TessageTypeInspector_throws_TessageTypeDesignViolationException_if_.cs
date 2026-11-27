@@ -4,8 +4,6 @@ using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-// ReSharper disable InconsistentNaming
-
 using Compze.Tessaging.Validation._private;
 
 namespace Compze.Tessaging.InternalSpecifications;

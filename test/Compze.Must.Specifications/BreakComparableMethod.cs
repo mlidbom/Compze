@@ -1,7 +1,3 @@
-
-
-// ReSharper disable InconsistentNaming
-
 namespace Compze.Must.Specifications;
 
 [Flags]

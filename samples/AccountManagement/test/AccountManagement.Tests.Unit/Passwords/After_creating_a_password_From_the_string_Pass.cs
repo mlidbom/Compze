@@ -4,8 +4,6 @@ using Compze.Must;
 
 using Compze.xUnitBDD;
 
-// ReSharper disable InconsistentNaming
-
 namespace AccountManagement.Tests.Unit.Passwords;
 
 
