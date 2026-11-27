@@ -77,6 +77,19 @@ interface ITessagingSqlLayer
       /// construction.</summary>
       Task<SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage, DeliveryStreamPosition deliveryStreamPosition);
 
+      ///<summary>Opens the endpoint's stream to itself, unless it is open already: the endpoint's own row of the admissions table<br/>
+      /// (<see cref="InboxDeliveryStreamAdmissionsSchemaStrings"/>), with nothing admitted yet. Run at the inbox's start, while<br/>
+      /// the endpoint's process lock is held, so that no two sends to the endpoint itself race to create the row.</summary>
+      Task OpenTheStreamToItselfAsync(EndpointId endpointId);
+
+      ///<summary>Admits a tessage the endpoint <paramref name="endpointId"/> sends itself, in the sender's ambient transaction:<br/>
+      /// advances the endpoint's stream to itself (<see cref="OpenTheStreamToItselfAsync"/>) by one and registers the tessage at<br/>
+      /// that sequence number, awaiting handling, in the same act. The advance takes the row lock of the stream's admission<br/>
+      /// row, held to the end of the sender's transaction, so the transactions that send to the endpoint itself commit one<br/>
+      /// after another: sequence order, and the order of the inbox table's <see cref="InboxTessageDatabaseSchemaStrings.GeneratedId"/><br/>
+      /// that the recovery scan reads, are commit order.</summary>
+      Task SaveTessageSentToItselfAsync(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId endpointId);
+
       ///<summary>Claims the tessage's row for the caller's handling execution, exclusively: rides the caller's ambient<br/>
       /// handling transaction, taking a row-level claim held to its end, so the claim and the handler's work commit or roll<br/>
       /// back as one. False means the tessage is not this execution's to handle — its handling already finished<br/>

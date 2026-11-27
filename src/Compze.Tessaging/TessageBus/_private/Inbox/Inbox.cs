@@ -28,8 +28,8 @@ static class InboxRegistrar
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITessageStorage>()
-                  .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
-                                => new InboxTessageStorage(sqlLayer)),
+                  .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer, EndpointConfiguration configuration)
+                                => new InboxTessageStorage(sqlLayer, configuration.Id)),
          Singleton.For<HandlerExecutionEngine>()
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, RetryPolicy retryPolicy, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, retryPolicy, configuration.Id)),

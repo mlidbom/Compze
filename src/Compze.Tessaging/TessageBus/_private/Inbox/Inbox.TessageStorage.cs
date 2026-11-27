@@ -1,17 +1,22 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.Tessaging._private.Transport;
 
 namespace Compze.Tessaging.TessageBus._private.Inbox;
 
-class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
+class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer, EndpointId endpointId) : Inbox.ITessageStorage
 {
    readonly ITessagingSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
+   readonly EndpointId _endpointId = endpointId;
 
    public async Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage)
       => await _sqlLayer.SaveTessageAsync(tessage.TessageId, tessage.TessageTypeId, tessage.Body, tessage.DeliveryStreamPosition._assert().NotNull()).caf();
+
+   public async Task SaveTessageSentToItselfAsync(TransportTessage.InComing tessage)
+      => await _sqlLayer.SaveTessageSentToItselfAsync(tessage.TessageId, tessage.TessageTypeId, tessage.Body, _endpointId).caf();
 
    public async Task<bool> TryClaimForHandlingAsync(TransportTessage.InComing tessage)
       => await _sqlLayer.TryClaimForHandlingAsync(tessage.TessageId).caf();
@@ -37,5 +42,9 @@ class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IT
       (await _sqlLayer.MarkAsFailedAsync(tessage.TessageId).caf())
                ._assert(affectedRows => affectedRows == 1);
 
-   public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
+   public async Task StartAsync()
+   {
+      await _sqlLayer.InitAsync().caf();
+      await _sqlLayer.OpenTheStreamToItselfAsync(_endpointId).caf();
+   }
 }
