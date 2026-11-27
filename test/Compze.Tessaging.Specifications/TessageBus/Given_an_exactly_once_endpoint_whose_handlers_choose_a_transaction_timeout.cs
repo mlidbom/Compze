@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Must;
@@ -17,12 +18,16 @@ using Compze.Threading.Testing;
 namespace Compze.Tessaging.Specifications.TessageBus;
 
 ///<summary>An exactly-once endpoint whose handlers' registrations choose a transaction timeout of a second, or choose none, and<br/>
-/// another exactly-once endpoint that sends and publishes to it. The first try of each tessage's handling takes two seconds,<br/>
-/// inside its transaction; every later try takes none.</summary>
+/// another exactly-once endpoint that sends and publishes to it. The first try of each tessage's handling waits, inside its<br/>
+/// transaction, until the transaction has ended or ten seconds have passed: longer than a second, and shorter than the default<br/>
+/// timeout. Every later try waits for nothing.</summary>
+///<remarks>The first try waits for its transaction's end, not for a fixed time, because .NET times a transaction out late under<br/>
+/// load: it counts a timeout in ticks of a 512-millisecond timer whose callbacks run on the thread pool, so a timeout of a<br/>
+/// second can come after a first try of two seconds has committed.</remarks>
 public abstract class Given_an_exactly_once_endpoint_whose_handlers_choose_a_transaction_timeout : UniversalTestBase
 {
    static readonly WaitTimeout HandlingTimeout = WaitTimeout.Seconds(30);
-   static readonly TimeSpan HowLongTheFirstTryTakes = TimeSpan.FromSeconds(2);
+   static readonly WaitTimeout HowLongTheFirstTryWaitsForItsTransactionToEnd = WaitTimeout.Seconds(10);
 
    readonly TestingEndpointHost _host = TestingEndpointHost.Create();
    readonly ExactlyOnceEndpoint _endpoint;
@@ -64,7 +69,14 @@ public abstract class Given_an_exactly_once_endpoint_whose_handlers_choose_a_tra
    {
       _tries.Enqueue(tessage.Name);
       unitOfWork.OnCommittedSuccessfully(() => HandledGate.AwaitPassThrough());
-      if(TriesOf(tessage.Name) == 1) await Task.Delay(HowLongTheFirstTryTakes);
+      if(TriesOf(tessage.Name) == 1) await WaitUntilTheTransactionHasEndedOrTenSecondsHavePassedAsync();
+   }
+
+   static async Task WaitUntilTheTransactionHasEndedOrTenSecondsHavePassedAsync()
+   {
+      var theTransactionHasEnded = IThreadGate.NewOpen(HandlingTimeout, "TheTransactionHasEnded");
+      Transaction.Current!.TransactionCompleted += (_, _) => theTransactionHasEnded.AwaitPassThrough();
+      await theTransactionHasEnded.TryAwaitPassedThroughCountEqualToAsync(1, HowLongTheFirstTryWaitsForItsTransactionToEnd);
    }
 
    public class when_a_unit_of_work_sends_it_a_step_whose_deferred_handler_has_a_transaction_timeout_of_a_second
