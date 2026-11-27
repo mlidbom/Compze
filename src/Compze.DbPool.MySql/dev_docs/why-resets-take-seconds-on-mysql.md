@@ -223,6 +223,25 @@ the runs began. Other sessions' builds shared this machine's processors. The MyS
   s. Against this machine's: MsSql 72 s and 74 s, PgSql 72 s and 72 s. All passed. Their floor, about 70 s, is
   Compze.DbPool.Tests' 66 s and Compze.Threading.Specifications' 58 s.
 
+**All five layers in one run, against threadripper's servers** (`suite_by_engine.py --together`), 15:34 to 15:43, no
+other run meanwhile:
+
+| C-Test | Run | Failed | MySQL reset average | MySQL connections, max | MySQL statements running, median / max |
+|---|---|---|---|---|---|
+| as it is | 270 s | 7, all MySql | 5.3 s | 290 | 28 / 52 |
+| `-MaxParallelThreads 8` | 309 s | 0 | 1.35 s | 194 | 8 / 22 |
+
+- **The failures' messages:** `DatabaseHeldPastItsReservationException` 6, "Unknown database" 6, `TimeoutException` 3,
+  `AggregateException` 2, among them `Exactly_once_guarantee_tests.ExactlyOnceTommand_handler_executes_exactly_once`.
+- **The run is Compze.Tests.Integration's,** which holds every layer's tests: 4 m 17 s as it is, 4 m 54 s capped. Every
+  other assembly got faster with the cap: Compze.Tessaging.Specifications 2 m 58 s and 1 m 13 s, AccountManagement.Tests
+  2 m 50 s and 1 m 07 s, AccountManagement.Tests.PerformanceInternals 2 m 05 s and 53 s.
+- **xUnit's limit is per assembly,** and each layer's tests are cases of the same classes, so a run that includes MySql
+  runs every layer at the cap.
+- **The processors were not the limit:** this machine's ran at a median of 11% over the first two minutes, with
+  Compze.Tests.Performance.Internals at 1.6 cores at most; threadripper's peaked at 42% in the first 30 s, SQL Server's
+  7.8 cores, and then ran at 11 to 18%.
+
 ## Emptying the tables instead of dropping them
 
 `MySqlDbPoolSqlLayer.ResetDatabase` drops the database and creates it again. Its comment from 2020 says dropping the
