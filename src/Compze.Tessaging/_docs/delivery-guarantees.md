@@ -50,6 +50,10 @@ handles it in a transaction that also records that it was handled, so its handle
 - **When to give up, declared on the endpoint:** its `RetryPolicy`, in an exactly-once declaration, or on its builder.
   `RetryPolicy.GiveUpAfter(...)` gives up after another time, and `RetryPolicy.RetryForever` never gives up on a tessage:
   the order is kept, whatever that costs the tessages behind it.
+- **A handler can be cancelled.** A handler that takes a `CancellationToken`, after the unit of work, is handed the
+  token of the execution it serves: for a tessage the endpoint received, one the endpoint's stop cancels; for a handler
+  run within a send or a publish, the token given to `SendAsync` or `PublishAsync`. A try that a stop cancels doesn't
+  count toward the retry policy: the endpoint's next start tries the tessage again.
 
 [!code-csharp[](delivery-guarantees.cs#declaring_a_retry_policy)]
 

@@ -43,23 +43,42 @@ partial class Inbox
          }
 
          ///<summary>The shutdown drain, then the stop. Waits until nothing more will be handled before stopping<br/>
-         /// (<see cref="NonThreadsafeImplementation.IsDrained"/>), then stops handling (<see cref="StopAsync"/>), and waits for a<br/>
-         /// try that was still running to end, so that this endpoint's process handles nothing after it returns. A tessage that<br/>
-         /// waits to be tried again, and those behind it, are left unhandled, for the recovery scan at the endpoint's next start.<br/>
-         /// Best-effort: if a wait lasts longer than <paramref name="patience"/> (a handler is likely hung) it logs loudly and<br/>
-         /// returns, leaving teardown to proceed rather than hang. Called after the transport has stopped, so nothing new<br/>
-         /// arrives.</summary>
-         internal async Task DrainAndStopAsync(WaitTimeout patience)
+         /// (<see cref="NonThreadsafeImplementation.IsDrained"/>), or until <paramref name="cancellationToken"/> is cancelled, then<br/>
+         /// stops handling (<see cref="StopAsync"/>), which cancels the token the running tries' handlers were handed, and waits<br/>
+         /// for those tries to end, so that this endpoint's process handles nothing after it returns. A tessage that waits to be<br/>
+         /// tried again, one whose try ended as handling stopped, and those behind them, are left unhandled, for the recovery scan<br/>
+         /// at the endpoint's next start. Best-effort: if the drain lasts longer than <paramref name="patience"/> (a handler is<br/>
+         /// likely hung), or the running tries do once cancelled, it logs loudly and returns, leaving teardown to proceed rather<br/>
+         /// than hang. Called after the transport has stopped, so nothing new arrives.</summary>
+         internal async Task DrainAndStopAsync(WaitTimeout patience, CancellationToken cancellationToken)
          {
-            var drained = await _implementation.TryAwaitAsync(implementation => implementation.IsDrained, timeout: patience).caf();
-            if(!drained)
-               this.Log().Warning(_implementation.Read(implementation =>
-                  $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
+            var aHandlerIsLikelyHung = !await TryDrainAsync(patience, cancellationToken).caf();
 
             await StopAsync().caf();
 
-            if(drained && !await _implementation.TryAwaitAsync(implementation => implementation.ExecutingCount == 0, timeout: patience).caf())
+            if(!aHandlerIsLikelyHung && !await _implementation.TryAwaitAsync(implementation => implementation.ExecutingCount == 0, timeout: patience).caf())
                this.Log().Warning($"Shutdown drain: a try of a tessage's handling was still running {patience} after handling stopped. Proceeding with teardown - a handler is likely hung.");
+         }
+
+         ///<summary>Waits until nothing more will be handled before stopping, until <paramref name="cancellationToken"/> is cancelled,<br/>
+         /// or for <paramref name="patience"/>.</summary>
+         ///<returns>False when <paramref name="patience"/> ran out first: a handler is then likely hung.</returns>
+         async Task<bool> TryDrainAsync(WaitTimeout patience, CancellationToken cancellationToken)
+         {
+            try
+            {
+               if(await _implementation.TryAwaitAsync(implementation => implementation.IsDrained, cancellationToken, patience).caf()) return true;
+            }
+            catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
+            {
+               this.Log().Info(_implementation.Read(implementation =>
+                  $"Shutdown drain: the stop's token ended the drain (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). The tries still running are cancelled, and what they and the tessages behind them didn't finish waits for the endpoint's next start."));
+               return true;
+            }
+
+            this.Log().Warning(_implementation.Read(implementation =>
+               $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
+            return false;
          }
 
          ///<summary>Stops handling: nothing more is dispatched, and every wait of a tessage to be tried again ends, leaving the<br/>
@@ -69,6 +88,15 @@ partial class Inbox
             _implementation.Update(implementation => implementation.StopDispatching());
             await _stopping.CancelAsync().caf();
          }
+
+         ///<summary>Stops handling (see <see cref="StopAsync"/>) the moment <paramref name="cancellationToken"/> is cancelled, or at<br/>
+         /// once if it already is. Dispose the registration before disposing this coordinator.</summary>
+         internal CancellationTokenRegistration StopHandlingWhenCancelled(CancellationToken cancellationToken) =>
+            cancellationToken.Register(() =>
+            {
+               _implementation.Update(implementation => implementation.StopDispatching());
+               _stopping.Cancel();
+            });
 
          internal void EnqueueTessageTask(TransportTessage.InComing tessage, TimeSpan failingTime) => _implementation.Update(implementation =>
          {

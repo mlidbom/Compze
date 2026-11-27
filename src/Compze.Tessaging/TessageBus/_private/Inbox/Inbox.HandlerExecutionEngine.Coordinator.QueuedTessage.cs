@@ -23,8 +23,9 @@ partial class Inbox
          /// at the head of the line, so that no tessage behind it is handled first.</summary>
          ///<remarks>A try counts only when the endpoint could record it. When it couldn't, such as when the endpoint's database<br/>
          /// is unreachable, it is the endpoint that is failing, not the tessage: the tessage is tried again once the endpoint<br/>
-         /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint ends a wait to be<br/>
-         /// tried again, and leaves the tessage unhandled for the recovery scan at the endpoint's next start.</remarks>
+         /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint's handling ends a wait to<br/>
+         /// be tried again, and cancels the token a running try's handlers were handed; a try that fails once handling has<br/>
+         /// stopped doesn't count either. The tessage is then left unhandled for the recovery scan at the endpoint's next start.</remarks>
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
          internal class HandlerExecutionTask
          {
@@ -68,7 +69,7 @@ partial class Inbox
                }
                catch(OperationCanceledException) when(_stopping.IsCancellationRequested)
                {
-                  this.Log().Info($"Leaving tessage {TessageId} unhandled: the endpoint stopped handling while the tessage waited to be tried again. The recovery scan at the endpoint's next start enqueues it again, ahead of the tessages behind it.");
+                  this.Log().Info($"Leaving tessage {TessageId} unhandled: the endpoint stopped handling while the tessage was being tried, or waited to be tried again. The recovery scan at the endpoint's next start enqueues it again, ahead of the tessages behind it.");
                   _coordinator.LeftUnhandledAtStop(this);
                }
             }
@@ -84,6 +85,11 @@ partial class Inbox
                      _coordinator.Succeeded(this);
                      return;
                   }
+
+                  //A try that fails once handling has stopped is the endpoint stopping, not the tessage failing: its handlers were
+                  //handed the stopping token, cancelled, and gave up. So the try doesn't count, and the tessage is left unhandled
+                  //for the next start.
+                  _stopping.ThrowIfCancellationRequested();
 
                   if(!await TryRecordFailedTryAsync(failure).caf())
                   {

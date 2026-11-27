@@ -186,9 +186,14 @@ public abstract class Endpoint : IEndpoint
    ///<summary>Drains the exactly-once inbox before teardown: waits for every already-received tessage to finish handling so the<br/>
    /// endpoint tears down with empty queues, then stops its handling. A tessage waiting to be tried again, and those behind it,<br/>
    /// are left for the recovery scan at the next start. The best-effort endpoint has no inbox, so the base does nothing.</summary>
-   private protected virtual Task DrainTheInboxAsync() => Task.CompletedTask;
+   ///<param name="cancellationToken">The stop's token: it ends the wait, cancelling the tries still running.</param>
+   private protected virtual Task DrainTheInboxAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-   public async Task StopAsync()
+   ///<summary>Stops the exactly-once inbox's handling the moment the stop's token is cancelled, in whichever phase the stop then<br/>
+   /// is. The best-effort endpoint has no inbox, so the base registers nothing.</summary>
+   private protected virtual CancellationTokenRegistration StopHandlingInTheInboxWhenCancelled(CancellationToken cancellationToken) => default;
+
+   public async Task StopAsync(CancellationToken cancellationToken = default)
    {
       //Set before the first phase, so a stop that throws part-way is never re-run - not by a second call, and not by disposal,
       //which goes straight on to releasing resources.
@@ -196,13 +201,24 @@ public abstract class Endpoint : IEndpoint
       _hasStopped = true;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping");
 
-      await RetractAddressAsync().caf();
-      await StopSendingAsync().caf();
-      await StopListeningAsync().caf();
-      //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
-      //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
-      //half-processed) that a rolling restart or a serialization-format change wants.
-      await DrainTheInboxAsync().caf();
+      //The token lets go of what the inbox runs at once, whichever phase the stop is in: stopping the listening waits for the
+      //requests in flight, and a running handler can hold one up, as by holding SQLite's one write lock that the request's
+      //admission waits for.
+      var stopHandlingInTheInboxWhenCancelled = StopHandlingInTheInboxWhenCancelled(cancellationToken);
+      try
+      {
+         await RetractAddressAsync().caf();
+         await StopSendingAsync().caf();
+         await StopListeningAsync().caf();
+         //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
+         //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
+         //half-processed) that a rolling restart or a serialization-format change wants.
+         await DrainTheInboxAsync(cancellationToken).caf();
+      }
+      finally
+      {
+         await stopHandlingInTheInboxWhenCancelled.DisposeAsync().caf();
+      }
       //Drain the observation queues while the container still serves the observers their scopes: once container disposal
       //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
       //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the

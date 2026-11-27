@@ -109,7 +109,9 @@ static class InboxRegistrar
       _handlerExecutionEngine.Enqueue(tessage, failingTime: TimeSpan.Zero);
    }
 
-   public Task DrainAndStopHandlingAsync() => _handlerExecutionEngine.DrainAndStopHandlingAsync();
+   public Task DrainAndStopHandlingAsync(CancellationToken cancellationToken) => _handlerExecutionEngine.DrainAndStopHandlingAsync(cancellationToken);
+
+   public CancellationTokenRegistration StopHandlingWhenCancelled(CancellationToken cancellationToken) => _handlerExecutionEngine.StopHandlingWhenCancelled(cancellationToken);
 
    public async ValueTask DisposeAsync()
    {

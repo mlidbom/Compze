@@ -55,5 +55,7 @@ public class ExactlyOnceEndpoint : Endpoint
 
    ///<summary>Waits for the inbox to finish handling every received tessage it can, and stops its handling, before the process<br/>
    /// lock is released and the container is torn down — see <see cref="IInbox.DrainAndStopHandlingAsync"/>.</summary>
-   private protected override async Task DrainTheInboxAsync() => await _inbox.DrainAndStopHandlingAsync().caf();
+   private protected override async Task DrainTheInboxAsync(CancellationToken cancellationToken) => await _inbox.DrainAndStopHandlingAsync(cancellationToken).caf();
+
+   private protected override CancellationTokenRegistration StopHandlingInTheInboxWhenCancelled(CancellationToken cancellationToken) => _inbox.StopHandlingWhenCancelled(cancellationToken);
 }

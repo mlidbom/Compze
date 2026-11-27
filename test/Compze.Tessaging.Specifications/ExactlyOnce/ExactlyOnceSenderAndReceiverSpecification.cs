@@ -28,6 +28,7 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    readonly IDependencyInjectionContainer _rootContainer;
    readonly ConcurrentQueue<HandlerTry> _tries = new();
    readonly ConcurrentQueue<HandledTommand> _handled = new();
+   readonly ConcurrentQueue<HandlerTry> _cancelledTries = new();
    TestingEndpointHost? _host;
 
    ///<summary>Passed through once by each try of a tommand's handling, failed or not.</summary>
@@ -38,6 +39,10 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
 
    ///<summary>How many tries of the first tommand's handling fail, from the first try on: <see cref="int.MaxValue"/> keeps failing.</summary>
    protected int TriesOfTheFirstTommandThatFail { get; set; }
+
+   ///<summary>Whether the first try of the first tommand's handling waits for the token its handler was handed to be<br/>
+   /// cancelled, and gives up then; it fails if the token isn't cancelled within a minute.</summary>
+   protected bool TheFirstTommandsFirstTryWaitsForItsCancellation { get; set; }
 
    ///<param name="receiversRetryPolicy">The Receiver's declared retry policy; null declares none, for the default.</param>
    protected ExactlyOnceSenderAndReceiverSpecification(RetryPolicy? receiversRetryPolicy)
@@ -52,6 +57,9 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
    protected IReadOnlyList<int> HandledTommandNumbers => [.. _handled.Select(it => it.Number)];
    protected HandledTommand HandlingOf(int tommandNumber) => _handled.Single(it => it.Number == tommandNumber);
    protected IReadOnlyList<HandlerTry> TriesOf(int tommandNumber) => [.. _tries.Where(it => it.TommandNumber == tommandNumber)];
+
+   ///<summary>The numbers of the tommands whose tries' handlers gave up when the token they were handed was cancelled.</summary>
+   protected IReadOnlyList<int> NumbersOfTheTommandsWhoseTriesWereCancelled => [.. _cancelledTries.Select(it => it.TommandNumber)];
 
    ExactlyOnceEndpoint Sender { get; set; } = null!;
    ExactlyOnceEndpoint Receiver { get; set; } = null!;
@@ -79,6 +87,9 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
          await Task.Delay(TimeSpan.FromMilliseconds(1));
       }
    }
+
+   ///<summary>Stops the Receiver, its stop's drain ended by <paramref name="cancellationToken"/>: see <see cref="IEndpoint.StopAsync"/>.</summary>
+   protected async Task StopTheReceiverAsync(CancellationToken cancellationToken) => await Receiver.StopAsync(cancellationToken);
 
    protected async Task SendAsync(int tommandNumber) =>
       await Sender.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new NumberedExactlyOnceTommand(tommandNumber));
@@ -119,17 +130,35 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
       await _rootContainer.DisposeAsync();
    }
 
-   async Task HandleAsync(NumberedExactlyOnceTommand tommand)
+   async Task HandleAsync(NumberedExactlyOnceTommand tommand, CancellationToken cancellationToken)
    {
       //The Receiver handles one exactly-once tessage at a time, so no other try runs while this one counts.
       var tryNumber = _tries.Count(it => it.TommandNumber == tommand.Number) + 1;
-      _tries.Enqueue(new HandlerTry(tommand.Number, tryNumber));
+      var handlerTry = new HandlerTry(tommand.Number, tryNumber);
+      _tries.Enqueue(handlerTry);
       await TriesGate.AwaitPassThroughAsync();
+
+      if(tommand.Number == 1 && tryNumber == 1 && TheFirstTommandsFirstTryWaitsForItsCancellation)
+         await WaitForTheCancellationOfAsync(handlerTry, cancellationToken);
 
       if(tommand.Number == 1 && tryNumber <= TriesOfTheFirstTommandThatFail) throw new IntentionalHandlerFailureException(tommand.Number, tryNumber);
 
       _handled.Enqueue(new HandledTommand(tommand.Number));
       await HandledGate.AwaitPassThroughAsync();
+   }
+
+   async Task WaitForTheCancellationOfAsync(HandlerTry handlerTry, CancellationToken cancellationToken)
+   {
+      try
+      {
+         await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+      }
+      catch(OperationCanceledException) when(cancellationToken.IsCancellationRequested)
+      {
+         _cancelledTries.Enqueue(handlerTry);
+         throw;
+      }
+      throw new TimeoutException($"The token handed to try {handlerTry.TryNumber} of tommand {handlerTry.TommandNumber} was not cancelled within a minute.");
    }
 
    ///<summary>One try of a tommand's handling, as its handler began it.</summary>
@@ -168,6 +197,6 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingSpecificationTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((NumberedExactlyOnceTommand tommand, IUnitOfWorkResolver _) => _specification.HandleAsync(tommand));
+         .ForTommand((NumberedExactlyOnceTommand tommand, IUnitOfWorkResolver _, CancellationToken cancellationToken) => _specification.HandleAsync(tommand, cancellationToken));
    }
 }

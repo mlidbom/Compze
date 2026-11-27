@@ -329,7 +329,10 @@ Per rung:
   endpoint's own database is unreachable, it is the endpoint failing, not the tessage, so the tessage keeps
   its place, waits, and the time doesn't count. Stopping the endpoint ends a wait to be tried again and
   stops handling before the process lock is released: the waiting tessage and those behind it are left
-  UnHandled, and the recovery scan at the next start re-enqueues them in admission order.
+  UnHandled, and the recovery scan at the next start re-enqueues them in admission order. A stop whose token
+  is cancelled (`IEndpoint.StopAsync(CancellationToken)`) stops handling at once, in whichever phase it is,
+  and cancels the token the running tries' handlers were handed: a try that fails once handling has stopped
+  doesn't count, and its tessage is left UnHandled the same way.
 
 ## Tommands are different
 

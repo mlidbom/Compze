@@ -51,7 +51,11 @@ partial class Inbox
       }
 
       ///<summary>Drains the inbox for shutdown and stops handling — see <see cref="Coordinator.DrainAndStopAsync"/>.</summary>
-      internal Task DrainAndStopHandlingAsync() => _coordinator.DrainAndStopAsync(ShutdownDrainPatience);
+      internal Task DrainAndStopHandlingAsync(CancellationToken cancellationToken) => _coordinator.DrainAndStopAsync(ShutdownDrainPatience, cancellationToken);
+
+      ///<summary>Stops handling the moment <paramref name="cancellationToken"/> is cancelled — see<br/>
+      /// <see cref="Coordinator.StopHandlingWhenCancelled"/>.</summary>
+      internal CancellationTokenRegistration StopHandlingWhenCancelled(CancellationToken cancellationToken) => _coordinator.StopHandlingWhenCancelled(cancellationToken);
 
       void AwaitDispatchableTessageThreadLoop()
       {
