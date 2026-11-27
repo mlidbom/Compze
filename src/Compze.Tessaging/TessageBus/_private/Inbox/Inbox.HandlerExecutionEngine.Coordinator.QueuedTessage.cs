@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.TessageHandling;
@@ -19,8 +20,8 @@ partial class Inbox
       partial class Coordinator
       {
          ///<summary>The handling of one received tessage: tried, and tried again while it fails, for as long as the endpoint's<br/>
-         /// <see cref="RetryPolicy"/> allow, and then marked failed. Until it is handled or marked failed, it holds its place<br/>
-         /// at the head of the line, so that no tessage behind it is handled first.</summary>
+         /// <see cref="RetryPolicy"/> allow, and then marked failed. Until it is handled or marked failed, a tessage that keeps its<br/>
+         /// place in the order (<see cref="HandlingOrder.AsAdmitted"/>) holds up every other tessage that keeps its place.</summary>
          ///<remarks>A try counts only when the endpoint could record it. When it couldn't, such as when the endpoint's database<br/>
          /// is unreachable, it is the endpoint that is failing, not the tessage: the tessage is tried again once the endpoint<br/>
          /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint's handling ends a wait to<br/>
@@ -38,6 +39,10 @@ partial class Inbox
             readonly TessageHandlerExecutor _executor;
             readonly RetryPolicy _retryPolicy;
             readonly CancellationToken _stopping;
+
+            ///<summary>How long the transaction of a try of the tessage's handling may run before it times out, as its handlers'<br/>
+            /// registrations chose.</summary>
+            readonly TimeSpan _transactionTimeout;
             readonly HandlingRetrySchedule _handlerFailures = new();
             readonly HandlingRetrySchedule _endpointFailures = new();
 
@@ -55,6 +60,10 @@ partial class Inbox
             bool _theNextTryIsTheLast;
 
             internal TessageId TessageId { get; }
+
+            ///<summary>Whether the tessage keeps its place in the order the inbox handles tessages in, as its handlers' registrations<br/>
+            /// chose (<see cref="HandlingOrder"/>).</summary>
+            internal bool KeepsItsPlaceInTheOrder { get; }
 
             ///<summary>True for a tessage the endpoint sent itself, which took its place in the line as it was admitted, in its<br/>
             /// sender's transaction. False for one the recovery scan enqueued, whatever sent it: such tessages are in the line<br/>
@@ -140,7 +149,7 @@ partial class Inbox
                      }
                      await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork, _stopping).caf();
                      await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
-                  }).caf();
+                  }, _transactionTimeout).caf();
                }
 #pragma warning disable CA1031 //Whatever a try fails with, the tessage is tried again or marked failed: see HandleTryingAgainWhileItFailsAsync.
                catch(Exception exception)
@@ -235,10 +244,12 @@ partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, InboxHandlingChoices inboxHandling, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
+               KeepsItsPlaceInTheOrder = inboxHandling.Order == HandlingOrder.AsAdmitted;
+               _transactionTimeout = inboxHandling.TransactionTimeout;
                IsSentByTheEndpointToItself = sentByTheEndpointToItself;
                AwaitsItsSendersCommit = sentByTheEndpointToItself;
                _failingTime = failingTime;

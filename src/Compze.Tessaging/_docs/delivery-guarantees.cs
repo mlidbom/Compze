@@ -49,9 +49,11 @@ class OnboardingEndpoint : ExactlyOnceEndpointDeclaration<OnboardingEndpoint>, I
                      tommandSender.SendAsync(new SendWelcomeEmail(tommand.AccountId, tommand.Email)));
 
    //Never runs within its sender's unit of work: once the registration has committed, the endpoint's inbox runs it in a
-   //unit of work of its own, and tries it again while it fails.
+   //unit of work of its own, and tries it again while it fails. One account's welcome email needn't wait for another's,
+   //so it gives up its place in the handling order: one that keeps failing holds up no other.
    protected override void RegisterDeferredTommandHandlers(IDeferredTommandHandlerRegistrar handle) => handle
       .ForTommand((SendWelcomeEmail tommand, IUnitOfWorkResolver unitOfWork) =>
-                     unitOfWork.Resolve<IEmailSender>().SendWelcomeEmailAsync(tommand.Email));
+                     unitOfWork.Resolve<IEmailSender>().SendWelcomeEmailAsync(tommand.Email),
+                  HandlingOrder.None);
 }
 #endregion

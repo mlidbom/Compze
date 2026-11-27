@@ -3,10 +3,10 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching;
 using Compze.Threading;
 using Compze.Tessaging._private.Transport;
 
@@ -18,6 +18,7 @@ partial class Inbox
    internal partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
       TessageHandlerExecutor executor,
+      TessageHandlerRoster roster,
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
@@ -33,12 +34,7 @@ partial class Inbox
       /// this means a handler is likely hung</summary>
       static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
 
-      readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
-      [
-         new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
-      ];
-
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, retryPolicy, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, roster, retryPolicy, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
       ///<summary>Enqueues a tessage for handling, behind every tessage enqueued before it. <paramref name="failingTime"/> is how<br/>
@@ -74,7 +70,7 @@ partial class Inbox
          {
             while(true)
             {
-               var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
+               var task = _coordinator.AwaitExecutableHandlerExecutionTask();
                task.Execute();
             }
          }

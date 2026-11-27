@@ -8,8 +8,9 @@ the completed ones.
 
 - **[Durable multi-step work on one endpoint](durable-multi-step-work-on-one-endpoint.md)** — deferred handlers, in
   a transaction of their own, a registration's transaction timeout, the handling order, handler cancellation and a stop
-  that lets go, and an endpoint that converses with no other. For the Claude tooling's hub: cancellation, the stop
-  and deferred tommand handlers are built; the rest awaits Magnus's go (2026-11-27).
+  that lets go, and an endpoint that converses with no other. For the Claude tooling's hub: cancellation, the stop,
+  deferred tommand handlers, the handling order and a registration's transaction timeout are built; the endpoint that
+  converses with no other is on hold (2026-11-27).
 
 The Tessaging migration is executed in full — all ten phases of
 [the migration plan](../DONE/tessaging-migration-plan.md), the last (the Host demotion) on 2026-07-18 — and

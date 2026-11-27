@@ -13,7 +13,7 @@ public interface IBestEffortTeventHandlerRegistrar
    ///<summary>Registers a handler for tevents compatible with <typeparamref name="TTevent"/>. The handler receives the<br/>
    /// <see cref="IUnitOfWorkResolver"/> of the unit of work delivering the tevent.</summary>
    ///<remarks>The handler also receives the token of the execution it serves: see<br/>
-   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/>.</remarks>
+   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task},HandlingOrder,Nullable{TimeSpan})"/>.</remarks>
    ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
    IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent;
 

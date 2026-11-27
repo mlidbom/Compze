@@ -9,6 +9,7 @@
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Teventive" />
     <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
   </ItemGroup>

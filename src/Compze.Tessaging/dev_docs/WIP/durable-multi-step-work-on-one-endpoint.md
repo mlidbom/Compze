@@ -29,6 +29,24 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
     progress, so none commits once the next process may own the inbox.
   - **The endpoint's stream to itself is opened at the inbox's start,** under the process lock, so no two first sends race
     to create its row.
+- **Increment 3 is built** (the handling order), on Magnus's go on topic 8, in two steps, as change 3 below designs it,
+  with four choices of the build's own:
+  - **The verbs that take an order:** both forms, with and without the token, of every handler verb the inbox serves,
+    on `TessageBusHandlerRegistrar` and the three minimal registrars; not the convenience forms that resolve a handler's
+    dependencies, nor the best-effort registrar, whose handlers keep the default when an exactly-once tevent runs them.
+  - **A tevent that runs no participation handler keeps its place,** since what its observers see follows the order
+    its handlings commit in. **A tommand with no handler keeps its place** too, and fails each try as before.
+  - **The dispatch decision moved into the inbox's line:** its list of dispatching rules, one rule long, is gone.
+  - **On SQLite, handlings take turns whatever their order,** contrary to change 3's walk-through below as first
+    written: the handling transaction holds the one writer from its claim of the tessage on, before the handler runs.
+- **Increment 4 is built** (a registration's transaction timeout), on Magnus's go on topic 8, in two steps, as change 2
+  below designs it, with three choices of the build's own:
+  - **A unit of work with a timeout of its own is internal** to Compze.DependencyInjection, visible to Compze.Tessaging
+    alone: no consumer has asked for a public one. `TransactionScopeCe.DefaultTimeout` is the backstop made public.
+  - **A tevent's handling gets the longest timeout of its handlers', the default counting for a handler that chose
+    none,** so that no handler gets less than it would have had.
+  - **The registration's choices are one value,** `InboxHandlingChoices`, the order and the timeout, which the roster
+    holds for each handler and combines for a tevent. A timeout not longer than zero explodes at registration too.
 - **Decision 7** is settled by Magnus on topic 7: hearing that a tessage was marked failed leaves this design for
   Tessaging's administration plane, designed by a helper of its own (2026-11-27).
 
@@ -267,7 +285,7 @@ sender's timeout.
 
 ### Mechanism
 
-- **Today's timeout is one constant,** 45 seconds for every unit of work (`TransactionScopeCE.TransactionTimeout`): a
+- **Today's timeout is one constant,** 45 seconds for every unit of work (`TransactionScopeCe.DefaultTimeout`): a
   backstop, so that a unit of work whose thread wedged rolls back in bounded time.
 - **The inbox's unit of work for a handling takes its timeout from the registration** of the tessage's handler. For a
   tevent whose handlers declare several, the longest.
@@ -327,8 +345,9 @@ looked up in the roster as it is enqueued.
   only for it: its other tessages keep their order among themselves. The tessage's type doesn't say so; the receiving
   handler's registration does, as for the choices of changes 1 and 2.
 - **At the same time as other handlers.** A handler that gives up its place runs at the same time as any handler of the
-  endpoint, so what it shares with them in memory needs locking; the database's isolation covers the rest. On SQLite the
-  transactional ones still take turns at the one writer; the outside effects of change 2 run in parallel.
+  endpoint, so what it shares with them in memory needs locking; the database's isolation covers the rest. On SQLite
+  handlings take turns at the one writer, outside effects included: the claim takes the writer before the handler runs.
+  There, giving up the place still means a tessage is handled while another waits to be tried again.
 - **Marking failed.** A tessage that gives up its place and keeps failing holds up nothing, and is marked failed when the
   `RetryPolicy` gives up.
 - **Restarts.** The recovery scan enqueues in admission order, and those whose handlers gave up their place are
