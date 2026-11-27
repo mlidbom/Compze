@@ -25,8 +25,10 @@ class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       _masterConnectionPool = IMsSqlConnectionPool.CreateInstance(_masterConnectionString);
    }
 
+   ///<summary>The connection string of <paramref name="db"/>, with a pool of ten connections, as the test databases of PostgreSQL and<br/>
+   /// MySQL have: a test that exhausts the pool exhausts it on all three.</summary>
    public string ConnectionStringFor(DbPoolDatabase db)
-      => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name }.ConnectionString;
+      => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name, MaxPoolSize = 10 }.ConnectionString;
 
    public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
