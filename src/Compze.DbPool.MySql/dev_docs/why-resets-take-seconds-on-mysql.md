@@ -56,7 +56,7 @@ need more flushes than the server's drive completes, so DDL statements queue: a 
   a full local run, in AccountManagement's user stories on MySql. A `bug:` comment marks it at the code.
 - **Tests run past their reservations.** A test host whose three databases each wait seconds for their reset, and then
   for their schema, spends much of the 65 s reservation starting up, so another pool may take and reset a database it
-  still uses: `Unknown database 'compze_dbpool_0084'` in the same run.
+  still uses. Probably what an `Unknown database 'compze_dbpool_0084'` in the same run was; not verified.
 
 ## What was ruled out
 
