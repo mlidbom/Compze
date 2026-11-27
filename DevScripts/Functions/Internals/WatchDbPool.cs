@@ -29,7 +29,7 @@ var stopAfterIdleFor = TimeSpan.FromSeconds(int.Parse(args[6], CultureInfo.Invar
 
 var dbPool = DbPoolAssembly.Load(dbPoolAssemblyPath);
 var stateFile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                          "Compze", "SharedFiles", $"{sqlLayerTypeName}_{dbPool.FormatVersion}.mmf"));
+                                          "Compze", "SharedFiles", $"{sqlLayerTypeName}{dbPool.StateNameSuffix}.mmf"));
 if(!stateFile.Exists)
 {
    Console.Error.WriteLine($"No machine-wide state at {stateFile.FullName}: no pool of this version has used the SQL layer {sqlLayerTypeName} on this machine.");
@@ -61,7 +61,7 @@ while(!stopRequested)
    {
       var reservations = dbPool.ReservationsIn(content);
       watch.Sample(now, reservations);
-      if(reservations.Count > 0) lastReservationSeenAt = now;
+      if(Watch.AnyIsForARunningProcess(reservations)) lastReservationSeenAt = now;
       if(now - lastReportAt >= TimeSpan.FromSeconds(1))
       {
          Console.WriteLine(watch.DescribeNow(now));
@@ -89,6 +89,9 @@ sealed class Reservation : IEquatable<Reservation>
       Name = name;
       ExpiresAt = expiresAt;
    }
+
+   ///<summary>What <see cref="ProcessId"/> is for a reservation made by a DbPool from before 0.4.0, which didn't record its process.</summary>
+   internal const int UnknownProcessId = 0;
 
    internal int DatabaseId { get; }
    internal Guid PoolId { get; }
@@ -134,9 +137,10 @@ sealed class DbPoolAssembly
    {
       _stateType = assembly.GetType("Compze.DbPool.DbPoolState", throwOnError: true)!;
       _databases = _stateType.GetProperty("Databases")!;
-      FormatVersion = (string)assembly.GetType("Compze.DbPool._private.DbPoolMachineWideState", throwOnError: true)!
-                                      .GetField("FormatVersion", BindingFlags.NonPublic | BindingFlags.Static)!
-                                      .GetRawConstantValue()!;
+      var formatVersion = assembly.GetType("Compze.DbPool._private.DbPoolMachineWideState", throwOnError: true)!
+                                  .GetField("FormatVersion", BindingFlags.NonPublic | BindingFlags.Static)
+                                 ?.GetRawConstantValue();
+      StateNameSuffix = formatVersion is null ? "" : $"_{formatVersion}";
       NumberOfDatabases = (int)assembly.GetType("Compze.DbPool.DbPool", throwOnError: true)!
                                        .GetField("NumberOfDatabases", BindingFlags.NonPublic | BindingFlags.Static)!
                                        .GetRawConstantValue()!;
@@ -154,7 +158,9 @@ sealed class DbPoolAssembly
       return new DbPoolAssembly(AssemblyLoadContext.Default.LoadFromStream(new MemoryStream(File.ReadAllBytes(path))));
    }
 
-   internal string FormatVersion { get; }
+   ///<summary>What follows the SQL layer's name in the machine-wide state's name: the format version, which DbPool 0.4.0 introduced, nothing<br/>
+   /// before it.</summary>
+   internal string StateNameSuffix { get; }
    internal int NumberOfDatabases { get; }
 
    internal IReadOnlyList<Reservation> ReservationsIn(byte[] stateFileContent)
@@ -169,12 +175,19 @@ sealed class DbPoolAssembly
       var type = database.GetType();
       if(!(bool)type.GetProperty("IsReserved")!.GetValue(database)!) return null;
 
-      var process = type.GetProperty("ReservedInProcess", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(database)!;
       return new Reservation(databaseId: (int)type.GetProperty("Id")!.GetValue(database)!,
                              poolId: (Guid)type.GetProperty("ReservedByPoolId")!.GetValue(database)!,
-                             processId: (int)process.GetType().GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(process)!,
+                             processId: ReservingProcessIdOf(database),
                              name: (string)type.GetProperty("ReservationName")!.GetValue(database)!,
                              expiresAt: (DateTime)type.GetProperty("ReservationExpirationTime")!.GetValue(database)!);
+   }
+
+   ///<summary>The id of the process the database is reserved in, or <see cref="Reservation.UnknownProcessId"/> for a DbPool from before 0.4.0,<br/>
+   /// which didn't record it.</summary>
+   static int ReservingProcessIdOf(object database)
+   {
+      var process = database.GetType().GetProperty("ReservedInProcess", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(database);
+      return process is null ? Reservation.UnknownProcessId : (int)process.GetType().GetProperty("Id", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(process)!;
    }
 }
 
@@ -277,9 +290,29 @@ sealed class Watch
 
    string ProcessName(int processId)
    {
+      if(processId == Reservation.UnknownProcessId) return "a process the pool didn't record";
+
       if(!_processes.TryGetValue(processId, out var name))
          _processes[processId] = name = $"{TestProjectOf(processId)} ({processId})";
       return name;
+   }
+
+   ///<summary>Whether any of <paramref name="reservations"/> is for a process that still runs, or one the pool didn't record: those of an exited<br/>
+   /// process stay in the state until the next reservation releases them.</summary>
+   internal static bool AnyIsForARunningProcess(IReadOnlyList<Reservation> reservations) =>
+      reservations.Select(it => it.ProcessId).Distinct().Any(processId => processId == Reservation.UnknownProcessId || IsRunning(processId));
+
+   static bool IsRunning(int processId)
+   {
+      try
+      {
+         using var process = Process.GetProcessById(processId);
+         return !process.HasExited;
+      }
+      catch(ArgumentException) //What Process.GetProcessById throws when no process with the id runs.
+      {
+         return false;
+      }
    }
 
    ///<summary>The test project whose bin folder the process runs from, as a test host does, or the process's name.</summary>

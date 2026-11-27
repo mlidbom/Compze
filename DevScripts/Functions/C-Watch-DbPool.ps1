@@ -33,6 +33,10 @@ function C-Watch-DbPool {
     .PARAMETER LogPath
     Where to write the log. obj\dbpool-watch-<SqlLayer>-<time>.log in the repository if left out.
 
+    .PARAMETER Checkout
+    The checkout whose build of Compze.DbPool.dll to read the state with, such as a worktree of an older commit being bisected. This
+    module's own checkout if left out. DbPool versions before 0.4.0 don't record the process of a reservation.
+
     .PARAMETER ReservationLength
     How long a reservation lasts, which dates each reservation from its expiry. The DbPool's 65 seconds if left out.
 
@@ -58,6 +62,8 @@ function C-Watch-DbPool {
 
         [string]$LogPath,
 
+        [string]$Checkout = $script:CompzeRoot,
+
         [TimeSpan]$ReservationLength = [TimeSpan]::FromSeconds(65)
     )
 
@@ -69,10 +75,10 @@ function C-Watch-DbPool {
         PgSql        = 'Compze.DbPool.PostgreSql._private.PgSqlDbPoolSqlLayer'
     }
 
-    $dbPoolAssembly = Get-ChildItem (Join-Path $script:CompzeSrcRoot 'Compze.DbPool\bin\Debug\net*\Compze.DbPool.dll') -ErrorAction SilentlyContinue |
+    $dbPoolAssembly = Get-ChildItem (Join-Path $Checkout 'src\Compze.DbPool\bin\Debug\net*\Compze.DbPool.dll') -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if (-not $dbPoolAssembly) {
-        Write-Error "No Compze.DbPool.dll under src\Compze.DbPool\bin\Debug: build first, with C-Build."
+        Write-Error "No Compze.DbPool.dll under $Checkout\src\Compze.DbPool\bin\Debug: build first, with C-Build."
         return
     }
 
