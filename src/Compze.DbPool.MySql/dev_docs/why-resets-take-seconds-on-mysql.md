@@ -28,10 +28,12 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
   database uses a second, 8.0.44 4.0, 8.4.6 3.9, and the installed 9.7.0 4.2 to 4.5, the reset's median between 1.5
   and 1.7 s on each. Alone, each resets a database in 0.13 to 0.22 s. 5.7 syncs less, 177 times for the 15 tables'
   creation against 8.0 and later's 296 to 378, but runs less DDL at once.
-- **What would cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run starts every test assembly
-  at once, each running a test class per logical processor, and other sessions' runs add theirs. The server's DDL
-  throughput stops rising at about 8 at once; past that, each statement only waits longer. [Emptying the tables
-  instead of dropping them](#emptying-the-tables-instead-of-dropping-them) and [Windows' write-cache buffer
+- **What cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run started every test assembly at
+  once, each running a test class per logical processor, and other sessions' runs added theirs. The server's DDL
+  throughput stops rising at about 8 at once; past that, each statement only waits longer. Since 2026-11-27, C-Test
+  runs at most 8 test classes at once per assembly in a run that includes MySql (Magnus's choice): the reset averages
+  about 1 s, and the suite passes on threadripper, where 3 to 7 MySql tests failed in every run before. [Emptying the
+  tables instead of dropping them](#emptying-the-tables-instead-of-dropping-them) and [Windows' write-cache buffer
   flushing](#windows-write-cache-buffer-flushing) were declined.
 
 ## What was measured
@@ -241,6 +243,18 @@ other run meanwhile:
 - **The processors were not the limit:** this machine's ran at a median of 11% over the first two minutes, with
   Compze.Tests.Performance.Internals at 1.6 cores at most; threadripper's peaked at 42% in the first 30 s, SQL Server's
   7.8 cores, and then ran at 11 to 18%.
+
+**C-Test's default since, checked against threadripper's servers,** 15:48 to 16:01, no other run meanwhile, every run
+passing:
+
+| Run | Time | MySQL reset average | MySQL connections, max | MySQL statements running, median / max |
+|---|---|---|---|---|
+| MsSql, PgSql, Sqlite, SqliteMemory, each alone, uncapped | 72, 72, 71, 71 s | | | |
+| MySql alone, capped at 8 | 216 s | 1.38 s | 178 | 10 / 30 |
+| All five layers in one run, capped at 8 | 273 s | 1.01 s | 182 | 7 / 23 |
+
+The run of all five layers took 309 s in the earlier capped run and 270 s uncapped, so a mixed run's cost is within what
+one run varies by.
 
 ## Emptying the tables instead of dropping them
 
