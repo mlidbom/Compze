@@ -65,7 +65,7 @@ public abstract class Given_two_exactly_once_tommands_sent_in_order_whose_first_
          TriesOf(1).Count.Must().Be(4);
 
       [PCT] public void disposing_the_host_reports_the_failure_that_marked_the_first_tommand_failed() =>
-         HostDisposalException!.Flatten().InnerExceptions.OfType<IntentionalHandlerFailureException>().Select(it => it.TommandNumber).Must().SequenceEqual([1]);
+         NumbersOfTheTommandsWhoseFailuresAreReportedIn(HostDisposalException).Must().SequenceEqual([1]);
    }
 
    public class that_keeps_failing_with_a_retry_policy_that_gives_up_at_once()

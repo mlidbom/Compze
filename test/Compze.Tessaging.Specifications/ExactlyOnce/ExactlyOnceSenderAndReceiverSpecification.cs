@@ -6,6 +6,7 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.TessageBus;
@@ -35,6 +36,10 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
 
    ///<summary>Passed through once by each tommand handled.</summary>
    protected IThreadGate HandledGate { get; } = IThreadGate.NewOpen(GateTimeout, nameof(HandledGate));
+
+   ///<summary>Passed through once by each stop of the Receiver, as the stop begins: when the Receiver retracts its address,<br/>
+   /// before it stops sending, stops listening and drains its inbox.</summary>
+   protected IThreadGate ReceiverStopsGate { get; } = IThreadGate.NewOpen(GateTimeout, nameof(ReceiverStopsGate));
 
    ///<summary>How many tries of the first tommand's handling fail, from the first try on: <see cref="int.MaxValue"/> keeps failing.</summary>
    protected int TriesOfTheFirstTommandThatFail { get; set; }
@@ -70,13 +75,20 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
       await Sender.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new NumberedExactlyOnceTommand(tommandNumber));
 
    ///<summary>Disposes the host once its endpoints are at rest, as the testing host does, and answers what its disposal threw.</summary>
-   protected async Task<AggregateException?> DisposeHostAsync()
+   protected async Task<AggregateException?> DisposeHostAsync() => await WhatDisposingTheHostThrewAsync(host => host.DisposeAsync().AsTask());
+
+   ///<summary>Disposes the host without waiting for its endpoints to come to rest, for a specification that stops the Receiver<br/>
+   /// while a tommand is still being tried, or waits to be tried again, and answers what its disposal threw.</summary>
+   protected async Task<AggregateException?> DisposeHostWithoutWaitingForItsEndpointsToBeAtRestAsync() =>
+      await WhatDisposingTheHostThrewAsync(host => host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync());
+
+   async Task<AggregateException?> WhatDisposingTheHostThrewAsync(Func<TestingEndpointHost, Task> dispose)
    {
       var host = _host!;
       _host = null;
       try
       {
-         await host.DisposeAsync();
+         await dispose(host);
          return null;
       }
       catch(AggregateException exception)
@@ -85,14 +97,12 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
       }
    }
 
-   ///<summary>Disposes the host without waiting for its endpoints to come to rest, for a specification that stops the Receiver<br/>
-   /// while a tommand is still being tried again.</summary>
-   protected async Task DisposeHostWithoutWaitingForItsEndpointsToBeAtRestAsync()
-   {
-      var host = _host!;
-      _host = null;
-      await host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync();
-   }
+   ///<summary>The numbers of the tommands whose handler's failures <paramref name="hostDisposalException"/> reports, in the<br/>
+   /// order it reports them: none when the host's disposal threw nothing.</summary>
+   protected static IReadOnlyList<int> NumbersOfTheTommandsWhoseFailuresAreReportedIn(AggregateException? hostDisposalException) =>
+      hostDisposalException is null
+         ? []
+         : [.. hostDisposalException.Flatten().InnerExceptions.OfType<IntentionalHandlerFailureException>().Select(it => it.TommandNumber)];
 
    protected override async Task DisposeAsyncInternal()
    {
@@ -150,5 +160,19 @@ public abstract class ExactlyOnceSenderAndReceiverSpecification : UniversalTestB
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
          .ForTommand((NumberedExactlyOnceTommand tommand, IUnitOfWorkResolver _) => _specification.HandleAsync(tommand));
+
+      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.AnnounceAddressTo(new AnnouncerPassingTheStopsGateAtRetraction(_specification.ReceiverStopsGate));
+   }
+
+   ///<summary>An address announcer that announces nothing, and passes <see cref="ReceiverStopsGate"/> as the Receiver retracts<br/>
+   /// its address: the first act of the Receiver's stop.</summary>
+   class AnnouncerPassingTheStopsGateAtRetraction : IEndpointAddressAnnouncer
+   {
+      readonly IThreadGate _receiverStopsGate;
+      internal AnnouncerPassingTheStopsGateAtRetraction(IThreadGate receiverStopsGate) => _receiverStopsGate = receiverStopsGate;
+
+      public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address) {}
+
+      public void RetractEndpointAddress(EndpointId endpointId) => _receiverStopsGate.AwaitPassThrough();
    }
 }
