@@ -44,6 +44,13 @@ runs:
         # A test whose own timeout runs out writes a dump of its process here (TestProcessDump), inside the results folder the
         # upload step below collects, so the dump is read in the log by the analysis step and kept with the job's artifacts.
         echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
+        # The SQLite pool's database files go in the runner's own temp folder, on the disk the work is on. On Windows the
+        # system's temp folder is on C:, the runner's operating-system disk, whose flushes stall for seconds under the suite's
+        # load: with the pool there, AccountManagement's user stories took 10-73 s now and then, and some held their databases
+        # past the DbPool's 65-second reservations (CI run 46021615668). With it on D:, where RUNNER_TEMP is, none of them took
+        # over 10 s in 40 runs of the suite, against 27 in 40 runs on C: (flake hunt 46032729934).
+        echo "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY=$RUNNER_TEMP/CompzeDbPool/Sqlite" >> "$GITHUB_ENV"
+        echo "The SQLite pool's databases go in $RUNNER_TEMP/CompzeDbPool/Sqlite"
 
     - name: Build
       shell: bash
@@ -78,8 +85,13 @@ runs:
         # slowest single assembly executes in under a second - so it can only fire on a genuine hang, never a slow runner.
         # --results-directory collects every project's dump and sequence file in one place for the upload step below.
         dotnet test Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1 \
-                    --results-directory TestResults --blame-hang --blame-hang-timeout 10min --blame-hang-dump-type full
+                    --results-directory TestResults --logger trx --blame-hang --blame-hang-timeout 10min --blame-hang-dump-type full
         test_exit=$?
+
+        # A slow test that passes prints nothing of its own, so slowness goes unseen until a test fails for it: Windows' SQLite
+        # user stories took 10-20 s now and then, unseen, until one held its databases past their reservation.
+        echo "===== The slowest tests of the run ====="
+        pwsh -NoProfile -File .github/scripts/Show-SlowestTests.ps1 -Directory TestResults -Top 15
 
         if [ "$sample_load" = true ]; then
           kill "$vmstat_pid" 2>/dev/null || true

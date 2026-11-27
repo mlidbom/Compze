@@ -104,6 +104,8 @@ jobs:
             echo "${{ matrix.persistence }}:$container:${{ matrix.serializer }}:${{ matrix.transport }}"
           done > src/TestUsingPluggableComponentCombinations
           echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
+          # Where CI keeps them, for the reason .github/actions/build-and-test gives: the system's temp folder is on Windows' slow C:.
+          echo "COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY=$RUNNER_TEMP/CompzeDbPool/Sqlite" >> "$GITHUB_ENV"
 
       - name: Build the hunted test project
         run: dotnet build "$HUNTED_TEST_PROJECT" --configuration Debug -p:CompzeRuntimeAsync=$RUNTIME_ASYNC
@@ -116,12 +118,12 @@ jobs:
           failures=0
           for run in $(seq 1 "$RUNS_PER_RUNNER"); do
             # The state of a fresh CI runner: no machine-wide DbPool state, test endpoint registries or SQLite pool databases (Compze
-            # keeps them under the local application data folder and the temp folder), and - on PostgreSQL - no pool databases and a
-            # freshly started server.
+            # keeps them under the local application data folder, the temp folder and the runner's temp folder), and - on
+            # PostgreSQL - no pool databases and a freshly started server.
             if [ "$RUNNER_OS" = "Windows" ]; then
-              rm -rf "$(cygpath "$LOCALAPPDATA")/Compze" "$(cygpath "$TEMP")/Compze" "$(cygpath "$TEMP")/CompzeDbPool"
+              rm -rf "$(cygpath "$LOCALAPPDATA")/Compze" "$(cygpath "$TEMP")/Compze" "$(cygpath "$RUNNER_TEMP")/CompzeDbPool"
             else
-              rm -rf ~/.local/share/Compze /tmp/Compze /tmp/CompzeDbPool
+              rm -rf ~/.local/share/Compze /tmp/Compze "$RUNNER_TEMP/CompzeDbPool"
             fi
             if [ "${{ matrix.persistence }}" = "PgSql" ]; then
               for database in $(docker exec "$POSTGRES_CONTAINER" psql -U postgres -At -c "SELECT datname FROM pg_database WHERE datname LIKE 'compze_dbpool_%'"); do
