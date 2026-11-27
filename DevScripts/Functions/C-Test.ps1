@@ -32,7 +32,14 @@ function C-Test {
 
     .PARAMETER MaxParallelThreads
     Runs at most this many test collections at once within each test assembly (xUnit's MaxParallelThreads), where by
-    default xUnit runs one for each logical processor.
+    default xUnit runs one for each logical processor. 0 leaves it to xUnit.
+
+    By default 8 when the run includes a MySql combination, and xUnit's otherwise. MySQL's DDL is bound by its syncs to
+    disk, and its throughput stops rising at about 8 statements at once: with a test class per logical processor, the
+    DbPool's resets of its databases take seconds, tests run past their reservations, and two runs at once exhaust the
+    server's connections. At 8, the MySql suite runs fastest and passes on threadripper's server. The limit is per
+    assembly, so it holds for every combination in such a run. Measured in
+    src/Compze.DbPool.MySql/dev_docs/why-resets-take-seconds-on-mysql.md (Magnus, 2026-11-27).
 
     .PARAMETER KeepResultsIn
     Keeps each test run's TRX files, the test results with each failure's message and stack trace, in a folder of its own
@@ -137,6 +144,11 @@ function C-Test {
 
         if ($Combinations) {
             Set-CombinationsFileCopies -Combinations $Combinations
+        }
+
+        $runsMySql = @(if ($Combinations) { $Combinations } else { Get-ActiveCombinations }) | Where-Object { $_ -match '^\s*(MySql|\*):' }
+        if (-not $PSBoundParameters.ContainsKey('MaxParallelThreads') -and $runsMySql) {
+            $MaxParallelThreads = 8
         }
 
         # Run tests for each iteration
