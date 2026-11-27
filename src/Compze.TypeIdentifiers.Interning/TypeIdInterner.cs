@@ -44,6 +44,13 @@ public sealed class TypeIdInterner : ITypeIdInterner
 
       // Not in the cache. Another process may already have interned it since we loaded — so probe the database
       // before minting.
+      //bug: the server persistences (PostgreSQL, MySQL, SQL Server) probe, mint and load under TransactionScopeOption.Suppress, on a
+      //   connection from the pool that units of work hold their transactions' connections from. A unit of work that holds a
+      //   taggregate's lock and stores a type new to the database, while as many units of work wait for that lock as the pool has
+      //   connections, gets none, and all wait until the pool times out: MySQL's tevent store's deadlock, pinned by
+      //   Given_a_tevent_store_holding_a_user's contexts that store a tevent type for the first time. ResolveType's load and
+      //   EnsureLoaded's, inside a unit of work, have the same hazard. The fix, a pool of the interner's own or another, is Magnus's
+      //   choice (2026-11-27, through compze-agent-rep).
       return TryResolveExistingId(typeId, out var found) ? found : Mint(typeId);
    }
 
