@@ -27,3 +27,4 @@ Discover all commands: `C-Get-Commands` or `C-<Tab>` in PowerShell.
 | `C-Prepare-Release` | Bump versions, split changelogs and add dependency floors lines for the next release |
 | `C-SimulateRelease` | Check a prepared release as the release workflow will, publishing nothing |
 | `C-Measure-Command` | Time a command line, with the processor time the rest of the machine used meanwhile |
+| `C-Watch-DbPool` | Watch how full the DbPool gets during a test run, who holds its databases, and for how long |

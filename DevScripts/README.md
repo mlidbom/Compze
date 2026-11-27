@@ -46,6 +46,13 @@ Then reload: `. $PROFILE`
   - `-Filter <filter>` - Run only the tests that match, passed to `dotnet test --filter`, such as `"FullyQualifiedName~CQRS.TaggregateStores"`. A filter that matches no test fails the run
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
+- **C-Watch-DbPool** - Watches the DbPool's reservations of one SQL layer's databases on this machine while tests run, to see why tests time out waiting for a pool database: once a second, how many are reserved, by how many pools, how many each pool holds, and the reservations per test project; each reservation and release in a log; and at the end a summary of how full the pool got and how long the reservations were held. Reads the state without its lock, with the Compze.DbPool.dll the checkout built. Start it, then C-Test in another shell
+  - `-SqlLayer <layer>` - SqliteMemory (the default), Sqlite, MsSql, MySql or PgSql
+  - `-Duration <time>` - Watch this long; until Ctrl+C otherwise
+  - `-StopAfterIdle <time>` - Stop once the pool has held no database for this long, after it has held some
+  - `-IntervalMilliseconds <n>` - How often to read the state: 100 by default
+  - `-LogPath <path>` - Where to write the log: `obj\dbpool-watch-<layer>-<time>.log` by default
+
 ### Packing & Releasing
 
 - **C-Pack** - Packs every package into the local `nupkgs/` feed that Compze's focused solutions restore from
