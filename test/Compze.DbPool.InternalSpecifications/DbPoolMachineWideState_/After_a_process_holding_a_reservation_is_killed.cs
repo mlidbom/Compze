@@ -27,7 +27,7 @@ public class After_a_process_holding_a_reservation_is_killed : UniversalTestBase
       _databaseTheKilledProcessHeld = await TheDatabaseAnotherProcessHeldWhenItWasKilledAsync();
 
       var poolId = Guid.NewGuid();
-      var state = new DbPoolMachineWideState(StateName);
+      using var state = new DbPoolMachineWideState(StateName);
       _databaseTheNextReservationGot = state.ReserveDatabase("the next reservation", poolId, ReservationLength).Name;
       state.ReleaseReservationsFor(poolId);
    }

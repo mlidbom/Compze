@@ -8,7 +8,7 @@ namespace Compze.DbPool._private;
 
 ///<summary>Which of the <see cref="DbPool"/>'s databases are reserved, and by whom,<br/>
 /// kept in an <see cref="IInterprocessObject{T}"/> that every process on this machine shares.</summary>
-class DbPoolMachineWideState
+class DbPoolMachineWideState : IDisposable
 {
    //todo: (Magnus, 2026-11-17) This class is to be replaced by a pool service that every machine shares: machines that use
    //   the same database servers reset each other's databases today. See
@@ -63,4 +63,7 @@ class DbPoolMachineWideState
    }
 
    internal void ReleaseReservationsFor(Guid poolId) => _shared.Update(state => state.ReleaseReservationsFor(poolId));
+
+   ///<summary>Releases this instance's hold on the shared state: its mapping of the file and its handles to the lock. The reservations stay.</summary>
+   public void Dispose() => _shared.Dispose();
 }
