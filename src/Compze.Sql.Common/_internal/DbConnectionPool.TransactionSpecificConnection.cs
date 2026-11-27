@@ -90,6 +90,10 @@ partial class DbConnectionPool<TConnection, TCommand>
       }
 
       ///<summary>Disposes the connection, if one opened, once the operations using it have released the lock.</summary>
-      public void Dispose() => _serializedAccess.Locked(() => _connection?.Dispose());
+      public void Dispose()
+      {
+         if(_probeUseOfThisFlow.Value is { Ended: false }) ConnectionLockReentryProbeLog.Record("dispose");
+         _serializedAccess.Locked(() => _connection?.Dispose());
+      }
    }
 }
