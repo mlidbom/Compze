@@ -52,7 +52,7 @@ static class UnitOfWorkTommandSenderRegistrar
       if(_roster.HandlesTommand(tommand.GetType()))
       {
          TessageInspector.AssertValidToExecuteLocally(tommand);
-         await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).caf();
+         await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver), CancellationToken.None).caf();
       }
       else
       {

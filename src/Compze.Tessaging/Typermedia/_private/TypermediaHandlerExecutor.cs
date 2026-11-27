@@ -35,7 +35,7 @@ class TypermediaHandlerExecutor
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
       await ExecuteWithRetryAsync<object?>(async () =>
       {
-         await _executor.ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(tommand).caf();
+         await _executor.ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(tommand, CancellationToken.None).caf();
          return null;
       }).caf();
    }

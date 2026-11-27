@@ -33,22 +33,30 @@ class TessageHandlerExecutor
    ///<summary>Executes every participation handler whose subscription matches <paramref name="wrappedTevent"/>, within<br/>
    /// <paramref name="unitOfWork"/> — the publisher's own unit of work for a local publish, the inbox processing's own for an<br/>
    /// exactly-once arrival.</summary>
-   public async Task ExecuteTeventHandlersAsync(IPublisherTevent<ITevent> wrappedTevent, IUnitOfWorkResolver unitOfWork)
+   ///<param name="wrappedTevent">The tevent, in its publisher-identifying wrapper.</param>
+   ///<param name="unitOfWork">The unit of work the handlers run in.</param>
+   ///<param name="cancellationToken">The token of the execution the handlers serve, handed to each: the publisher's for a<br/>
+   /// local publish, the endpoint's stopping token for an arrival the inbox handles.</param>
+   public async Task ExecuteTeventHandlersAsync(IPublisherTevent<ITevent> wrappedTevent, IUnitOfWorkResolver unitOfWork, CancellationToken cancellationToken)
    {
       foreach(var handler in _roster.GetTeventHandlers(wrappedTevent.GetType()))
-         await handler(wrappedTevent, unitOfWork).caf();
+         await handler(wrappedTevent, unitOfWork, cancellationToken).caf();
    }
 
    ///<summary>Executes the roster's full tevent response — see <see cref="ExecuteTeventHandlersAsync"/> — as its own unit of work:<br/>
    /// the best-effort arrival form, where no caller context exists to join.</summary>
-   public async Task ExecuteTeventHandlersInOwnUnitOfWorkAsync(IPublisherTevent<ITevent> wrappedTevent) =>
-      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork).caf()).caf();
+   public async Task ExecuteTeventHandlersInOwnUnitOfWorkAsync(IPublisherTevent<ITevent> wrappedTevent, CancellationToken cancellationToken) =>
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork, cancellationToken).caf()).caf();
 
    ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — within<br/>
    /// <paramref name="unitOfWork"/>: the caller's session for a strictly-local send, the inbox processing's own unit of work for<br/>
    /// an exactly-once arrival.</summary>
-   public Task ExecuteTommandHandlerAsync(ITommand tommand, IUnitOfWorkResolver unitOfWork) =>
-      _roster.GetVoidTommandHandler(tommand.GetType())(tommand, unitOfWork);
+   ///<param name="tommand">The tommand.</param>
+   ///<param name="unitOfWork">The unit of work the handler runs in.</param>
+   ///<param name="cancellationToken">The token of the execution the handler serves, handed to it: the sender's for an inline<br/>
+   /// send, the endpoint's stopping token for an arrival the inbox handles.</param>
+   public Task ExecuteTommandHandlerAsync(ITommand tommand, IUnitOfWorkResolver unitOfWork, CancellationToken cancellationToken) =>
+      _roster.GetVoidTommandHandler(tommand.GetType())(tommand, unitOfWork, cancellationToken);
 
    ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, within <paramref name="unitOfWork"/>.</summary>
    public async Task<TResult> ExecuteTommandHandlerAsync<TResult>(ITommand<TResult> tommand, IUnitOfWorkResolver unitOfWork) =>
@@ -57,10 +65,10 @@ class TessageHandlerExecutor
    ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — as its own<br/>
    /// unit of work: the remote-arrival form. The handler is resolved before the unit of work opens: a missing handler is a<br/>
    /// programming error surfacing as <see cref="NoHandlerException"/>, never work worth beginning a transaction for.</summary>
-   public async Task ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(ITommand tommand)
+   public async Task ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(ITommand tommand, CancellationToken cancellationToken)
    {
       var handler = _roster.GetVoidTommandHandler(tommand.GetType());
-      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await handler(tommand, unitOfWork).caf()).caf();
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await handler(tommand, unitOfWork, cancellationToken).caf()).caf();
    }
 
    ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, as its own unit of<br/>

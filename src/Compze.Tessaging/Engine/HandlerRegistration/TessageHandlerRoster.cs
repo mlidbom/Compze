@@ -22,7 +22,7 @@ namespace Compze.Tessaging.Engine.HandlerRegistration;
 public class TessageHandlerRoster
 {
    readonly IReadOnlyList<TeventHandlerRegistration> _teventHandlers;
-   readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers;
+   readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>> _voidTommandHandlers;
    readonly IReadOnlyDictionary<Type, TommandHandlerWithResult> _tommandHandlersWithResults;
    readonly IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers;
    readonly IReadOnlyList<Type> _subscribedTeventTypes;
@@ -35,7 +35,7 @@ public class TessageHandlerRoster
                                  IReadOnlyList<TeventObserverRegistration> teventObservers,
                                  bool isTheEngineOfAnEndpoint,
                                  IReadOnlyList<Type> teventTypesSubscribedForDynamicObservers,
-                                 IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> voidTommandHandlers,
+                                 IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>> voidTommandHandlers,
                                  IReadOnlyDictionary<Type, TommandHandlerWithResult> tommandHandlersWithResults,
                                  IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> tueryHandlers,
                                  IReadOnlyList<Type> subscribedTeventTypes,
@@ -62,7 +62,7 @@ public class TessageHandlerRoster
    /// dispatch's own for a best-effort arrival.</summary>
    ///<remarks>The order is a guarantee: a handler may depend on what the handlers registered before it did (Magnus, 2026-11-24).</remarks>
    //performance: Use static caching trick.
-   public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
+   public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, CancellationToken, Task>> GetTeventHandlers(Type wrapperTeventType) =>
       [.._teventHandlers.Where(it => it.MatchesTeventsWrappedAs(wrapperTeventType)).Select(it => it.Handle)];
 
    ///<summary>Every composed tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
@@ -79,7 +79,7 @@ public class TessageHandlerRoster
    internal IReadOnlyList<Type> TeventTypesSubscribedForDynamicObservers { get; }
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose type declares no result.</summary>
-   public Func<ITommand, IUnitOfWorkResolver, Task> GetVoidTommandHandler(Type tommandType) =>
+   public Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task> GetVoidTommandHandler(Type tommandType) =>
       _voidTommandHandlers.TryGetValue(tommandType, out var handler) ? handler : throw new NoHandlerException(tommandType);
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose result answers the caller.</summary>

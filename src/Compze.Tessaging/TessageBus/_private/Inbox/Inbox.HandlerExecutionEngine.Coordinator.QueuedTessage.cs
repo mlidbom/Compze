@@ -30,7 +30,7 @@ partial class Inbox
          {
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, IUnitOfWorkResolver, Task> _tessageTask;
+            readonly Func<object, IUnitOfWorkResolver, CancellationToken, Task> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
@@ -120,7 +120,7 @@ partial class Inbox
                         claimed = false;
                         return;
                      }
-                     await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork).caf();
+                     await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork, _stopping).caf();
                      await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                   }).caf();
                }
@@ -233,12 +233,12 @@ partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, IUnitOfWorkResolver, Task> CreateTessageTask() =>
+            Func<object, IUnitOfWorkResolver, CancellationToken, Task> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
                   //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork) => _executor.ExecuteTeventHandlersAsync(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork),
-                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) => _executor.ExecuteTommandHandlerAsync((IExactlyOnceTommand)tessage, unitOfWork),
+                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork, cancellationToken) => _executor.ExecuteTeventHandlersAsync(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork, cancellationToken),
+                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork, cancellationToken) => _executor.ExecuteTommandHandlerAsync((IExactlyOnceTommand)tessage, unitOfWork, cancellationToken),
                   TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(),
                   _                                     => throw new ArgumentOutOfRangeException()
                };

@@ -40,7 +40,7 @@ class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
       //todo:urgent: a synchronous wait on an asynchronous handler: it holds the calling thread, and stalls while every
       //   thread-pool thread is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
 #pragma warning disable VSTHRD002 // The navigator session's synchronous API, over the executor's asynchronous handlers.
-      _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
+      _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver), CancellationToken.None).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002
    }
 
@@ -69,7 +69,7 @@ class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
    public async Task ExecuteAsync(IStrictlyLocalTommand tommand)
    {
       CommonAssertion(tommand);
-      await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).caf();
+      await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver), CancellationToken.None).caf();
    }
 
    public async Task<TResult> ExecuteAsync<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>

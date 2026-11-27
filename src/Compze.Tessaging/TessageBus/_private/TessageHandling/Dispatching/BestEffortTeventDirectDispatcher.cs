@@ -49,7 +49,9 @@ class BestEffortTeventDirectDispatcher
          //An arriving best-effort tevent is already a committed fact on its publisher: it queues for this endpoint's observers on
          //arrival, before the transactional handling below - dispatched off-thread, per-observer FIFO.
          _observationDispatcher.QueueForObservers(wrappedTevent);
-         await _executor.ExecuteTeventHandlersInOwnUnitOfWorkAsync(wrappedTevent).caf();
+         //todo: A best-effort arrival's handlers get a token never cancelled: nothing yet tells them that the endpoint is
+         //   stopping. See src/Compze.Tessaging/dev_docs/WIP/durable-multi-step-work-on-one-endpoint.md, change 4.
+         await _executor.ExecuteTeventHandlersInOwnUnitOfWorkAsync(wrappedTevent, CancellationToken.None).caf();
       }
 #pragma warning disable CA1031 //The best-effort tier has no store to retry from: a failed handling is reported and the tevent is gone - never bounced to the sender, whose delivery already succeeded and who has nothing durable to redeliver from.
       catch(Exception exception)

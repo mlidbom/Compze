@@ -82,7 +82,7 @@ static class UnitOfWorkTeventPublisherRegistrar
       //participation runs, so a tevent a participation handler publishes in response comes after this one: observers see cause
       //before consequence.
       _observationDispatcher.QueueAtTheCommitOf(unitOfWork, wrappedTevent);
-      await _executor.ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork).caf();
+      await _executor.ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork, CancellationToken.None).caf();
       if(remoteDelivery != null) await remoteDelivery().caf();
    }
 

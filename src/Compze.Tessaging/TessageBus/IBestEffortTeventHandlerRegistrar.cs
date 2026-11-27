@@ -12,7 +12,15 @@ public interface IBestEffortTeventHandlerRegistrar
 {
    ///<summary>Registers a handler for tevents compatible with <typeparamref name="TTevent"/>. The handler receives the<br/>
    /// <see cref="IUnitOfWorkResolver"/> of the unit of work delivering the tevent.</summary>
-   IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent;
+   ///<remarks>The handler also receives the token of the execution it serves: see<br/>
+   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/>.</remarks>
+   ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
+   IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent;
+
+   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   /// handler that waits on nothing it could give up.</summary>
+   IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+      => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork));
 
    ///<summary>The synchronous form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,Task})"/> — first-class<br/>
    /// here, because no subscription registered here is exactly-once.</summary>

@@ -15,25 +15,25 @@ sealed class TeventHandlerRegistration
 {
    readonly Type _subscribedWrapperType;
 
-   TeventHandlerRegistration(Type subscribedWrapperType, Func<ITevent, IUnitOfWorkResolver, Task> handle)
+   TeventHandlerRegistration(Type subscribedWrapperType, Func<ITevent, IUnitOfWorkResolver, CancellationToken, Task> handle)
    {
       _subscribedWrapperType = subscribedWrapperType;
       Handle = handle;
    }
 
    ///<summary>The registration of <paramref name="handler"/>, for tevents compatible with <typeparamref name="TTevent"/>.</summary>
-   internal static TeventHandlerRegistration For<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+   internal static TeventHandlerRegistration For<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
       return new TeventHandlerRegistration(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)),
                                            typeof(TTevent).Is<IPublisherTevent<ITevent>>()
-                                              ? (wrappedTevent, unitOfWork) => handler((TTevent)wrappedTevent, unitOfWork)
-                                              : (wrappedTevent, unitOfWork) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, unitOfWork));
+                                              ? (wrappedTevent, unitOfWork, cancellationToken) => handler((TTevent)wrappedTevent, unitOfWork, cancellationToken)
+                                              : (wrappedTevent, unitOfWork, cancellationToken) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, unitOfWork, cancellationToken));
    }
 
    ///<summary>Runs the handler on a wrapped tevent: on the wrapper itself for a subscription to a wrapper type, and on the tevent it<br/>
    /// wraps otherwise.</summary>
-   internal Func<ITevent, IUnitOfWorkResolver, Task> Handle { get; }
+   internal Func<ITevent, IUnitOfWorkResolver, CancellationToken, Task> Handle { get; }
 
    ///<summary>Whether a tevent whose wrapper is of <paramref name="wrapperTeventType"/> runs this handler: whether the wrapper is<br/>
    /// compatible with the subscription's wrapper type.</summary>
