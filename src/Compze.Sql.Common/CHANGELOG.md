@@ -4,11 +4,15 @@ All notable changes to Compze.Sql.Common will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-alpha
+
+- **Internal: a use of a transaction's connection from inside another use of it fails at once, with an exception that says so,** where it ran on the connection together with the use it was inside, a collision no provider supports. No Compze code does it: a probe found none in the full suite on all five persistence layers. And a transaction that completes during a use of its connection, as one that holds a durable resource already does as it refuses Compze's SQLite connection, has the connection disposed as that use ends, not under it.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.13.0-internal (was 0.12.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.7.0-alpha
 
 - **For Compze's SQL packages: commands created, executed and read asynchronously throughout,** where a command was created synchronously on the asynchronous path. A connection whose command creation waits, as SQLite's does for its write gate, waits holding no thread.
 - **A transaction's connection goes back to the database provider's pool only once the provider is done with the completed transaction on it.** The pool disposed the connection in a completion handler it subscribed before the connection opened, so the handler ran before the provider's own, which the provider subscribes as the connection takes part in the transaction. The connection was back in the provider's pool while the provider still handled the completed transaction on it. The connection now subscribes its disposal once it has opened. See Compze.Sql.MicrosoftSql's changelog for what a consumer saw.
-- **Internal: a use of a transaction's connection from inside another use of it fails at once, with an exception that says so,** where it ran on the connection together with the use it was inside, a collision no provider supports. No Compze code does it: a probe found none in the full suite on all five persistence layers. And a transaction that completes during a use of its connection, as one that holds a durable resource already does as it refuses Compze's SQLite connection, has the connection disposed as that use ends, not under it.
 
 ## 0.6.1-alpha
 
