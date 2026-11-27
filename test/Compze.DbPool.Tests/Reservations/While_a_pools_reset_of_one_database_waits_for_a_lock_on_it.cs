@@ -13,8 +13,9 @@ namespace Compze.DbPool.Tests.Reservations;
 ///<remarks>
 /// The reset is made to wait as a consumer can make it wait: a first pool reserves a database, a transaction on it holds a lock, and the<br/>
 /// first pool releases it. A reservation is given the database released last, so the second pool's first reservation is given that one,<br/>
-/// and its reset waits for the transaction. Unless another test process reserves it in between: then the reset waits for no lock, and<br/>
-/// the specification is skipped rather than passed.<br/>
+/// and its reset waits for the transaction. Unless another test process reserves it in between: then that process's reset waits for the<br/>
+/// lock instead, until the specification ends, and the specification is skipped rather than passed. The lock is taken before the release,<br/>
+/// so no other process can reset the database first.<br/>
 /// Not on the Sqlite layers: they name their databases per SQL layer instance, so another pool's database can't be held from outside.
 ///</remarks>
 public class While_a_pools_reset_of_one_database_waits_for_a_lock_on_it : DbPoolTestBase
@@ -27,11 +28,14 @@ public class While_a_pools_reset_of_one_database_waits_for_a_lock_on_it : DbPool
       if(TestEnv.SqlLayer is SqlLayer.Sqlite or SqlLayer.SqliteMemory)
          Assert.Skip("The Sqlite layers name their databases per SQL layer instance: no lock from outside a pool can make its reset wait.");
 
-      await using var heldConnection = CreateConnection(await TheConnectionStringOfADatabaseThatAnotherPoolHasReleased());
+      await using var firstContainer = CreateContainer();
+      var firstPool = firstContainer.Resolve<DbPool>();
+      await using var heldConnection = CreateConnection(firstPool.ConnectionStringFor("held by the test"));
       await heldConnection.OpenAsync(TestContext.Current.CancellationToken);
       await ExecuteAsync(heldConnection, transaction: null, "CREATE TABLE blocker (id int)");
       await using var transaction = await heldConnection.BeginTransactionAsync(TestContext.Current.CancellationToken);
       await ExecuteAsync(heldConnection, transaction, "INSERT INTO blocker VALUES (1)");
+      firstPool.Dispose();
 
       var waitingReservation = Task.Run(() => Pool.ConnectionStringFor("waits for the lock"), TestContext.Current.CancellationToken);
       await Task.Delay(LongEnoughForTheResetToBeWaiting, TestContext.Current.CancellationToken);
@@ -47,14 +51,6 @@ public class While_a_pools_reset_of_one_database_waits_for_a_lock_on_it : DbPool
          Assert.Skip("Another test process reserved the released database first: this pool's reset waited for a busy server, not for the lock.");
 
       otherReservationStatus.Must().Be(TaskStatus.RanToCompletion);
-   }
-
-   ///<summary>The connection string of a database that a pool reserved and has released: the database the next reservation is given,<br/>
-   /// unless another process reserves first.</summary>
-   static async Task<string> TheConnectionStringOfADatabaseThatAnotherPoolHasReleased()
-   {
-      await using var firstContainer = CreateContainer();
-      return firstContainer.Resolve<DbPool>().ConnectionStringFor("held by the test");
    }
 
    static string DatabaseNamedBy(string connectionString)
