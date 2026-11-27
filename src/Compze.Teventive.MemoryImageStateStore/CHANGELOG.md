@@ -4,11 +4,15 @@ All notable changes to Compze.Teventive.MemoryImageStateStore will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.0-alpha
+## 0.4.1-alpha
 
 - **A disposed store refuses every use, and releases its storage's lock only once no write of it can still land in the storage,** for files and tables alike. A store disposed while a unit of work still ran released the lock at once, and the unit of work's write landed after the next memory image had taken the storage, over what that one wrote: two memory images wrote the same storage, which the lock exists to prevent.
   - **A unit of work that has prepared its write as disposing begins commits or rolls back as it would have, and disposing waits for it.** One that hasn't fails at its next get, add or read of the store, or as it commits, with an `InvalidOperationException` saying the store is disposed, and rolls back. Reads, reloads and `WriteAllToStorage()` after disposing fail the same way.
   - **Disposing waits at most a minute for the loads and writes under way to end.** Should one still be under way then, disposing throws a `TimeoutException`, and the store keeps holding the storage until the process ends, rather than release it while a write can still land. A first load waiting for another memory image to release the storage is one of them.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.13.0-internal (was 0.12.1-internal), Compze.Tessaging.Abstractions 0.8.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.4.0-alpha
+
 - **Its part of `ITaggregateStoreUpdater.GetForUpdateAsync` and `TryGetForUpdateAsync`, of Compze.Teventive: it waits for its lock of the taggregate holding no thread.**
 - **Requires newer minor versions of other Compze packages:** Compze.Teventive 0.9.0-alpha (was 0.8.0-alpha), Compze.Threading.Interprocess 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
