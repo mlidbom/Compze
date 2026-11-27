@@ -256,11 +256,9 @@ function C-Prepare-Release {
         [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion; Reason = $preparation.Reason }
     })
     if ($prepared.Count -gt 0) { RemoveUnreleasedChangeAcknowledgements @($prepared | ForEach-Object { $_.PackageId }) }
-    # -PackageId names packages; the lines go to their sections, to those of the packages prepared for them, and, when this
-    # runs again, to those of the packages an earlier run prepared for them.
-    $awaitingRelease = @(Get-PackagesAwaitingRelease $(if ($PackageId) {
-        @($PackageId) + @($prepared | ForEach-Object { $_.PackageId }) + @(GetPackagesThatUseTheInternalsOf $PackageId $packagesWhoseInternalsEachUses)
-    }))
+    # Every version awaiting release gets its lines, also with -PackageId: a version prepared earlier that depends on a package
+    # prepared now has a line naming that package's version, and the release checks every version's lines.
+    $awaitingRelease = @(Get-PackagesAwaitingRelease)
 
     C-Pack -CI
     if ($global:LASTEXITCODE -ne 0) { throw "C-Prepare-Release: packing failed (see above), so the lines about the versions' Compze dependencies weren't checked." }
