@@ -1,8 +1,45 @@
 # Exact versions of the Compze packages whose internals a package uses: the design
 
-**Status:** design only, awaiting Magnus's answers to the three decisions at the end. Nothing is built. It answers topic 72
+**Status:** built on branch exact-versions-on-internals, 2026-11-27, in the order of the last section. It answers topic 72
 of compze-agent-rep, where Magnus chose option 1 on 2026-11-27: a Compze package declares an exact version of each Compze
-dependency whose internals it uses, and only those.
+dependency whose internals it uses, and only those. The decisions of section 7:
+
+- **Decision 1, Magnus, forwarded by compze-agent-rep:** "Go ahead as designed. The helper builds it in the document's
+  order, and the two SystemCE types can be made public later, as a design of their own."
+- **Decision 2, the changelog line:** with Magnus. Built with the recommended line, a line of its own, the floors line
+  leaving out exact-version dependencies.
+- **Decision 3:** NU1608 stays a warning, settled by compze-agent-rep on its own judgment, as recommended.
+
+### What the build changed from the design
+
+- **The 24 indirect grants:** 23 are Compze.Sql.Common's, and one is Compze.Abstractions' to
+  Compze.Serialization.Newtonsoft. All 24 grantees now reference the granting package directly.
+- **The 7 grants that might be unused:** the build showed 4 unused, those of the four Sql providers to
+  Compze.Tessaging.Hosting.Testing, and they are removed. The other 3 are used. So 89 grants remain, and C-Pack writes 89
+  exact-version dependencies in 41 packages. Without those 4, the replay of section 5 adds 244 versions, not 248; a release
+  of Compze.Sql.Common alone now releases 28 more packages, of Compze.Internals.SystemCE 31, of Compze.Sql.Sqlite 6.
+- **The code policy** reads the direct references from the test project's `.deps.json`, which lists each library's direct
+  dependencies, so that it judges compiled output and runs in NCrunch's workspaces.
+- **The upgrade report's restore-graph reader** already read `[x.y.z]`. It now also records which dependencies are exact,
+  for the left-behind section.
+- **The line says "not required directly before"** for an exact-version dependency the previous version reached only
+  through another package, such as Compze.Sql.Common for Compze.Tessaging.Sqlite.
+- **The rule on releasing** only points at the skill, and is unchanged.
+
+### What the merge leaves for the next release
+
+The 28 packages whose project files changed, the 24 with a new direct reference and the 4 Sql providers that lost a
+grant, count as changed since their release. Until each is released or acknowledged, `C-Prepare-Release`,
+`C-SimulateRelease` and Create Releases refuse.
+
+- **The 4 grant removals ship nothing a consumer sees:** acknowledge them with `C-Acknowledge-UnreleasedChanges`.
+- **The 24 new direct references** ship a dependency their consumers already had through another package, and, once
+  packed with the new target, exact versions. Either acknowledge them, and each gains its exact versions at its next
+  release, which a release of a package whose internals it uses forces; or give them changelog entries and release them
+  now. That is for the next release's preparer to decide.
+
+No package on nuget.org has exact versions until a release after the merge. Each package gains them at its next release,
+and a release of a package releases those that use its internals.
 
 ## The headline
 
@@ -16,7 +53,8 @@ dependency whose internals it uses, and only those.
 - **`C-Prepare-Release` releases every package that uses the internals of one it releases,** as a patch with a generated
   changelog line, and the release refuses a set of versions that leaves one behind.
 - **The cost: about 2.3 times as many package versions.** The last 20 releases published 197. With exact versions they
-  would have published 445. Compze.Sql.Common causes most of it: each release of it would release 29 more packages.
+  would have published 445, or 441 without the 4 grants the build showed unused. Compze.Sql.Common causes most of it: each
+  release of it releases 28 more packages.
 - **Three decisions are Magnus's,** at the end: whether to go ahead at this cost, the changelog line, and NU1608 in the
   repositories that use Compze.
 
@@ -368,9 +406,9 @@ error, for a pairing that breaks at run time.
 - **Option B: each such repository makes NU1608 an error** (`<WarningsAsErrors>$(WarningsAsErrors);NU1608</WarningsAsErrors>`).
   The restore then refuses such a pairing. But it refuses one of a third-party package's ranges too.
 
-## Building it, once answered
+## Building it
 
-In this order, each step a commit of its own:
+Built in this order, each step one commit or more:
 
 1. The manifest reader learns `[x.y.z]`.
 2. Direct references to Compze.Sql.Common for the 24 packages; the removal of each grant the build shows unused; the code
@@ -386,5 +424,8 @@ In this order, each step a commit of its own:
 
 Verified by `C-Build` at 0 warnings, the full suite on MsSql, PgSql, MySql, Sqlite and SqliteMemory with
 Microsoft:Newtonsoft:AspNetCore, and a `C-SimulateRelease` that shows the exact versions. Nothing awaits release at HEAD,
-so that simulation runs in a throwaway worktree where `C-Prepare-Release` has prepared a patch of Compze.Sql.Sqlite, which
-releases 8 packages.
+so that simulation ran in a throwaway worktree, with the 28 changed packages acknowledged there, where
+`C-Prepare-Release -PackageId Compze.Sql.Sqlite -Patch` prepared Sql.Sqlite and the 6 packages that use its internals, as
+patches with the generated line. The dry run listed each package's exact versions, and passed the changelog checks, the
+three checks of section 4 and the post-release binding check. Run before the line's wording changed, it refused the 5
+sections whose line was stale, which a rerun of `C-Prepare-Release` with the same `-PackageId` fixed.
