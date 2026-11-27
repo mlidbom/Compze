@@ -35,20 +35,25 @@ function Invoke-BuildWithValidation {
         [switch]$FullGitReset
     )
     
-    # Build if needed
-    C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset
-    
+    # What the build writes is captured: left in the pipeline, it became part of what this function returns, and the
+    # caller's test of the result read the non-empty array as success, so the tests ran after a failed build.
+    $buildOutput = @(C-Build -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)
+    $buildExitCode = $LASTEXITCODE
+
     # Handle -WhatIf for FullGitReset (returns early after showing what would be deleted)
     if ($FullGitReset -and $WhatIfPreference) {
+        $buildOutput | Out-Host
         $global:LASTEXITCODE = 0
         return $false  # Signal to caller to exit early
     }
-    
-    # Check if build failed. C-Build has reported it; the caller reports its own failure.
-    if ($LASTEXITCODE -ne 0) {
+
+    # C-Build has reported the failure, and the caller reports its own: this shows what the build said about it.
+    if ($buildExitCode -ne 0) {
+        $errorLines = @($buildOutput | ForEach-Object { "$_" } | Where-Object { $_ -match ':\s*error\s+[A-Za-z]+\d+' } | Select-Object -Unique)
+        if ($errorLines.Count -gt 0) { $errorLines | Out-Host } else { $buildOutput | Select-Object -Last 40 | Out-Host }
         $global:LASTEXITCODE = 1
         return $false
     }
-    
+
     return $true
 }
