@@ -2,7 +2,7 @@
 function C-Get-CompzeUpgradeReport {
     <#
     .SYNOPSIS
-    Reports, for a solution that uses Compze, which of its Compze package references have newer versions, what each upgrade changes and brings along, and where its projects run different versions of a package
+    Reports, for a solution that uses Compze, which of its Compze package references have newer versions, what each upgrade changes, brings along and leaves behind, and where its projects run different versions of a package
 
     .DESCRIPTION
     Run it in a repository that uses Compze, before upgrading its Compze packages. It restores the solution and reads
@@ -22,6 +22,14 @@ function C-Get-CompzeUpgradeReport {
       upgrade brings along, calling out a patch that brings a minor version, the references to raise with it, and the
       changelog sections in between as released, read at the release tags of this Compze checkout, so it fetches the
       latest tags first.
+    - For each such upgrade, also the Compze packages of the solution it leaves behind: those that depend on a package it
+      raises, the upgraded one or one it brings along, and stay at a version built against an older version of it. For
+      each, whether it may use that package's internals (an InternalsVisibleTo grant in that package's project); whether
+      a Compze release checked it beside the new version, as the post-release binding check checks the newest version of
+      every Compze package against the newest of every other; and the version of it that the release of the upgrade's
+      version had, to upgrade it to as well. One that may use internals and no release checked is marked UNCHECKED, ON
+      INTERNALS: that is what fails at run time. Read at the commit the upgrade's package records as its build, or, for
+      an older release that records none, at its release tag.
 
     What an upgrade breaks in the solution's code is not in the report: upgrade, and the build names it, once every
     project builds against the version it runs with, which transitive pinning makes sure of.
@@ -72,7 +80,7 @@ function C-Get-CompzeUpgradeReport {
                     [PSCustomObject]@{ Graph = $graph; Version = $graph.Packages[$packageId].Version; IsDirectReference = $graph.DirectPackageReferences.ContainsKey($packageId) }
                 }
             })
-            $isPinned = $usesTransitivePinningEverywhere -and [bool](GetCentralVersion $packageId)
+            $isPinned = TestIsPinned $packageId
             $namedVersions = @(if ($isPinned) { GetCentralVersion $packageId } else { SortVersions @($uses | Where-Object IsDirectReference | ForEach-Object { $_.Version }) })
             [PSCustomObject]@{
                 PackageId            = $packageId
@@ -104,6 +112,29 @@ function C-Get-CompzeUpgradeReport {
         return [bool]$newestRelease -and [semver]$newestRelease.Version -eq [semver]$Version
     }
 
+    function TestIsCheckedByEveryRelease([string]$PackageId, [string]$Version) {
+        # Whether every Compze release checks the version against the newest version of every other Compze package, as
+        # its post-release binding check does with the packages Compze builds: the newest version of a package that this
+        # Compze checkout has a project for. Every release has since 2026-11-12.
+        return (TestIsNewestRelease $PackageId $Version) -and (TestCompzeBuilds $PackageId)
+    }
+
+    function TestCompzeBuilds([string]$PackageId) {
+        # Whether this Compze checkout has a project for the package, as every package Compze still publishes has.
+        return Test-Path -LiteralPath (Join-Path $script:CompzeRoot "src/$PackageId/$PackageId.csproj")
+    }
+
+    function DescribeWhyEveryReleaseDoesNotCheck([string]$PackageId, [string]$Version) {
+        if (-not (TestIsNewestRelease $PackageId $Version)) { return "$PackageId $Version isn't its package's newest version" }
+        $retirement = FindRetirement $PackageId
+        return "Compze no longer builds $PackageId$(if ($retirement) { ", which $($retirement.ReplacedBy) replaced" })"
+    }
+
+    function FindRetirement([string]$PackageId) {
+        # The record of the package's retirement, with ReplacedBy; $null for a package Compze still publishes.
+        return $retiredPackages | Where-Object { $_.PackageId -eq $PackageId } | Select-Object -First 1
+    }
+
     function TestIsOnlyInThePendingReleaseFeed([string]$PackageId, [string]$Version) {
         return (@($versionsOnNuGetOrg[$PackageId]) -notcontains $Version.ToLowerInvariant()) -and
                @($pendingReleaseFeedPackages | Where-Object { $_.PackageId -eq $PackageId -and $_.Version -eq $Version }).Count -gt 0
@@ -118,12 +149,17 @@ function C-Get-CompzeUpgradeReport {
         return @($graphs | Where-Object { $_.CentralPackageVersions.ContainsKey($PackageId) } | ForEach-Object { $_.CentralPackageVersions[$PackageId] }) | Select-Object -First 1
     }
 
+    function TestIsPinned([string]$PackageId) {
+        # Whether the package's PackageVersion line sets its version wherever the solution gets it, as under transitive
+        # pinning it does.
+        return $usesTransitivePinningEverywhere -and [bool](GetCentralVersion $PackageId)
+    }
+
     function FormatProjectNames($Graphs) {
         return (@($Graphs | ForEach-Object { $_.ProjectName } | Sort-Object -Unique)) -join ', '
     }
 
     function WriteOverview {
-        $retiredPackages = @(Get-RetiredNuGetPackageIds)
         $idWidth = ($usedPackages | ForEach-Object { $_.PackageId.Length } | Measure-Object -Maximum).Maximum
         $versionTexts = @{}
         foreach ($usedPackage in $usedPackages) {
@@ -136,7 +172,7 @@ function C-Get-CompzeUpgradeReport {
         ""
         foreach ($usedPackage in $usedPackages) {
             $newestRelease = $newestReleases[$usedPackage.PackageId]
-            $retired = $retiredPackages | Where-Object { $_.PackageId -eq $usedPackage.PackageId } | Select-Object -First 1
+            $retired = FindRetirement $usedPackage.PackageId
             $status = if ($retired) { "retired: replaced by $($retired.ReplacedBy)" }
                       elseif (-not $newestRelease) { "on neither nuget.org nor this machine's pending-release feed" }
                       elseif ($upgradedPackageIds -contains $usedPackage.PackageId) { "-> $($newestRelease.Version)$(if ($newestRelease.IsPending) { ' (pending)' })" }
@@ -243,13 +279,13 @@ function C-Get-CompzeUpgradeReport {
                     "  A direct reference to $newerVersion raises it in those projects; central package management with transitive pinning would in all of them."
                 }
                 foreach ($holder in @($holdersBuiltAgainstAnOlderVersion | Where-Object { $_.Name -like 'Compze.*' } | Sort-Object Name, Version -Unique)) {
-                    $notNewest = @()
-                    if (-not (TestIsNewestRelease $holder.Name $holder.Version)) { $notNewest += "$($holder.Name) $($holder.Version)" }
-                    if (-not (TestIsNewestRelease $usedPackage.PackageId $newerVersion)) { $notNewest += "$($usedPackage.PackageId) $newerVersion" }
-                    if ($notNewest.Count -eq 0) {
+                    $whyUnchecked = @(foreach ($pairedVersion in @(@{ PackageId = $holder.Name; Version = $holder.Version }, @{ PackageId = $usedPackage.PackageId; Version = $newerVersion })) {
+                        if (-not (TestIsCheckedByEveryRelease $pairedVersion.PackageId $pairedVersion.Version)) { DescribeWhyEveryReleaseDoesNotCheck $pairedVersion.PackageId $pairedVersion.Version }
+                    })
+                    if ($whyUnchecked.Count -eq 0) {
                         "  Where $($holder.Name) $($holder.Version) runs beside $($usedPackage.PackageId) $newerVersion, it runs against a version it wasn't built against. Compze's release checked that pair: it checks the newest version of every Compze package against the newest of every other, and both are."
                     } else {
-                        "  Where $($holder.Name) $($holder.Version) runs beside $($usedPackage.PackageId) $newerVersion, it runs against a version it wasn't built against, and no Compze release has checked that pair: $($notNewest -join ' and ') isn't its package's newest version."
+                        "  Where $($holder.Name) $($holder.Version) runs beside $($usedPackage.PackageId) $newerVersion, it runs against a version it wasn't built against, and no Compze release has checked that pair: $($whyUnchecked -join ' and ')."
                     }
                 }
                 "  The projects that resolve an older version build against it: where their own code uses $($usedPackage.PackageId) and runs beside $newerVersion, nothing has checked it."
@@ -291,6 +327,7 @@ function C-Get-CompzeUpgradeReport {
             }
         }
         $upgradedAlongAcrossAMinorVersion = @($upgradedAlong | Where-Object { TestCrossesAMinorVersion $_.FromVersion $_.Floor })
+        $leftBehind = @(GetPackagesLeftBehind $UsedPackage $NewestRelease.Version $upgradedAlong $raisedGraphs)
 
         ""
         "== $packageId $fromVersion -> $($NewestRelease.Version)$(if ($NewestRelease.IsPending) { ' (pending)' }) =="
@@ -312,9 +349,172 @@ function C-Get-CompzeUpgradeReport {
             "Adds these Compze packages to projects that use it and don't use them yet:"
             foreach ($dependency in $addedAlong) { "  $($dependency.PackageId) $($dependency.Floor) or newer" }
         }
+        if ($leftBehind.Count -gt 0) {
+            WriteLeftBehind $leftBehind $packageId $NewestRelease $manifest
+        }
 
         ""
         WriteChanges $packageId $fromVersion $NewestRelease
+    }
+
+    function GetPackagesLeftBehind($UsedPackage, [string]$NewVersion, $UpgradedAlong, $RaisedGraphs) {
+        # The Compze packages of the solution that the upgrade leaves at their versions though they depend on a package it
+        # raises, the upgraded one or one it brings along: they then run beside a version of it they weren't built
+        # against. Each as an object with PackageId, Version and RaisedDependencies: for each raised package it depends
+        # on, the version it was built against (its dependency floor) and the version the upgrade raises it to.
+        #
+        # The upgraded package is raised where raising its version raises it (TestIsRaisedByTheUpgrade). One it brings
+        # along is raised where a project has an older version: in the projects that use the upgraded package, whose
+        # restore raises it, and, for a pinned one, wherever the solution gets it, since its line is raised too.
+        $raisedVersions = [ordered]@{ $UsedPackage.PackageId = $NewVersion }
+        foreach ($dependency in $UpgradedAlong) { $raisedVersions[$dependency.PackageId] = $dependency.Floor }
+        $leftBehind = [ordered]@{}
+        foreach ($graph in $graphs) {
+            $raisedInTheGraph = @($raisedVersions.Keys | Where-Object {
+                if ($_ -eq $UsedPackage.PackageId) { $RaisedGraphs -contains $graph }
+                else { $graph.Packages.ContainsKey($_) -and [semver]$graph.Packages[$_].Version -lt [semver]$raisedVersions[$_] -and (($RaisedGraphs -contains $graph) -or (TestIsPinned $_)) }
+            })
+            if ($raisedInTheGraph.Count -eq 0) { continue }
+            foreach ($packageId in @($graph.Packages.Keys | Where-Object { $_ -like 'Compze.*' -and -not $raisedVersions.Contains($_) })) {
+                $package = $graph.Packages[$packageId]
+                $raisedDependencies = @($raisedInTheGraph | Where-Object { $package.Dependencies.ContainsKey($_) })
+                if ($raisedDependencies.Count -eq 0) { continue }
+                $key = "$packageId $($package.Version)"
+                if (-not $leftBehind.Contains($key)) {
+                    $leftBehind[$key] = [PSCustomObject]@{ PackageId = $packageId; Version = $package.Version; RaisedDependencies = [ordered]@{} }
+                }
+                foreach ($dependencyId in $raisedDependencies) {
+                    $leftBehind[$key].RaisedDependencies[$dependencyId] = [PSCustomObject]@{ PackageId = $dependencyId; BuiltAgainst = $package.Dependencies[$dependencyId]; RaisedTo = $raisedVersions[$dependencyId] }
+                }
+            }
+        }
+        return @($leftBehind.Values | Sort-Object PackageId, { [semver]$_.Version })
+    }
+
+    function WriteLeftBehind($LeftBehind, [string]$UpgradedPackageId, $NewestRelease, $Manifest) {
+        # What Compze's release checked of each package left behind, read at the commit it built the upgrade's version from:
+        # the release's own versions of the other packages, and the internals each grants (InternalsVisibleTo). The
+        # versions the upgrade brings along are that commit's too, since its dependency floors are the versions its
+        # dependencies had when it was packed.
+        $theRelease = "The release of $UpgradedPackageId $($NewestRelease.Version)"
+        ""
+        "Leaves behind these Compze packages of the solution, built against older versions of what it raises. Compze's release checks the newest version of every Compze package against the newest of every other:"
+        $buildCommit = FindBuildCommit $UpgradedPackageId $NewestRelease.Version $Manifest
+        if (-not $buildCommit) {
+            foreach ($package in $LeftBehind) { "  $(DescribeBuiltAgainst $package)." }
+            "  The report can't tell which commit built $UpgradedPackageId $($NewestRelease.Version): its package names none, and this Compze checkout has no tag $UpgradedPackageId/v$($NewestRelease.Version). So it can't tell which of them may use the internals of what it raises, nor whether a Compze release checked them beside it."
+            return
+        }
+        $releaseCheckedThePackagesAgainstEachOther = TestCheckedThePackagesAgainstEachOther $buildCommit
+        ReadProjectsAtRevision @($LeftBehind | ForEach-Object { $_.PackageId; @($_.RaisedDependencies.Keys) }) $buildCommit
+        $checked = @()
+        foreach ($package in $LeftBehind) {
+            $raisedDependencies = @($package.RaisedDependencies.Values)
+            $grantingItsInternals = @($raisedDependencies | Where-Object { (ReadRaisedProjectAtItsBuild $_.PackageId $buildCommit).InternalsVisibleTo -contains $package.PackageId } | ForEach-Object { $_.PackageId })
+            $internals = if ($grantingItsInternals.Count -gt 0) { "may use the internals of $(JoinWithAnd $grantingItsInternals) (InternalsVisibleTo)" } else { $null }
+            $atTheRelease = ReadProjectAtRevision $package.PackageId $buildCommit
+            $releaseHadThisVersion = $atTheRelease -and [semver]$atTheRelease.Version -eq [semver]$package.Version
+            # Checked by the release, when it had this version; or by every release since the post-release binding check,
+            # which matters for a release from before it.
+            $everyReleaseChecksThem = (TestIsCheckedByEveryRelease $package.PackageId $package.Version) -and
+                                      @($raisedDependencies | Where-Object { -not (TestIsCheckedByEveryRelease $_.PackageId $_.RaisedTo) }).Count -eq 0
+            if (($releaseHadThisVersion -and $releaseCheckedThePackagesAgainstEachOther) -or $everyReleaseChecksThem) {
+                $checked += "$($package.PackageId) $(FormatVersions $package.PackageId @($package.Version))$(if ($internals) { ", which $internals" })"
+                continue
+            }
+            if ($internals) {
+                "  UNCHECKED, ON INTERNALS: $(DescribeBuiltAgainst $package), $internals, and no Compze release checked it beside $(DescribeRaisedTo $package). Expect it to fail at run time."
+            } else {
+                "  Unchecked, on public API only: $(DescribeBuiltAgainst $package), and no Compze release checked it beside $(DescribeRaisedTo $package)."
+            }
+            "    $(DescribeVersionThatPairs $package $atTheRelease $theRelease $releaseCheckedThePackagesAgainstEachOther)"
+        }
+        if ($checked.Count -gt 0) {
+            "  Checked beside it by Compze's release, at the versions the solution has: $($checked -join '; ')."
+        }
+    }
+
+    function DescribeVersionThatPairs($PackageLeftBehind, $ProjectAtTheRelease, [string]$TheRelease, [bool]$ReleaseCheckedThePackagesAgainstEachOther) {
+        # The version of a package left behind, and no release checked, that pairs with the upgrade: the one the release
+        # of the upgrade's version had.
+        $retirement = FindRetirement $PackageLeftBehind.PackageId
+        if ($retirement) { return "It is retired, replaced by $($retirement.ReplacedBy), and no Compze release checks it any more: replace it." }
+        if (-not $ProjectAtTheRelease) { return "$TheRelease had no project $($PackageLeftBehind.PackageId), so the report knows no version of it that pairs with the upgrade." }
+        $versionAtTheRelease = FormatVersions $PackageLeftBehind.PackageId @($ProjectAtTheRelease.Version)
+        if ([semver]$ProjectAtTheRelease.Version -eq [semver]$PackageLeftBehind.Version) { return "$TheRelease had it at this version, but came before Compze's releases checked the packages against each other." }
+        if ($ReleaseCheckedThePackagesAgainstEachOther) { return "$TheRelease checked it at ${versionAtTheRelease}: upgrade it to that version too." }
+        return "$TheRelease had it at $versionAtTheRelease, though it came before Compze's releases checked the packages against each other: upgrade it to that version too."
+    }
+
+    function DescribeBuiltAgainst($PackageLeftBehind) {
+        return "$($PackageLeftBehind.PackageId) $(FormatVersions $PackageLeftBehind.PackageId @($PackageLeftBehind.Version)), built against $(JoinWithAnd @($PackageLeftBehind.RaisedDependencies.Values | ForEach-Object { "$($_.PackageId) $($_.BuiltAgainst)" }))"
+    }
+
+    function DescribeRaisedTo($PackageLeftBehind) {
+        return JoinWithAnd @($PackageLeftBehind.RaisedDependencies.Values | ForEach-Object { "$($_.PackageId) $(FormatVersions $_.PackageId @($_.RaisedTo))" })
+    }
+
+    function FindBuildCommit([string]$PackageId, [string]$Version, $Manifest) {
+        # The commit Compze built the version from: the one its package records, or, for an older release that predates
+        # the record, its release tag. The record comes first because two release tags sit on a later commit than the
+        # one built: Compze.Internals.SystemCE/v0.13.0-internal and Compze.Sql.Common/v0.8.0-alpha, on 81f775b23, where
+        # 9f1109e17 built them. $null when this Compze checkout has neither.
+        $revision = if ($Manifest.RepositoryCommit) { $Manifest.RepositoryCommit } else { "$PackageId/v$Version" }
+        git -C $script:CompzeRoot rev-parse --verify --quiet "$revision^{commit}" | Out-Null
+        if ($LASTEXITCODE -ne 0) { return $null }
+        return $revision
+    }
+
+    function TestCheckedThePackagesAgainstEachOther([string]$BuildCommit) {
+        # Whether a release from the commit ran the post-release binding check (.github/scripts/PostReleaseBindingCheck),
+        # which checks the newest version of every Compze package against the newest of every other: the releases from
+        # 2026-11-12 on.
+        if (-not $releasesThatCheckedThePackagesAgainstEachOther.ContainsKey($BuildCommit)) {
+            git -C $script:CompzeRoot cat-file -e "${BuildCommit}:.github/scripts/Invoke-PostReleaseBindingCheck.ps1" 2>$null
+            $releasesThatCheckedThePackagesAgainstEachOther[$BuildCommit] = $LASTEXITCODE -eq 0
+        }
+        return $releasesThatCheckedThePackagesAgainstEachOther[$BuildCommit]
+    }
+
+    function ReadRaisedProjectAtItsBuild([string]$PackageId, [string]$BuildCommit) {
+        # A raised package's project, which the commit that built the upgrade has: the upgraded package was built from it,
+        # and what it brings along are the versions its dependencies had there.
+        $project = ReadProjectAtRevision $PackageId $BuildCommit
+        if (-not $project) { throw "C-Get-CompzeUpgradeReport: the Compze checkout has no src/$PackageId/$PackageId.csproj at $BuildCommit, though the package was built there or the upgrade depends on it there." }
+        return $project
+    }
+
+    function ReadProjectAtRevision([string]$PackageId, [string]$Revision) {
+        # A package's project at a revision of the Compze checkout, as an object with Version and InternalsVisibleTo: the
+        # assemblies it grants its internals to, which Compze's projects name in their csproj, each as its package is
+        # named. $null when Compze had no such project then.
+        ReadProjectsAtRevision @($PackageId) $Revision
+        return $projectsAtRevisions["$PackageId@$Revision"]
+    }
+
+    function ReadProjectsAtRevision($PackageIds, [string]$Revision) {
+        # Reads, for ReadProjectAtRevision, the projects it hasn't read yet at the revision, all through one git process:
+        # one for each would cost more than the rest of the report. Each once, since the upgrades the report offers often
+        # come from one release.
+        $unread = @($PackageIds | Sort-Object -Unique | Where-Object { -not $projectsAtRevisions.ContainsKey("$_@$Revision") })
+        if ($unread.Count -eq 0) { return }
+        $files = Read-CompzeFilesAtRevision -Revision $Revision -Path @($unread | ForEach-Object { "src/$_/$_.csproj" })
+        foreach ($packageId in $unread) {
+            $projectLines = $files["src/$packageId/$packageId.csproj"]
+            $projectsAtRevisions["$packageId@$Revision"] = if ($null -eq $projectLines) { $null } else {
+                [xml]$project = $projectLines -join "`n"
+                [PSCustomObject]@{
+                    Version            = $project.SelectSingleNode('//Version').InnerText.Trim()
+                    InternalsVisibleTo = @($project.SelectNodes('//InternalsVisibleTo[@Include]') | ForEach-Object { $_.GetAttribute('Include') })
+                }
+            }
+        }
+    }
+
+    function JoinWithAnd($Texts) {
+        $all = @($Texts)
+        if ($all.Count -le 1) { return $all -join '' }
+        return "$($all[0..($all.Count - 2)] -join ', ') and $($all[-1])"
     }
 
     function DescribeWhatToRaise($Dependency, [string]$UpgradedPackageId) {
@@ -380,6 +580,7 @@ function C-Get-CompzeUpgradeReport {
         Write-Warning "Could not fetch the Compze checkout's latest release tags, so the changelogs of the newest releases may be missing from the report.`n$fetchResult"
     }
 
+    $retiredPackages = @(Get-RetiredNuGetPackageIds)
     $pendingReleaseFeedPackages = @(Get-PendingReleaseFeedPackages)
     $versionsOnNuGetOrg = Get-NuGetOrgRestorableVersions -PackageId @($usedPackages | ForEach-Object { $_.PackageId })
     $newestReleases = @{}
@@ -387,6 +588,8 @@ function C-Get-CompzeUpgradeReport {
         $newestRelease = FindNewestRelease $usedPackage.PackageId
         if ($newestRelease) { $newestReleases[$usedPackage.PackageId] = $newestRelease }
     }
+    $projectsAtRevisions = @{}
+    $releasesThatCheckedThePackagesAgainstEachOther = @{}
     $upgrades = @($usedPackages | Where-Object { $_.IsNamedBySolution -and $newestReleases.ContainsKey($_.PackageId) -and [semver]$newestReleases[$_.PackageId].Version -gt [semver]$_.NamedVersions[0] })
     $upgradedPackageIds = @($upgrades | ForEach-Object { $_.PackageId })
 
