@@ -38,12 +38,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [1, 2, 3, 4, 5, 6, 7, 8]
-        os: [ubuntu-latest]
-        persistence: [PgSql]
-        di: [LightInject]
+        runner: [1, 2, 3, 4]
+        os: [windows-latest]
+        persistence: [Sqlite]
+        di: [every]
         serializer: [Newtonsoft]
-        transport: [AspNetCore]
+        transport: [AspNetCore, NamedPipes]
 
     name: "Hunt ${{ matrix.runner }} on ${{ matrix.os }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
@@ -73,7 +73,7 @@ jobs:
           --health-retries 10
 
     env:
-      HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
+      HUNTED_TEST_PROJECT: samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj
       RUNS_PER_RUNNER: "20"
       SLOWEST_TESTS_PER_RUN: "3"
       RUNTIME_ASYNC: "true"

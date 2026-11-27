@@ -70,17 +70,25 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
    {
       // Sqlite sometimes takes a moment to release the files, so we retry in a loop for a maximum of 10 seconds
       var startTime = DateTime.UtcNow;
+      Exception? lastException = null;
+      var attempts = 0;
       while(true)
       {
          try
          {
+            attempts++;
             using var connection = new SqliteConnection(ConnectionStringFor(db));
             SqliteConnection.ClearPool(connection);
             DeleteDatabaseFiles(db);
+            //hack: flake-hunt instrumentation, never merged.
+            var took = DateTime.UtcNow - startTime;
+            if(took > TimeSpan.FromMilliseconds(200))
+               Compze.Internals.Logging.CompzeLogger.For<SqliteDbPoolSqlLayer>().Warning($"FLAKE-HUNT: deleting {db.Name} took {took.TotalSeconds:F1}s over {attempts} attempts; last failure: {lastException?.GetType().Name}: {lastException?.Message}");
             return;
          }
          catch(Exception ex)
          {
+            lastException = ex;
             if(DateTime.UtcNow - startTime > 10.Seconds())
             {
                throw new Exception($"Failed to clean up database {FileInfoFor(db).FullName}", ex);

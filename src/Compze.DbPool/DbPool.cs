@@ -122,6 +122,8 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
    /// if the pool held any of them past the end of its reservation, since another pool may then have reset it while it was still in use.</summary>
    public override void Dispose()
    {
+      //hack: flake-hunt instrumentation, never merged.
+      _log.Info("FLAKE-HUNT: disposing the pool");
       var databasesHeldPastTheirReservation = _reservations.UpdateWhen(
          reservations => !reservations.AnyIsBeingPrepared,
          IReadOnlyList<DbPoolDatabase> (reservations) =>
@@ -129,7 +131,9 @@ public partial class DbPool : StrictlyManagedResourceBase<DbPool>
             if(Disposed) return [];
             base.Dispose();
             var reservedDatabases = reservations.ReservedDatabases;
+            _log.Info($"FLAKE-HUNT: deleting {reservedDatabases.Count} databases");
             _sqlLayer.Dispose(reservedDatabases);
+            _log.Info("FLAKE-HUNT: deleted them");
             _machineWideState.ReleaseReservationsFor(_poolId);
             return [..reservedDatabases.Where(db => db.ReservationHasExpired)];
          },
