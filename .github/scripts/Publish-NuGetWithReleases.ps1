@@ -83,7 +83,7 @@ if ($newPackages.Count -eq 0) {
     Write-Host "`nNew packages to release:"
     foreach ($pkg in $newPackages) {
         Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
-        $exactVersionDependencies = (ReadNupkgManifest (Join-Path $nupkgsPath "$($pkg.PackageName).$($pkg.Version).nupkg")).CompzeExactVersionDependencies
+        $exactVersionDependencies = (ReadNupkgManifest ($allPackages | Where-Object PackageName -eq $pkg.PackageName).NupkgPath).CompzeExactVersionDependencies
         if ($exactVersionDependencies.Count -gt 0) {
             Write-Host "    requires exactly: $(($exactVersionDependencies.Keys | ForEach-Object { "$_ $($exactVersionDependencies[$_])" }) -join ', ')"
         }
