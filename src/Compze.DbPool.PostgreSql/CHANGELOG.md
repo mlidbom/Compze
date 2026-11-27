@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.1-alpha
 
+- **Resetting a test database clears the pools of their own that Compze keeps on it, such as the type-id interner's, with the pool of the database's connection string; nothing public changes.**
 - **Internal: clears the pool of a test database by the connection string Compze's PostgreSQL connections now open with,** which turns Npgsql's enlistment off. Nothing public changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.6.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

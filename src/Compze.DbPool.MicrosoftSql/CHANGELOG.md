@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.0-alpha
 
+- **Resetting a test database clears the pools of their own that Compze keeps on it, such as the type-id interner's, with the pool of the database's connection string; nothing public changes.**
+- **A test database's connection string limits its pool to ten connections, as the test databases of PostgreSQL and MySQL do,** rather than SqlClient's default of a hundred. A test that uses more connections at once waits for one, as it does on the other two, so a test that exhausts the pool, or deadlocks it, does so on SQL Server too.
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.DbPool 0.3.0-alpha (was 0.2.2-alpha), Compze.Sql.MicrosoftSql 0.5.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -1,7 +1,7 @@
 using System.Transactions;
 using Compze.Abstractions;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Sql.Common._internal;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -65,46 +65,54 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
    TeventDataRow ToDataRow((int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage) raw) =>
       new(_typeIdInterner.GetTypeId(raw.TeventTypeId), raw.Json, raw.TeventId, raw.Version, raw.TaggregateId, raw.UtcTimeStamp, raw.Storage);
 
+   ///<summary>Reads the history of <paramref name="taggregateId"/>, after taking its lock when <paramref name="takeWriteLock"/>: in the<br/>
+   /// transaction, on its connection.</summary>
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
-      IReadOnlyList<TeventDataRow> GetHistory()
-      {
-         var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                                 command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).PrepareStatement().ExecuteReaderAndSelect(ReadRawDataRow));
-         return TheRowsAfter(startAfterInsertedVersion, raw);
-      }
+      if(takeWriteLock) TakeTheTaggregatesLock(taggregateId);
 
-      if(takeWriteLock)
-      {
-         _connectionManager.UseCommand(command => TheTaggregatesLockCommand(command, taggregateId).PrepareStatement().ExecuteNonQuery());
-
-         //Advisory lock serializes access. Since tevents are append-only, the lock is sufficient. Suppressing the current transaction keeps PostgreSql from incorrectly detecting a collision and failing our transactions.
-         //bug: the read outside the transaction opens a second connection while the transaction's holds the taggregate's advisory
-         //   lock. With as many units of work waiting for one taggregate's lock as the pool has connections, each holding one, the
-         //   holder gets none, and the pool deadlocks until the waiters time out, after 15 s by default. Found 2026-11-26 by
-         //   Given_a_tevent_store_and_a_memory_image_state_store's eight units of work at once, which stay below the pool's size for
-         //   it. MySQL's tevent store deadlocks the same way, through a second connection not yet located.
-         using var ignore = new TransactionScope(TransactionScopeOption.Suppress);
-         return GetHistory();
-      } else
-      {
-         return GetHistory();
-      }
+      var raw = _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
+                                              command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).PrepareStatement().ExecuteReaderAndSelect(ReadRawDataRow));
+      return TheRowsAfter(startAfterInsertedVersion, raw);
    }
 
+   ///<summary>As <see cref="GetTaggregateHistory"/> taking the lock, waiting for the lock holding no thread.</summary>
    public async Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion)
    {
-      await _connectionManager.UseCommandAsync(suppressTransactionWarning: false, command => TheTaggregatesLockCommand(command, taggregateId).ExecutePreparedNonQueryAsync()).caf();
+      await TakeTheTaggregatesLockAsync(taggregateId).caf();
 
-      //As in GetTaggregateHistory: the advisory lock serializes access, and the read runs outside the transaction.
-      //bug: as GetTaggregateHistory's: a second connection for the read, which deadlocks the pool when it is full.
-      return await TransactionScopeCe.SuppressAmbientAsync(async () =>
-      {
-         var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: true,
-                                                            command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).ExecutePreparedReaderAndSelectAsync(ReadRawDataRow)).caf();
-         return TheRowsAfter(startAfterInsertedVersion, raw);
-      }).caf();
+      var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: false,
+                                                         command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).ExecutePreparedReaderAndSelectAsync(ReadRawDataRow)).caf();
+      return TheRowsAfter(startAfterInsertedVersion, raw);
    }
+
+   ///<summary>Takes the taggregate's lock for the transaction: an advisory lock on its id, which PostgreSQL holds until the transaction<br/>
+   /// commits or rolls back, and which a transaction that asks for it meanwhile waits for.</summary>
+   ///<remarks>The read of the history after it, in the same transaction, sees every tevent committed before the read began, those of the<br/>
+   /// lock's previous holder included: at <see cref="IsolationLevel.ReadCommitted"/>, the isolation level of a unit of work's transaction,<br/>
+   /// each statement reads what was committed when it began. See <see cref="AssertTheTransactionIsAtReadCommitted"/> for higher levels.</remarks>
+   void TakeTheTaggregatesLock(TaggregateId taggregateId)
+   {
+      AssertTheTransactionIsAtReadCommitted();
+      _connectionManager.UseCommand(command => TheTaggregatesLockCommand(command, taggregateId).PrepareStatement().ExecuteNonQuery());
+   }
+
+   ///<summary>As <see cref="TakeTheTaggregatesLock"/>, waiting for the lock holding no thread.</summary>
+   async Task TakeTheTaggregatesLockAsync(TaggregateId taggregateId)
+   {
+      AssertTheTransactionIsAtReadCommitted();
+      await _connectionManager.UseCommandAsync(suppressTransactionWarning: false, command => TheTaggregatesLockCommand(command, taggregateId).ExecutePreparedNonQueryAsync()).caf();
+   }
+
+   ///<summary>Asserts that the ambient transaction, if there is one, is at <see cref="IsolationLevel.ReadCommitted"/>, as a unit of work's is.</summary>
+   ///<remarks>At a higher isolation level, a transaction reads the database as it was when its first statement began, which may be before<br/>
+   /// the lock's previous holder committed. Its read after the lock would then miss the tevents that holder added. Until 2026-03-16, units<br/>
+   /// of work ran at <see cref="IsolationLevel.Serializable"/>, and their reads for update failed with serialization failures; this store<br/>
+   /// read the history outside the transaction, on a second connection, for that reason.</remarks>
+   static void AssertTheTransactionIsAtReadCommitted() =>
+      Contract.State.Assert(Transaction.Current is not {} transaction || transaction.IsolationLevel == IsolationLevel.ReadCommitted,
+                            () => $"The PostgreSQL tevent store gets a taggregate for update only in a transaction at {IsolationLevel.ReadCommitted}, as a unit of work's is, and this one is at {Transaction.Current!.IsolationLevel}. "
+                                + "At a higher isolation level, a transaction reads the database as it was when its first statement began, which may be before the unit of work that held the taggregate's lock committed: its read would miss the tevents that unit of work added.");
 
    static NpgsqlCommand TheTaggregatesLockCommand(NpgsqlCommand command, TaggregateId taggregateId) =>
       command.SetCommandText($"SELECT pg_advisory_xact_lock(hashtext(cast(@{Tevent.TaggregateId} as text)));")

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.8.0-alpha
 
 - **Internal: a use of a transaction's connection from inside another use of it fails at once, with an exception that says so,** where it ran on the connection together with the use it was inside, a collision no provider supports. No Compze code does it: a probe found none in the full suite on all five persistence layers. And a transaction that completes during a use of its connection, as one that holds a durable resource already does as it refuses Compze's SQLite connection, has the connection disposed as that use ends, not under it.
+- **For Compze's SQL packages: pools of their own on a database,** beside the pool its units of work hold their transactions' connections from, for operations that commit on their own and may run inside a unit of work, such as the type-id interner's. It records the connection string of each, for what clears a database's pools, such as the DbPool. Nothing public changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.13.0-internal (was 0.12.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.7.0-alpha

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Resetting a test database clears the pools of their own that Compze keeps on it, such as the type-id interner's, with the pool of the database's connection string; nothing public changes.**
 - **Clears the pool of Compze's own connections before it drops a database; nothing public changes:** MySqlConnector keys its pools by connection string, and Compze.Sql.MySql's new version connects with its own settings added to the configured string, so the pool is now named by that string. An application that upgrades Compze.Sql.MySql to 0.6.0-alpha must upgrade this package too: the earlier version names another pool, and clears nothing.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.MySql 0.6.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

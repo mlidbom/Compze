@@ -1,3 +1,4 @@
+using Compze.Sql.Common._internal;
 using Compze.Sql.MicrosoftSql._internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -25,8 +26,10 @@ class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       _masterConnectionPool = IMsSqlConnectionPool.CreateInstance(_masterConnectionString);
    }
 
+   ///<summary>The connection string of <paramref name="db"/>, with a pool of ten connections, as the test databases of PostgreSQL and<br/>
+   /// MySQL have: a test that exhausts the pool exhausts it on all three.</summary>
    public string ConnectionStringFor(DbPoolDatabase db)
-      => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name }.ConnectionString;
+      => new SqlConnectionStringBuilder(_masterConnectionString) { InitialCatalog = db.Name, MaxPoolSize = 10 }.ConnectionString;
 
    public void EnsureDatabaseExistsAndIsEmpty(DbPoolDatabase db)
    {
@@ -60,9 +63,13 @@ class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
       }
    }
 
+   ///<summary>Clears every pool Compze keeps in this process on <paramref name="db"/>: the database's own, and the pools of their own on it.</summary>
    void ResetConnectionPool(DbPoolDatabase db)
    {
-      using var connection = new SqlConnection(ConnectionStringFor(db));
-      SqlConnection.ClearPool(connection);
+      foreach(var connectionString in PoolsOfTheirOwn.ConnectionStringsOfEveryPoolOn(ConnectionStringFor(db)))
+      {
+         using var connection = new SqlConnection(connectionString);
+         SqlConnection.ClearPool(connection);
+      }
    }
 }

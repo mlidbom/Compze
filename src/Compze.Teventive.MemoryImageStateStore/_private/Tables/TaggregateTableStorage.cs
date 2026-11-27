@@ -54,6 +54,12 @@ sealed class TaggregateTableStorage : ITaggregateStorage
    {
       _theTablesLock ??= _sqlLayer.TryTakeProcessLock(TheTablesLockName, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(WhereItIsKept), _waitForTheTables, RecordThatTheTablesLockWasLost)
                       ?? throw StorageHeldByAnotherMemoryImage.Refusal(WhereItIsKept, _sqlLayer.ProcessLockHolder(TheTablesLockName), _waitForTheTables);
+      //bug: the read outside the transaction takes a connection from the domain database's pool, the pool units of work hold their
+      //   transactions' connections from. The first load runs at the store's first use, which may be in a unit of work that holds its
+      //   transaction's connection, and a lock other units of work wait for holding theirs, such as a tevent-store taggregate's lock:
+      //   with every connection held, the load gets none, and all wait until the pool times out. Those waiting at the loading monitor
+      //   may hold theirs too. Found 2026-11-27 while fixing the tevent stores' second connections, the same deadlock: see
+      //   Given_a_tevent_store_holding_a_user. No specification reproduces it yet.
       return [..TransactionScopeCe.Execute(() => _sqlLayer.ReadAll(_classNames.Names), TransactionScopeOption.Suppress).Select(SnapshotIn)];
    }
 

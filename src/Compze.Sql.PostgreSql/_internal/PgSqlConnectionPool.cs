@@ -17,6 +17,13 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
    /// gets the settings the pool's own connections have.</summary>
    string ConnectionString { get; }
 
+   ///<summary>A pool of its own on this pool's database, of at most <paramref name="maxPoolSize"/> connections, which the server shows as<br/>
+   /// <paramref name="applicationName"/>'s: for operations that commit on their own and may run inside a unit of work, which no connection<br/>
+   /// held by a unit of work may keep waiting. See <see cref="PoolsOfTheirOwn"/>.</summary>
+   IPgSqlConnectionPool APoolOfItsOwn(string applicationName, int maxPoolSize) =>
+      CreateInstance1(() => PoolsOfTheirOwn.Record(ConnectionString,
+                                                    new NpgsqlConnectionStringBuilder(ConnectionString) { ApplicationName = applicationName, MinPoolSize = 0, MaxPoolSize = maxPoolSize }.ConnectionString));
+
    public class PgSqlConnectionPool : IPgSqlConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>> _pool;

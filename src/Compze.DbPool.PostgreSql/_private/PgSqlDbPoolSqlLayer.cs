@@ -88,9 +88,13 @@ sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
       }
    }
 
+   ///<summary>Clears every pool Compze keeps in this process on <paramref name="db"/>: the database's own, and the pools of their own on it.</summary>
    void ResetConnectionPool(DbPoolDatabase db)
    {
-      using var connection = new NpgsqlConnection(CompzePgSqlConnectionString.From(ConnectionStringFor(db)));
-      NpgsqlConnection.ClearPool(connection);
+      foreach(var connectionString in PoolsOfTheirOwn.ConnectionStringsOfEveryPoolOn(CompzePgSqlConnectionString.From(ConnectionStringFor(db))))
+      {
+         using var connection = new NpgsqlConnection(connectionString);
+         NpgsqlConnection.ClearPool(connection);
+      }
    }
 }

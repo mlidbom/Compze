@@ -14,6 +14,14 @@ namespace Compze.Teventive.TeventStore;
 
 public partial class TeventStore
 {
+   ///<summary>The options of the transaction that persists the migrations of one taggregate: the isolation level of a unit of work's<br/>
+   /// transaction, <see cref="IsolationLevel.ReadCommitted"/>, and ten minutes, for a taggregate with a long history.</summary>
+   ///<remarks>At <see cref="IsolationLevel.ReadCommitted"/>, the read of the history after the taggregate's lock sees every tevent committed<br/>
+   /// before it began. At a higher level, such as <see cref="TransactionScope"/>'s default <see cref="IsolationLevel.Serializable"/>, a<br/>
+   /// PostgreSQL transaction reads the database as it was when its first statement began, before it waited for the lock, which PostgreSQL's<br/>
+   /// tevent store refuses.</remarks>
+   static readonly TransactionOptions MigrationTransactionOptions = new() { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = 10.Minutes() };
+
    public void PersistMigrations()
    {
       Contract.State.Assert(Transaction.Current == null, () => $"Cannot run {nameof(PersistMigrations)} within a transaction. Internally manages transactions.");
@@ -41,7 +49,7 @@ public partial class TeventStore
                try
                {
                   //performance: Look at ways to avoid taking a lock for a long time as we do now. This might be a problem in production.
-                  using var transaction = new TransactionScope(TransactionScopeOption.Required, scopeTimeout: 10.Minutes());
+                  using var transaction = new TransactionScope(TransactionScopeOption.Required, MigrationTransactionOptions);
 
                   var original = GetTaggregateTeventsFromSqlLayer(taggregateId: taggregateId, takeWriteLock: true);
 
