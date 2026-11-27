@@ -12,6 +12,13 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />

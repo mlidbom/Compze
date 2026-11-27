@@ -21,6 +21,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true'">
     <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
+  <!-- Compze.Sql.Common — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
+    <PackageReference Include="Compze.Sql.Common" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+  </ItemGroup>
   <!-- Compze.Sql.MySql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
     <PackageReference Include="Compze.Sql.MySql" Version="*-*" />

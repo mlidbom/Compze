@@ -8,6 +8,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
   </ItemGroup>
+  <!-- Compze.Sql.Common — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
+    <PackageReference Include="Compze.Sql.Common" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+  </ItemGroup>
   <!-- Compze.Sql.Sqlite — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
     <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
