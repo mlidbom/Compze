@@ -6,8 +6,8 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
 
 - **Decision 1** is settled by Magnus's words on topic 27: at the registration. Increment 2 waits for him to see the
   design.
-- **Decision 2** was rewritten after Magnus's objection on topic 1, that a handler outside any transaction isn't an
-  exactly-once handler: it now chooses between at-least-once tommands and none.
+- **Decision 2** is settled by Magnus on topic 1: a handler's registration sets its transaction timeout, after his
+  objection that a handler outside any transaction isn't exactly-once handling. Decision 4 falls away with it.
 - **Change 5 and decision 6 are on hold:** Magnus asked on topic 2 whether an endpoint that converses with no other
   differs enough from one that simply has no peers to be worth building, then came to doubt his own conclusion, and
   holds the decision (2026-11-27).
@@ -35,8 +35,8 @@ they are today:
 
 1. **A tommand handler may run in a transaction of its own:** never in the sender's, always after the sender commits,
    through the endpoint's own inbox.
-2. **An at-least-once tommand may run an outside effect outside any transaction:** the effect at least once, then the recording
-   of its outcome exactly once, in the transaction that marks the tommand handled.
+2. **A handler's registration may set its transaction timeout,** so that a long step, such as a 60-second git worktree
+   removal, can run as an ordinary handler in a transaction of its own.
 3. **A handler may give up its place in the endpoint's order,** so that its tessages are handled as soon as there is
    capacity, at the same time as anything else.
 4. **Handlers receive a cancellation token, and an endpoint's stop can let go at once:** it cancels what its inbox is
@@ -85,39 +85,34 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
    public static string Name => "Hub.Operations";
    public static EndpointId Id { get; } = new(Guid.Parse("..."));
 
-   protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.ConverseWithNoOtherEndpoint();
-
    protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
       //Sent by the hub's front: runs in the front's unit of work, so the operation and its first step commit together.
       .ForTommand<StartWorktreeRemoval>(async (start, unitOfWork, cancellation) =>
        {
           unitOfWork.Resolve<IWorktreeRemovals>().Add(new WorktreeRemoval(start.RemovalId, start.Worktree));
           await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new RemoveTheWorktreesFiles(start.RemovalId, start.Worktree), cancellation);
-       });
-
-   //RemoveTheWorktreesFiles and DeleteTheWorktreesBranch are IAtLeastOnceTommands (change 2).
-   protected override void RegisterAtLeastOnceTommandHandlers(IAtLeastOnceTommandHandlerRegistrar handle) => handle
-      //The 60-second git step: outside any transaction, at least once; its outcome and the next step, exactly once.
-      .ForTommand<RemoveTheWorktreesFiles, GitOutcome>(
-          outsideEffect: async (step, scope, cancellation) => await scope.Resolve<IGit>().RemoveWorktreeAsync(step.Worktree, cancellation),
-          recordOutcome: async (step, outcome, unitOfWork, cancellation) =>
-          {
-             var removal = await unitOfWork.Resolve<IWorktreeRemovals>().GetForUpdateAsync(step.RemovalId);
-             removal.FilesRemoved(outcome);
-             await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new DeleteTheWorktreesBranch(step.RemovalId), cancellation);
-          },
-          HandlingOrder.None)
-      .ForTommand<DeleteTheWorktreesBranch, GitOutcome>(..., HandlingOrder.None);
+       })
+      //The 60-second git step: in a transaction of its own, given its order up, allowed 3 minutes (change 2).
+      .ForTommandInATransactionOfItsOwn<RemoveTheWorktreesFiles>(async (step, unitOfWork, cancellation) =>
+       {
+          var outcome = await unitOfWork.Resolve<IGit>().RemoveWorktreeAsync(step.Worktree, cancellation);
+          var removal = await unitOfWork.Resolve<IWorktreeRemovals>().GetForUpdateAsync(step.RemovalId);
+          removal.FilesRemoved(outcome);
+          await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new DeleteTheWorktreesBranch(step.RemovalId), cancellation);
+       }, HandlingOrder.None, transactionTimeout: TimeSpan.FromMinutes(3))
+      .ForTommandInATransactionOfItsOwn<DeleteTheWorktreesBranch>(..., HandlingOrder.None, transactionTimeout: TimeSpan.FromMinutes(3));
 }
 ```
 
 - **Ten removals** are ten `RemoveTheWorktreesFiles` in the inbox, each `HandlingOrder.None`: they run at once, up to the
   inbox's 20 at a time. One operation's steps stay in order by themselves: each sends the next only as it commits.
-- **At a publish,** the old hub calls `StopAsync` with a cancelled token. The running git steps are cancelled and left
-  unhandled, and the process lock is released once each has ended. The new hub builds and starts the endpoint, and its
-  inbox's recovery scan runs them again.
-- **After a crash,** the same: what wasn't recorded as handled runs again, the git steps at least once, the recordings
-  exactly once.
+- **At a publish,** the old hub calls `StopAsync` with a cancelled token. The running git steps are cancelled and roll
+  back, and are left unhandled. The new hub builds and starts the endpoint, and its inbox's recovery scan runs them again.
+- **After a crash,** the same: a step whose transaction didn't commit runs again. Its effect outside the database, the git
+  removal, is at least once, as any handler's outside effect is, and must be safe to repeat; its recording is exactly
+  once.
+- **On a server engine:** on SQLite, a step's long transaction would hold the one write lock and stop every other write
+  (the tooling's topic 26).
 - **The hub writes no machinery of its own** for resuming, retrying, marking failed or deduplicating.
 
 ## Where this departs from the tooling's proposals
@@ -125,10 +120,10 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
 - **Parallelism per handler, not for the endpoint as a whole.** The endpoint keeps the order for everything whose handler
   doesn't give it up, so the hub can later receive ordered tessages from other endpoints without being split in two. It
   costs one argument per registration.
-- **The outside effect and the recording of its outcome are two parts of one registration,** rather than a handler that
-  runs outside any transaction and records through an immediate tommand. With one part, a crash between the recording's
-  commit and the tommand being marked handled runs the effect and the recording again, so the recording, too, must be
-  safe to repeat. With two, the recording commits together with the mark: only the effect ever repeats.
+- **A long step stays a transactional handler, allowed a longer transaction by its registration,** rather than a handler
+  that runs outside any transaction and records through an immediate tommand (Magnus, topic 1: a handler outside any
+  transaction isn't exactly-once handling). Its recording then commits with the tommand's mark, so only its effect
+  outside the database can ever repeat.
 - **The stop lets go when its token says so,** rather than always cancelling handlers. Cancelling always would end
   today's graceful drain, which a rolling restart or a change of serialization format wants. A token on `StopAsync` lets
   each caller choose, as `IHostedService.StopAsync` does.
@@ -211,60 +206,49 @@ The inbox's dispatch loop already handles several tessages at once, up to `MaxCo
 a task of its own, and consults a list of dispatching rules (`ITessageDispatchingRule`) for each waiting tessage. Change 1
 needs nothing more of it but the reserved place: today an entry is ready when it is enqueued.
 
-## 2. At-least-once tommands, handled outside any transaction
+## 2. A handler's registration sets its transaction timeout
 
-No longer recommended: see decision 2. With SQLite left behind and a registration's own transaction timeout, a long
-step is an ordinary handler in a transaction of its own, and this rung has hardly any motivation left (Magnus, topic 1).
-
-Magnus, on topic 1, 2026-11-27: "A handler outside any transactions is not an ExactlyOnceTommandHandler." The first draft
-registered such a handler on the exactly-once registrar. The type hierarchy already has the rung that tells the truth:
-`IAtLeastOnceTessage`, "delivered until it arrives, and whose handling is retried while it fails", without the
-transactional handling `IExactlyOnceTessage` adds.
+Chosen by Magnus on topic 1, 2026-11-27, over at-least-once tommands: "A handler outside any transactions is not an
+ExactlyOnceTommandHandler", and with SQLite left behind and a registration allowed to change its timeout, a long step
+needs nothing else.
 
 ### Public API (sketch)
 
 ```csharp
-//review-naming:
-///A tommand delivered exactly once to its receiver's inbox, and handled at least once: its handler's effect runs outside any
-///transaction, and runs again when a try fails or a crash or a stop cuts it off, so it must be safe to repeat.
-public interface IAtLeastOnceTommand : IAtLeastOnceTessage, IMustBeSentTransactionally, ITommand;
-
-//review-naming:
-public interface IAtLeastOnceTommandHandlerRegistrar
+public interface IExactlyOnceTommandHandlerRegistrar
 {
-   ///The inbox runs outsideEffect outside any transaction, then recordOutcome in the unit of work that marks the tommand handled.
-   IAtLeastOnceTommandHandlerRegistrar ForTommand<TTommand, TOutcome>(
-      Func<TTommand, IScopeResolver, CancellationToken, Task<TOutcome>> outsideEffect,
-      Func<TTommand, TOutcome, IUnitOfWorkResolver, CancellationToken, Task> recordOutcome,
-      HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IAtLeastOnceTommand;
+   //review-naming: transactionTimeout
+   ///transactionTimeout: how long the inbox's handling transaction may run before it is rolled back; null keeps the unit of
+   ///work's 45-second backstop.
+   IExactlyOnceTommandHandlerRegistrar ForTommandInATransactionOfItsOwn<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
+                                                                                  HandlingOrder order = HandlingOrder.AsAdmitted,
+                                                                                  TimeSpan? transactionTimeout = null) where TTommand : IExactlyOnceTommand;
 }
 ```
 
-The tommand senders accept it beside `IExactlyOnceTommand`. Sent from the endpoint itself, it is admitted to the inbox as
-in change 1: it never runs inline, since its effect can't run in the sender's transaction. Sent from another endpoint, it
-travels the outbox and arrives in the inbox as an exactly-once tommand does today.
+The same argument on `ForTommand` and the tevent verbs: it applies wherever the inbox handles the tessage, which is
+where a handler has a transaction of its own. A handler running inline, in its sender's transaction, runs within the
+sender's timeout.
 
 ### Mechanism
 
-1. **The inbox dispatches it as any tessage,** in its place in the order its registration chose.
-2. **The outside effect runs in a scope with no ambient transaction,** with the endpoint's stopping token. The row isn't
-   claimed: nothing else can handle it at the same time, since one process runs the endpoint (the process lock), the
-   line hands a tessage out once, and the stop keeps the process lock until the effect has ended (decision 4).
-3. **The recording runs in a unit of work that claims the row, records the outcome and marks the tommand handled:** one
-   commit.
-4. **A failure of either part is a failed try,** and the next try runs both parts again: the effect's outcome is not kept
-   between tries.
+- **Today's timeout is one constant,** 45 seconds for every unit of work (`TransactionScopeCE.TransactionTimeout`): a
+  backstop, so that a unit of work whose thread wedged rolls back in bounded time.
+- **The inbox's unit of work for a handling takes its timeout from the registration** of the tessage's handler. For a
+  tevent whose handlers declare several, the longest.
+- **Above 10 minutes,** `TransactionManager.MaximumTimeout` clamps it, and must be raised too, process-wide. The
+  registration's timeout fails loud when it is above the maximum, rather than being clamped silently.
 
 ### The guarantee, walked through
 
-- **The effect: at least once, never twice at the same time.** It must be safe to repeat: the contract the tommand's type
-  declares, which its sender sees.
-- **The recording: exactly once,** atomically with the mark.
-- **The tommand: admitted exactly once,** deduplicated and in its pair's order, as every tessage the inbox admits.
-- **Crash windows.** During the effect: the row stays UnHandled, and the effect runs again at the next start. After the
-  effect and before the recording commits: both run again. After the recording commits: nothing repeats.
-- **Order.** An ordered one holds the ordered line for as long as its effect runs, which is why the hub gives the order up.
-- **Marking failed, restarts and replacement topologies:** as in change 1.
+- **Exactly once: unchanged.** The claim, the handler's work and the mark still commit together.
+- **What a long transaction holds,** for as long as it runs: a pooled connection, the locks it takes, and on PostgreSQL an
+  old snapshot that holds back vacuum. On a server engine, the claim locks only the tessage's own inbox row.
+- **On SQLite,** a long transaction holds the one write lock and stops every other write: the hub's long steps need a
+  server engine.
+- **A stop cancels it** through the stopping token, and it rolls back: as for any handling.
+- **Its effect outside the database is at least once,** as any handler's is: a step that rolls back after the effect runs
+  it again.
 
 ## 3. Handling order
 
@@ -437,7 +421,7 @@ alone:
    publishers, and `IEndpoint.StopAsync(CancellationToken)`.
 2. **Tommand handlers in a transaction of their own:** change 1.
 3. **The handling order:** change 3.
-4. **At-least-once tommands, handled outside any transaction:** change 2.
+4. **A handler's registration sets its transaction timeout:** change 2.
 5. **The endpoint that converses with no other:** change 5, with the start's cost measured before and after.
 
 Later, when a consumer needs them: the tevent counterparts, the order by a key, and a successor's claim that waits for its
@@ -453,24 +437,13 @@ predecessor's release (below).
      `IStrictlyLocalTessage`, the type-level promise in the other direction. Tevents can't have it: a publisher mustn't
      decide what its subscribers need.
    - **(c) No:** the law stays, and multi-step flows ping-pong between two endpoints.
-2. **A long outside effect, such as a git step** (rewritten twice after Magnus's objections on topic 1: that a handler
-   outside any transaction isn't exactly-once handling, then that SQLite should go and a registration could set its
-   timeout):
-   - **(a) A handler's registration sets its transaction timeout,** and no at-least-once tommands. On a server engine a
-     long step is then an ordinary handler in a transaction of its own (change 1), its order given up (change 3), and its
-     claim locks only its own inbox row. What the long transaction still costs, a pooled connection, its locks and on
-     PostgreSQL an old snapshot, doesn't matter at the hub's scale. Today's timeout is one 45-second backstop for every
-     unit of work (`TransactionScopeCE.TransactionTimeout`); above 10 minutes, `TransactionManager.MaximumTimeout` must be
-     raised too, process-wide. For the hub this means leaving SQLite (the tooling's topic 26). Recommended.
-   - **(b) At-least-once tommands,** as change 2 sketches.
+2. **A long outside effect, such as a git step:** settled by Magnus on topic 1, a registration's transaction timeout,
+   over at-least-once tommands.
 3. **Where the order is given up:**
    - **(a) Per handler registration.** Recommended.
    - **(b) For the endpoint as a whole.**
-4. **An outside effect still running when the stop's grace has ended:**
-   - **(a) The process lock is kept until it ends.** Recommended: an effect never runs twice at the same time. A hung
-     effect delays the successor's start, loudly.
-   - **(b) The lock is released after the drain's patience, as for transactional handlers:** the successor starts on time,
-     and may run the effect while the predecessor still does.
+4. **An outside effect still running when the stop's grace has ended:** fell away with decision 2: every handler is
+   transactional, and a successor that tries a tessage again waits at its claim until the predecessor's transaction ends.
 5. **How the stop lets go:**
    - **(a) `StopAsync(CancellationToken)`:** the drain as today, ended at once by the token. Recommended: the .NET
      convention, and each caller chooses.
@@ -485,7 +458,7 @@ predecessor's release (below).
      environment)`. Recommended: it is only an absence, and needs no new abstraction.
 
 The names marked `review-naming:` above are chosen, not decisions: `ForTommandInATransactionOfItsOwn`,
-`IAtLeastOnceTommand` with its registrar, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
+`transactionTimeout`, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
 
 ## Not in this design
 
