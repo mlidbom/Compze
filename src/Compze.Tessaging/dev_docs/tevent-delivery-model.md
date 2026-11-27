@@ -333,6 +333,18 @@ Per rung:
   is cancelled (`IEndpoint.StopAsync(CancellationToken)`) stops handling at once, in whichever phase it is,
   and cancels the token the running tries' handlers were handed: a try that fails once handling has stopped
   doesn't count, and its tessage is left UnHandled the same way.
+- **The handling order: a handler's registration may give up the tessage's place in it.** Every handler verb
+  the inbox serves takes a `HandlingOrder`: `AsAdmitted`, the default, is the one-at-a-time line above;
+  `None` lets the inbox dispatch the tessage as soon as it is ready, up to 20 executing at once, beside
+  anything else. The order is looked up in the roster as the tessage is enqueued, the recovery scan's
+  included, and a tevent gives up its place only when every participation handler it runs does; one that
+  runs none keeps it, since what observers see follows the order the handlings commit in. Admission is
+  unchanged: still once, in stream order per pair. A tessage that gave up its place and keeps failing holds
+  up nothing, and is marked failed when the `RetryPolicy` gives up. The line dispatches a tessage that keeps
+  its place only while no other such tessage executes, and passes over the endpoint's own tessages that keep
+  their place behind one whose sender hasn't committed; the drain waits for what gave up its place too, also
+  while a tessage that keeps its place waits to be tried again. On SQLite the handling transaction holds the
+  one writer from its claim of the tessage on, so handlings take turns there whatever their order.
 
 ## Tommands are different
 
@@ -344,7 +356,8 @@ execution — exactly-once by construction, per the consistency law (see
 [Tessaging](tessaging.md)). Unless its handler is deferred: then the endpoint admits it to its own inbox in
 the sender's transaction, advancing the endpoint's stream to itself, a row of the inbox's admissions table
 whose lock makes the sends to the endpoint itself commit one after another, and handles it in an execution
-of its own once the sender has committed, in the order the senders committed. A tommand whose handler lives elsewhere binds to its one
+of its own once the sender has committed, in the order the senders committed unless the handler gives up its
+place in the handling order (see [Ordering](#ordering)). A tommand whose handler lives elsewhere binds to its one
 specific receiver at send time — the live handler when one is connected, otherwise the sole remembered peer
 whose advertisement handles the type (see [peers](peers.md)) — so a
 known-but-down handler receives the tommand on its return without the send exploding, while every tessage

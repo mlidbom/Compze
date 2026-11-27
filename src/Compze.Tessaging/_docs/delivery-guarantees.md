@@ -40,16 +40,22 @@ handles it in a transaction that also records that it was handled, so its handle
   the one remembered endpoint that handles it. When that endpoint is down, the tommand waits for it.
 - **In order.** What one endpoint sends another, tevents and tommands alike, the other receives in the order the sending
   transactions committed, across restarts on either side. An endpoint handles its exactly-once tessages one at a time,
-  in the order they arrived.
+  in the order they arrived, unless their handlers give up their place in that order (below).
 - **A failing handler is retried, for 5 minutes unless the endpoint declares otherwise.** When a handler throws, its
   transaction rolls back and the tessage is tried again: a few times at once, then with a delay that grows from a second
-  up to a minute. The tessages behind it wait, since the endpoint handles them in order. When its handling has failed
+  up to a minute. The tessages behind it that keep their place in the order wait. When its handling has failed
   for 5 minutes, the tessage is marked failed, and isn't handled again, not after a restart either; the endpoint goes on
   with the next. The time counts while the endpoint runs and can reach its database, across restarts: when the
   endpoint can't reach its database, it is the endpoint that is failing, not the tessage, and nothing counts.
 - **When to give up, declared on the endpoint:** its `RetryPolicy`, in an exactly-once declaration, or on its builder.
   `RetryPolicy.GiveUpAfter(...)` gives up after another time, and `RetryPolicy.RetryForever` never gives up on a tessage:
   the order is kept, whatever that costs the tessages behind it.
+- **A handler can give up its place in the order:** with `HandlingOrder.None`, an argument of each handler verb, the
+  endpoint handles its tessages as soon as it can, up to 20 at once, at the same time as anything else, whatever arrived
+  before them, and one that keeps failing holds up nothing. Its handler then runs at the same time as the endpoint's
+  other handlers, so what it shares with them in memory needs locking. A tevent gives up its place only when every
+  handler it runs in the endpoint gives it up. On SQLite, whose one writer takes one transaction at a time, handlings
+  still take turns: a tessage that gives up its place is handled while another waits to be tried again.
 - **A handler can be cancelled.** A handler that takes a `CancellationToken`, after the unit of work, is handed the
   token of the execution it serves: for a tessage the endpoint received, one the endpoint's stop cancels; for a handler
   run within a send or a publish, the token given to `SendAsync` or `PublishAsync`. A try that a stop cancels doesn't
@@ -95,8 +101,8 @@ Where a handler lives decides when it runs:
 - **Within the endpoint, after the sender commits, when the handler is deferred.** A tommand handler registered in an
   exactly-once declaration's `RegisterDeferredTommandHandlers` is never run within its sender's unit of work. The
   endpoint stores the tommand in its own inbox within the sender's transaction, and handles it in a unit of work of its
-  own once the sender has committed: exactly once, what the endpoint sends itself in the order the senders committed,
-  and tried again while it fails, as the endpoint's retry policy says. The sender neither waits for it nor sees it fail.
+  own once the sender has committed: exactly once, what the endpoint sends itself in the order the senders committed
+  unless the handler gives up its place in it, and tried again while it fails, as the endpoint's retry policy says. The sender neither waits for it nor sees it fail.
 - **In another endpoint, eventually,** with the guarantee its type declares.
 
 So moving a handler to another endpoint, or deferring it, is a decision about consistency, and it is visible where it is
