@@ -1,9 +1,9 @@
 """Watches a MySQL server while a test run uses it, reading only, and says where the server's time went: the connections
-open and how many the server refused, the statements by total time, the waits for metadata locks and file I/O, the
+open and how many the server refused, the statements by kind and total time, the waits for metadata locks and file I/O, the
 fsyncs by file kind, and from the process list, sampled every 200 ms, what ran at once and how long the DbPool's resets
 were seen running.
 
-Everything it reads is on by default in MySQL 8 and 9: performance_schema's statement digests, its metadata-lock and
+Everything it reads is on by default in MySQL 8 and 9: performance_schema's statement summaries, its metadata-lock and
 file-I/O instruments, and the process list. It changes nothing on the server.
 
 Usage: python observe_mysql.py <host[:port]> <output-folder>
@@ -21,8 +21,11 @@ server, out = Server(sys.argv[1]), sys.argv[2]
 os.makedirs(out, exist_ok=True)
 PICOSECONDS = 1e12
 
-DIGESTS = ("SELECT digest, LEFT(REPLACE(digest_text, '\\n', ' '), 90), count_star, sum_timer_wait "
-           "FROM performance_schema.events_statements_summary_by_digest WHERE digest IS NOT NULL")
+# By statement kind, such as statement/sql/create_table: a table of fixed size. Its summary by digest fills up on a server
+# that has run tests for a day, since each pool database's name makes its statements' digests new ones, and then it
+# counts no new statements at all.
+STATEMENT_KINDS = ("SELECT event_name, count_star, sum_timer_wait FROM performance_schema.events_statements_summary_global_by_event_name "
+                   "WHERE count_star > 0")
 WAITS = ("SELECT event_name, count_star, sum_timer_wait FROM performance_schema.events_waits_summary_global_by_event_name "
          "WHERE count_star > 0 AND (event_name LIKE 'wait/lock/metadata%' OR event_name LIKE 'wait/io/file/innodb/%' "
          "OR event_name LIKE 'wait/io/file/sql/binlog%')")
@@ -49,7 +52,7 @@ def where_from(process_id):
     checkout = re.search(r"([^\\/\s\"]+\.worktrees[\\/][^\\/\s\"]+)", text) or re.search(r"Dev[\\/]([^\\/\s\"]+)", text)
     return checkout.group(1) if checkout else process.name()
 
-def snapshot(): return {query: {row[0]: row for row in server.run(query)} for query in (DIGESTS, WAITS, FILES, CONNECTION_COUNTERS)}
+def snapshot(): return {query: {row[0]: row for row in server.run(query)} for query in (STATEMENT_KINDS, WAITS, FILES, CONNECTION_COUNTERS)}
 
 def differences(before, after, query, columns):
     """Each row's growth between the snapshots in the given numeric columns, the rows that didn't grow left out."""
@@ -95,13 +98,10 @@ if most_by_checkout:
               + ", ".join(f"{checkout} {count}" for checkout, count in most_by_checkout.most_common())]
     lines += [f"Client processes: {len(most_by_process)}; the most connections one held at once: "
               + ", ".join(f"{count} (process {process_id}, {checkout_of_process[process_id]})" for process_id, count in most_by_process.most_common(5))]
-lines += ["", "Statements by total time (count, total s):"]
-statements = sorted(differences(before, after, DIGESTS, (2, 3)), key=lambda it: -it[1][1])
-lines += [f"  {count:7d} {total / PICOSECONDS:9.1f}  {row[1]}" for row, (count, total) in statements[:20]]
-resets = [grown for row, grown in statements if row[1].upper().startswith(("DROP SCHEMA IF EXISTS `COMPZE_DBPOOL", "DROP DATABASE IF EXISTS `COMPZE_DBPOOL"))]
-if resets:
-    count, total = sum(it[0] for it in resets), sum(it[1] for it in resets)
-    lines += ["", f"The DbPool's resets: {count}, {total / PICOSECONDS:.0f} s in all, {total / PICOSECONDS / count:.2f} s on average"]
+lines += ["", "Statements by kind, by total time (count, total s, average ms); the DbPool's resets are drop_db:"]
+statements = sorted(differences(before, after, STATEMENT_KINDS, (1, 2)), key=lambda it: -it[1][1])
+lines += [f"  {count:7d} {total / PICOSECONDS:9.1f} {total / PICOSECONDS / count * 1000:9.1f}  {row[0].removeprefix('statement/sql/')}"
+          for row, (count, total) in statements[:15]]
 lines += ["", "Waits (count, total s):"]
 lines += [f"  {count:9d} {total / PICOSECONDS:9.1f}  {row[0]}" for row, (count, total) in differences(before, after, WAITS, (1, 2))]
 lines += ["", "Files (fsync count, fsync s, write count, write s):"]

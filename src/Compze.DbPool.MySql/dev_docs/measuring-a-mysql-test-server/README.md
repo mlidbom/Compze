@@ -10,9 +10,10 @@ A server is `host` or `host:port`, such as `192.168.0.11` for threadripper's.
 
 | Tool | What it does to the server | What it says |
 |---|---|---|
-| `ddl_capacity.py <server> [<workers> [<seconds>]]` | Creates databases `dbpool_measurement_capacity_<n>` and drops them | The database uses a second it completes under a suite-like load, and the resets' latency meanwhile |
-| `fsyncs_per_operation.py <server>` | Creates the database `dbpool_measurement_operations` and drops it | The fsyncs, by file kind, and the wall time of each step a pool database goes through |
-| `observe_mysql.py <server> <folder>` | Reads only | Where the server's time went during a test run: statements, waits, fsyncs, what ran at once, the resets |
+| `ddl_capacity.py <server> [<workers> [<seconds> [<idle connections>]]]` | Creates databases `dbpool_measurement_capacity_<n>` and drops them | The database uses a second it completes under a suite-like load, and the resets' latency meanwhile, with as many idle connections held open as asked |
+| `fsyncs_per_operation.py <server>` | Creates the database `dbpool_measurement_operations` and drops it | The file operations other than reads and writes, mostly syncs, by file kind, and the wall time of each step a pool database goes through |
+| `file_operations_per_step.py <server>` | Turns performance_schema's wait history on for the run: **only on a server of your own** | Each step's file operations by kind, syncs, creates, deletes, opens, reads and writes, and their time |
+| `observe_mysql.py <server> <folder>` | Reads only | Where the server's time went during a test run: connections and whose they are, statements by kind, waits, syncs, what ran at once, the resets |
 | `binlog_resets.py <binlog file>...` | Reads its binary log files | Each past test run's resets and how long they took |
 
 - **`ddl_capacity.py` is the one to compare settings with:** run it before and after, on a quiet server. 16 workers,
