@@ -2,8 +2,10 @@ name: MySQL skips crash durability
 description: Makes a MySQL service container create tables without files of their own and commit without flushing to disk, which a throwaway test server never needs.
 
 # On MySQL, Compze's tests are mostly DDL: each use of a pool database is a test's CREATE TABLE statements and the DbPool's
-# DROP DATABASE, about 500 fsyncs with InnoDB's defaults, so a suite waits on the disk's flushes. Measured 2026-11-27 with
-# MySQL 9.7 and the MySql suite: 150 s became 78 s, and 139,000 fsyncs 28,000. The measurements are in
+# DROP DATABASE, about 500 fsyncs with InnoDB's defaults, so on a disk with slow flushes a suite waits on them. Measured
+# 2026-11-27 with MySQL 9.7 on a Windows desktop and the MySql suite: 150 s became 78 s, and 139,000 fsyncs 28,000. On CI
+# it made no difference the runs could show: Compze.Tests.Integration took 159 and 129 s with it, against 112 to 223 s in
+# four jobs without it. CI's MySQL jobs take about as long as PgSql's and MsSql's. The measurements are in
 # src/Compze.DbPool.MySql/dev_docs/why-resets-take-seconds-on-mysql.md.
 #
 # - innodb_file_per_table = OFF: tables live in the system tablespace, so creating or dropping one creates or deletes no

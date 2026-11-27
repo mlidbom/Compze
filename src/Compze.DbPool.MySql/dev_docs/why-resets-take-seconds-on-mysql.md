@@ -74,6 +74,11 @@ Magnus's to decide: threadripper's MySQL is a test server, and these trade crash
 On this machine's drive, with 16 workers: 4.0–4.2 database uses a second became 19–20, and the reset's median 1.6 s
 became 0.19 s; the suite, 150 s became 78 s. Not yet measured on threadripper.
 
+CI's MySQL container gets the same three settings, from `.github/actions/mysql-skips-crash-durability`, since
+2026-11-27. There they made no difference the runs could show: Compze.Tests.Integration on the two MySql jobs took 159
+and 129 s with them, against 137, 184, 223 and 112 s in two runs without. CI's MySQL isn't held up by its flushes: its
+jobs take about as long as PgSql's and MsSql's.
+
 The system tablespace, `ibdata1`, 12 MB on threadripper now, grows to hold the tables and never shrinks; for 100
 databases of 15 small tables, by an estimate, tens of megabytes, and what a drop frees is reused. Settings like these can't come from Compze's code: each is
 global only, and test code must never change a developer's shared server.
