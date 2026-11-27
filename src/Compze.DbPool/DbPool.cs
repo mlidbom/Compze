@@ -62,6 +62,12 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
+      //bug: the reservation, which waits up to 45 s for a free database, and the reset run inside the pool's lock, which
+      //   times out after 30 s. When they take longer, as MySQL's resets do when a suite saturates the server with DDL, a
+      //   concurrent ConnectionStringFor on this pool throws TakeMonitorLockTimeoutException: another endpoint of the same
+      //   host starting at the same time, twice on 2026-11-27 in AccountManagement's user stories on MySql. Recording
+      //   the reservation name under the lock, and reserving and resetting outside it, once for all the callers that
+      //   wait for that name, would end it. See src/Compze.DbPool.MySql/dev_docs/why-resets-take-seconds-on-mysql.md.
       reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
       _log.Info($"Reserved pool database: {reservedDatabase.Name}");
       reservedDatabases.Add(reservedDatabase);
