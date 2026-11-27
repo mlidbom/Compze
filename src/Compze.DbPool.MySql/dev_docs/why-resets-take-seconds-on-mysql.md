@@ -66,8 +66,8 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
 
 ## What slow resets break
 
-- **The DbPool's lock times out:** a flaw in `DbPool`, whatever the server, marked by a `bug:` comment at
-  `DbPool.ConnectionStringFor`; [below](#the-dbpools-lock-held-across-the-reservation-and-the-reset).
+- **The DbPool's lock timed out:** a flaw in `DbPool`, whatever the server, fixed 2026-11-27;
+  [below](#the-dbpools-lock-held-across-the-reservation-and-the-reset).
 - **Tests run past their reservations.** A test host whose three databases each wait seconds for their reset, and then
   for their schema, spends much of the 65 s reservation starting up, so another pool may take and reset a database it
   still uses. Probably what an `Unknown database 'compze_dbpool_0084'` in the same run was; not verified. Since
@@ -78,8 +78,9 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
 
 ### The DbPool's lock held across the reservation and the reset
 
-Being fixed on this branch, at Magnus's word, 2026-11-27, after merging dbpool-reset-mid-test's branch, which changes
-`Dispose` too.
+Fixed on this branch, at Magnus's word, 2026-11-27, after merging dbpool-reset-mid-test's branch, which changes `Dispose`
+too. `Compze.DbPool.Tests.Reservations.While_a_pools_reset_of_one_database_waits_for_a_lock_on_it` specifies it on the
+server engines: before the fix the call for another name was still waiting after 20 s, on MySql, PgSql and MsSql alike.
 
 - **The flaw:** `DbPool.ConnectionStringFor` runs entirely inside `_reservedDatabases.Locked`, a lock created with
   `LockTimeout.Seconds(30)`. Inside it run `DbPoolMachineWideState.ReserveDatabase`, which waits up to 45 s for a free
@@ -98,16 +99,17 @@ Being fixed on this branch, at Magnus's word, 2026-11-27, after merging dbpool-r
   `MySqlConnectionPool`'s lazy connection string, `TestingComponentRegistrar.MySqlDbPoolRegistrar`, then
   `DbPool.ConnectionStringFor`. The exception's stack of the blocking thread's release showed it releasing the lock in
   `DbPool.ConnectionStringFor` too, after more than 30 s inside it.
-- **The fix:** take the lock only to find or record an entry for the reservation name, and reserve and reset outside
-  it, once for all the callers of that name. A `LazyCE<string>` per name, whose factory reserves, resets and returns the
-  connection string, does that: its waiters wait up to `LockTimeout.Default`, 2 minutes (45 s under NCrunch), and a
-  factory that throws is run again by the next read, where today a database whose reset and fallback both failed stays
-  cached and is handed out unreset. Callers for other names never wait behind another database.
-- **What the fix must handle: `Dispose`.** It takes the same lock now, so it waits for a `ConnectionStringFor` in
-  progress. Once the slow work runs outside the lock, `Dispose` could release the pool's reservations, which
-  `DbPoolMachineWideState.ReleaseReservationsFor` does by pool id, while another thread is still reserving: that
-  reservation would come after the release, and stay held until it expires. So `Dispose` waits for the entries still in
-  progress before it releases, or a reservation that finishes after `Dispose` releases itself.
+- **The fix, as built:** the pool's lock, an `IAwaitableThreadShared<DbPool.Reservations>`, is held only to read and
+  change the pool's `DbPool.Reservation`s, one per reservation name. The first call for a name marks its reservation as
+  being prepared, and reserves and resets its database outside the lock; the other calls for the name wait, with
+  `UpdateWhen`, until it isn't, for up to 2 minutes. Calls for other names never wait behind another database. A
+  reservation whose reset failed keeps its database, and the next call for its name resets it again, where before it was
+  handed out unreset. A `LazyCE` per name was the first idea, but `Dispose` can't wait for a `LazyCE`'s factory without
+  running it.
+- **`Dispose`:** it took the same lock, so it waited for a `ConnectionStringFor` in progress. With the slow work
+  outside the lock, it could have released the pool's reservations, which `DbPoolMachineWideState.ReleaseReservationsFor`
+  does by pool id, while another thread was still reserving: that reservation would have come after the release, and
+  stayed held until it expired. So `Dispose` waits, with `UpdateWhen`, until no reservation is being prepared.
 
 ## What was ruled out
 
