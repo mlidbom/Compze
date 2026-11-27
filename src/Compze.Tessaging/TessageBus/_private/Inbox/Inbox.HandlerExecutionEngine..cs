@@ -6,7 +6,6 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching;
 using Compze.Threading;
 using Compze.Tessaging._private.Transport;
 
@@ -32,11 +31,6 @@ partial class Inbox
       /// end, before giving up and letting teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching<br/>
       /// this means a handler is likely hung</summary>
       static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
-
-      readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
-      [
-         new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
-      ];
 
       readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, retryPolicy, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
@@ -74,7 +68,7 @@ partial class Inbox
          {
             while(true)
             {
-               var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
+               var task = _coordinator.AwaitExecutableHandlerExecutionTask();
                task.Execute();
             }
          }

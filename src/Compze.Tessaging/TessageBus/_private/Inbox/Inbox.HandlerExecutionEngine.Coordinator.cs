@@ -8,7 +8,6 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Tessaging._private.Transport;
@@ -36,10 +35,10 @@ partial class Inbox
 
          ///<summary>Waits for the next tessage that may be dispatched, and dispatches it; throws an<br/>
          /// <see cref="OperationCanceledException"/> once handling has stopped (<see cref="StopAsync"/>).</summary>
-         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
+         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask()
          {
             HandlerExecutionTask? handlerExecutionTask = null;
-            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask), _stopping.Token);
+            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(out handlerExecutionTask), _stopping.Token);
             return handlerExecutionTask._assert().NotNull();
          }
 
@@ -148,18 +147,11 @@ partial class Inbox
 
          public void Dispose() => _stopping.Dispose();
 
-         public class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId) : IExecutingTessagesSnapshot
+         public class NonThreadsafeImplementation(ITessagesInFlightTracker globalStateTracker, EndpointId endpointId)
          {
             const int MaxConcurrentlyExecutingHandlers = 20;
             readonly ITessagesInFlightTracker _globalStateTracker = globalStateTracker;
             readonly EndpointId _endpointId = endpointId;
-
-
-            //performance: Split waiting tessages into prioritized categories: Exactly once tevent/tommand, At most once tevent/tommand,  NonTransactional tuery
-            //don't postpone checking if mutations are allowed to run because we have a ton of tueries queued up. Also the tueries are likely not allowed to run due to the tommands and tevents!
-            //performance: Use static type caching trick to ensure that we know which rules need to be applied to which tessages. Don't check rules that don't apply. (Double dispatching might be required.)
-            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands => _executingExactlyOnceTommands;
-            public IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents => _executingExactlyOnceTevents;
 
             readonly List<HandlerExecutionTask> _tessagesWaitingToExecute = [];
             bool _dispatchingStopped;
@@ -175,13 +167,13 @@ partial class Inbox
             internal bool TakesTessagesSentToItselfIntoTheLine => _tessagesSentToItselfTakeAPlaceInTheLine && !_dispatchingStopped;
 
             ///<summary>True when nothing more will be handled before stopping: nothing is executing and nothing waits to<br/>
-            /// execute, or every executing tessage waits to be tried again. A tessage waiting to be tried again holds the line: the<br/>
-            /// dispatching rules dispatch no exactly-once tessage while another executes.</summary>
+            /// execute, or every executing tessage waits to be tried again. A tessage waiting to be tried again holds the line: no<br/>
+            /// tessage is dispatched while another executes.</summary>
             internal bool IsDrained => ExecutingCount == 0 ? WaitingCount == 0 : ExecutingCount == _waitingToBeTriedAgainCount;
             internal int WaitingCount => _tessagesWaitingToExecute.Count;
             internal int ExecutingCount { get; private set; }
 
-            internal bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
+            internal bool TryGetDispatchableTessage([NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {
                dispatchable = null!;
                if(_dispatchingStopped || ExecutingCount >= MaxConcurrentlyExecutingHandlers)
@@ -189,7 +181,7 @@ partial class Inbox
                   return false;
                }
 
-               dispatchable = FirstDispatchableTessage(dispatchingRules);
+               dispatchable = FirstDispatchableTessage();
 
                if (dispatchable == null)
                {
@@ -200,11 +192,13 @@ partial class Inbox
                return true;
             }
 
-            ///<summary>The first tessage in the line that the dispatching rules allow, passing over every tessage the endpoint sent<br/>
-            /// itself whose sender hasn't committed, and every tessage the endpoint sent itself behind such a one: the endpoint's<br/>
-            /// stream to itself is handled in the order its senders committed. Other streams don't wait for it.</summary>
-            HandlerExecutionTask? FirstDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
+            ///<summary>The first tessage in the line, once no tessage executes, passing over every tessage the endpoint sent itself<br/>
+            /// whose sender hasn't committed, and every tessage the endpoint sent itself behind such a one: the endpoint's stream to<br/>
+            /// itself is handled in the order its senders committed. Other streams don't wait for it.</summary>
+            HandlerExecutionTask? FirstDispatchableTessage()
             {
+               if(ExecutingCount > 0) return null;
+
                var aTessageSentToItselfAwaitsItsSendersCommit = false;
                foreach(var waiting in _tessagesWaitingToExecute)
                {
@@ -216,7 +210,7 @@ partial class Inbox
 
                   if(waiting.IsSentByTheEndpointToItself && aTessageSentToItselfAwaitsItsSendersCommit) continue;
 
-                  if(dispatchingRules.All(rule => rule.CanBeDispatched(this, waiting.TransportTessage))) return waiting;
+                  return waiting;
                }
 
                return null;
@@ -284,25 +278,10 @@ partial class Inbox
             /// is not told it is done, since it isn't.</summary>
             internal void LeftUnhandledAtStop(HandlerExecutionTask queuedTessageInformation) => StopExecuting(queuedTessageInformation);
 
-            //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)
             {
                this.Log().Debug($"Dispatching {dispatchable.TransportTessage.TessageTypeEnum} tessage {dispatchable.TessageId} (executing: {ExecutingCount + 1}, waiting: {_tessagesWaitingToExecute.Count})");
                ExecutingCount++;
-
-               switch(dispatchable.TransportTessage.TessageTypeEnum)
-               {
-                  case TransportTessageType.ExactlyOnceTevent:
-                     _executingExactlyOnceTevents.Add(dispatchable.TransportTessage);
-                     break;
-                  case TransportTessageType.ExactlyOnceTommand:
-                     _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
-                     break;
-                  case TransportTessageType.BestEffortTevent:
-                  default:
-                     throw new ArgumentOutOfRangeException();
-               }
-
                _tessagesWaitingToExecute.Remove(dispatchable);
             }
 
@@ -313,27 +292,7 @@ partial class Inbox
                _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
-            //Refactor: Switching should not be necessary. See also inbox.
-            void StopExecuting(HandlerExecutionTask executing)
-            {
-               ExecutingCount--;
-
-               switch(executing.TransportTessage.TessageTypeEnum)
-               {
-                  case TransportTessageType.ExactlyOnceTevent:
-                     _executingExactlyOnceTevents.Remove(executing.TransportTessage);
-                     break;
-                  case TransportTessageType.ExactlyOnceTommand:
-                     _executingExactlyOnceTommands.Remove(executing.TransportTessage);
-                     break;
-                  case TransportTessageType.BestEffortTevent:
-                  default:
-                     throw new ArgumentOutOfRangeException();
-               }
-            }
-
-            readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];
-            readonly List<TransportTessage.InComing> _executingExactlyOnceTevents = [];
+            void StopExecuting(HandlerExecutionTask executing) => ExecutingCount--;
          }
       }
    }
