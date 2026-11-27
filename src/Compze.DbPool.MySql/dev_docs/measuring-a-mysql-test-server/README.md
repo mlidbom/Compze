@@ -10,7 +10,8 @@ A server is `host` or `host:port`, such as `192.168.0.11` for threadripper's.
 
 | Tool | What it does to the server | What it says |
 |---|---|---|
-| `ddl_capacity.py <server> [<workers> [<seconds> [<idle connections>]]]` | Creates databases `dbpool_measurement_capacity_<n>` and drops them | The database uses a second it completes under a suite-like load, and the resets' latency meanwhile, with as many idle connections held open as asked |
+| `ddl_capacity.py <server> [<workers> [<seconds> [<idle connections>]]] [--reset <reset>]` | Creates databases `dbpool_measurement_capacity_<n>` and drops them | The database uses a second it completes under a suite-like load, the syncs a use, and the resets' latency meanwhile, with as many idle connections held open as asked. `--reset` tries another reset than the DbPool's `DROP DATABASE`: `drop-tables`, `truncate`, or `delete`, which empties the tables and keeps them |
+| `private_server.py start <MySQL folder> <port> <folder>` | Runs a server of your own, of any version, configured as this machine's test server | Nothing: the other tools measure it, as `127.0.0.1:<port>`. `stop <MySQL folder> <port>` stops it |
 | `fsyncs_per_operation.py <server>` | Creates the database `dbpool_measurement_operations` and drops it | The file operations other than reads and writes, mostly syncs, by file kind, and the wall time of each step a pool database goes through |
 | `file_operations_per_step.py <server>` | Turns performance_schema's wait history on for the run: **only on a server of your own** | Each step's file operations by kind, syncs, creates, deletes, opens, reads and writes, and their time |
 | `observe_mysql.py <server> <folder>` | Reads only | Where the server's time went during a test run: connections and whose they are, statements by kind, waits, syncs, what ran at once, the resets |
@@ -18,6 +19,10 @@ A server is `host` or `host:port`, such as `192.168.0.11` for threadripper's.
 
 - **`ddl_capacity.py` is the one to compare settings with:** run it before and after, on a quiet server. 16 workers,
   about what a full suite runs at once, for 30 s.
+- **Comparing MySQL versions:** unpack a version's zip archive, from `https://cdn.mysql.com/archives/mysql-<major.minor>/`,
+  start it with `private_server.py`, and measure it with the others. Reach it as `127.0.0.1:<port>`, not `localhost`:
+  it listens on IPv4 only, and on Windows the client's first try, IPv6, takes 2 s to be refused. For MySQL 5.7, set
+  `MYSQL_BIN` to its own `bin` folder.
 - **`observe_mysql.py` with a test run:** start it, run
   `C-Test -Combinations 'MySql:Microsoft:Newtonsoft:AspNetCore'`, then create the file `<folder>/stop`. It writes
   `<folder>/summary.txt` and prints it.

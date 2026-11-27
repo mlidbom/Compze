@@ -21,6 +21,12 @@ class Server:
     def __init__(self, address):
         host, _, port = address.partition(":")
         self.client_arguments = [MYSQL, "-h", host, "-P", port or "3306", f"-u{USER}", f"-p{PASSWORD}", "-N", "-B"]
+        self._version = None
+
+    def version(self):
+        """The server's version, such as 9.7.0."""
+        if self._version is None: self._version = self.run("SELECT VERSION()")[0][0]
+        return self._version
 
     def run(self, sql):
         """Runs statements on a connection of their own; returns the result rows, their columns split."""
@@ -32,8 +38,12 @@ class Server:
         return Session(self)
 
     def create_pool_tables_sql(self, database):
-        """The statements that create the 15 pool tables in a database, as a test's schema creation does."""
+        """The statements that create the 15 pool tables in a database, as a test's schema creation does: each
+        CREATE TABLE IF NOT EXISTS, as Compze's schema code has it."""
         tables = "".join(line for line in open(POOL_TABLES_SQL, encoding="utf-8") if not line.startswith("--"))
+        tables = tables.replace("CREATE TABLE `", "CREATE TABLE IF NOT EXISTS `")
+        if self.version().startswith("5."):  # utf8mb4_0900_ai_ci came with MySQL 8.0
+            tables = tables.replace("utf8mb4_0900_ai_ci", "utf8mb4_unicode_ci")
         return f"USE `{database}`; SET SESSION foreign_key_checks = 0; " + tables.replace("{database}", database).replace("\n", " ")
 
     def fsyncs(self):
