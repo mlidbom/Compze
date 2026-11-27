@@ -510,7 +510,6 @@ predecessor's release (below).
    - **(a) `StopAsync(CancellationToken)`:** the drain as today, ended at once by the token. Recommended: the .NET
      convention, and each caller chooses.
    - **(b) The stop always cancels running handlers,** without a drain.
-7. **How a flow hears that its deferred tessage was marked failed (change 6):** put to Magnus on a topic.
 6. **How an endpoint that converses with no other is declared** (on hold with change 5; Magnus leans to (b), topic 4):
    - **(a) By the endpoint,** `ConverseWithNoOtherEndpoint()` in its declaration, the environment's transport and
      discovery left unused.
@@ -519,6 +518,7 @@ predecessor's release (below).
      phases assume a transport server: all three would take the absence. An endpoint wanting no wire in a process whose
      other endpoints have one gets an environment of its own, through `IEndpointHost.RegisterEndpoint(declaration,
      environment)`. Recommended: it is only an absence, and needs no new abstraction.
+7. **How a flow hears that its deferred tessage was marked failed (change 6):** put to Magnus on a topic.
 
 The names marked `review-naming:` above are chosen, not decisions: `RegisterDeferredTessageBusHandlers` and the
 deferred registrars,
