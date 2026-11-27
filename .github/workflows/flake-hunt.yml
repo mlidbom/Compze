@@ -1,5 +1,5 @@
 # Flake hunt: reproduce an intermittent CI failure on demand. Runs ONE test project in ONE pluggable-component combination over
-# and over, on several Linux runners at once, each run starting from the state of a fresh CI runner - so a failure CI shows once
+# and over, on several runners at once, each run starting from the state of a fresh CI runner - so a failure CI shows once
 # in several pushes shows up within one push, together with the diagnostics CI collects: every dump analyzed in the log, and on
 # PostgreSQL the server's log of lock waits and slow statements, printed when the job's containers stop.
 #
@@ -7,6 +7,9 @@
 # test project and the number of runs in the env block - and push. Every push of the branch is one hunt. ci.yml ignores
 # flake-hunt/** branches, so a hunt does not also queue the full matrix ahead of its own runners. The persistence may be
 # PgSql or MsSql, whose servers run in service containers, or a SQLite one; di may be one container or "every".
+#
+# os in the matrix is the runner's operating system: ubuntu-latest, or windows-latest for a flake that CI shows only on Windows.
+# Service containers run only on Linux, so a hunt on Windows is a hunt on SQLite.
 #
 # RUNTIME_ASYNC in the env block says how the hunted code is compiled. "true", as everything is compiled since .NET 11, has
 # the runtime suspend and resume async methods. "false" has the compiler generate state machines instead, which is what
@@ -25,23 +28,28 @@ permissions:
 
 jobs:
   hunt:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 50
+
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       fail-fast: false
       matrix:
         runner: [1, 2, 3, 4, 5, 6, 7, 8]
+        os: [ubuntu-latest]
         persistence: [PgSql]
         di: [LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore]
 
-    name: "Hunt ${{ matrix.runner }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Hunt ${{ matrix.runner }} on ${{ matrix.os }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     services:
       postgres:
-        image: ${{ matrix.persistence == 'PgSql' && 'postgres:17' || '' }}
+        image: ${{ matrix.os == 'ubuntu-latest' && matrix.persistence == 'PgSql' && 'postgres:17' || '' }}
         env:
           POSTGRES_PASSWORD: "Development!1"
         ports:
@@ -52,7 +60,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       mssql:
-        image: ${{ matrix.persistence == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        image: ${{ matrix.os == 'ubuntu-latest' && matrix.persistence == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
         env:
           ACCEPT_EULA: "Y"
           MSSQL_SA_PASSWORD: "Development!1"
@@ -67,6 +75,7 @@ jobs:
     env:
       HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
       RUNS_PER_RUNNER: "20"
+      SLOWEST_TESTS_PER_RUN: "3"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
@@ -106,9 +115,14 @@ jobs:
           set +e
           failures=0
           for run in $(seq 1 "$RUNS_PER_RUNNER"); do
-            # The state of a fresh CI runner: no machine-wide DbPool state or test endpoint registries (Compze keeps them under
-            # ~/.local/share/Compze and the temp folder), and - on PostgreSQL - no pool databases and a freshly started server.
-            rm -rf ~/.local/share/Compze /tmp/Compze
+            # The state of a fresh CI runner: no machine-wide DbPool state, test endpoint registries or SQLite pool databases (Compze
+            # keeps them under the local application data folder and the temp folder), and - on PostgreSQL - no pool databases and a
+            # freshly started server.
+            if [ "$RUNNER_OS" = "Windows" ]; then
+              rm -rf "$(cygpath "$LOCALAPPDATA")/Compze" "$(cygpath "$TEMP")/Compze" "$(cygpath "$TEMP")/CompzeDbPool"
+            else
+              rm -rf ~/.local/share/Compze /tmp/Compze /tmp/CompzeDbPool
+            fi
             if [ "${{ matrix.persistence }}" = "PgSql" ]; then
               for database in $(docker exec "$POSTGRES_CONTAINER" psql -U postgres -At -c "SELECT datname FROM pg_database WHERE datname LIKE 'compze_dbpool_%'"); do
                 docker exec "$POSTGRES_CONTAINER" psql -U postgres -q -c "DROP DATABASE \"$database\" WITH (FORCE)"
@@ -117,7 +131,7 @@ jobs:
               until docker exec "$POSTGRES_CONTAINER" pg_isready -U postgres -q; do sleep 1; done
             fi
 
-            dotnet test "$HUNTED_TEST_PROJECT" --configuration Debug --no-build --results-directory "TestResults/run-$run" \
+            dotnet test "$HUNTED_TEST_PROJECT" --configuration Debug --no-build --results-directory "TestResults/run-$run" --logger trx \
                         --blame-hang --blame-hang-timeout 10min --blame-hang-dump-type full > "run-$run.log" 2>&1
             if [ $? -eq 0 ]; then
               echo "Run $run passed: $(grep -E 'Passed!' "run-$run.log")"
@@ -126,6 +140,8 @@ jobs:
               echo "::error::Run $run failed"
               cat "run-$run.log"
             fi
+            # A slow test that passes prints nothing of its own: the slowest of each run, with when they ran.
+            pwsh -NoProfile -File .github/scripts/Show-SlowestTests.ps1 -Directory "TestResults/run-$run" -Top "$SLOWEST_TESTS_PER_RUN"
           done
           echo "$failures of $RUNS_PER_RUNNER runs failed."
           [ "$failures" -eq 0 ]
