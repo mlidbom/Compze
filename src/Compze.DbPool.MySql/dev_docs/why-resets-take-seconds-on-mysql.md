@@ -50,13 +50,43 @@ need more flushes than the server's drive completes, so DDL statements queue: a 
 
 ## What slow resets break
 
-- **The DbPool's lock times out.** `DbPool.ConnectionStringFor` reserves and resets inside the pool's lock, which times
-  out after 30 s, so a reset that takes longer makes a concurrent call on the same pool throw
-  `TakeMonitorLockTimeoutException`: another endpoint of the same host, starting at the same time. Twice on 2026-11-27 in
-  a full local run, in AccountManagement's user stories on MySql. A `bug:` comment marks it at the code.
+- **The DbPool's lock times out:** a flaw in `DbPool`, whatever the server, marked by a `bug:` comment at
+  `DbPool.ConnectionStringFor`; [below](#the-dbpools-lock-held-across-the-reservation-and-the-reset).
 - **Tests run past their reservations.** A test host whose three databases each wait seconds for their reset, and then
   for their schema, spends much of the 65 s reservation starting up, so another pool may take and reset a database it
   still uses. Probably what an `Unknown database 'compze_dbpool_0084'` in the same run was; not verified.
+
+### The DbPool's lock held across the reservation and the reset
+
+To be fixed after dbpool-reset-mid-test's branch merges, by a helper of its own (compze-agent-rep, 2026-11-27).
+
+- **The flaw:** `DbPool.ConnectionStringFor` runs entirely inside `_reservedDatabases.Locked`, a lock created with
+  `LockTimeout.Seconds(30)`. Inside it run `DbPoolMachineWideState.ReserveDatabase`, which waits up to 45 s for a free
+  database, and `IDbPoolSqlLayer.ResetDatabase`, which on MySQL took up to 37 s, with `EnsureDatabaseExistsAndIsEmpty`
+  after a failed reset. A call for any other reservation name on the same pool, even one already reserved and only
+  looked up, waits behind them and throws `TakeMonitorLockTimeoutException` after 30 s.
+- **Who calls concurrently:** `DbPool` is one instance per host, shared by the endpoints' containers, which are clones
+  of the host's (`DelegateToParentServiceLocatorWhenCloning`). `EndpointHost.StartAsync` starts the endpoints together,
+  with `Task.WhenAll`, and each asks for its databases' connection strings as it starts.
+- **Seen once, 2026-11-27,** in a full local run against threadripper's servers, in
+  `AccountManagement.UserStories._020_After_a_user_has_registered_an_account` on MySql:Microsoft:Newtonsoft:AspNetCore.
+  The waiting call: `ExactlyOnceEndpoint.ClaimTheProcessLockAsync`, `EndpointProcessLock.AcquireAsync`,
+  `MySqlEndpointCatalogSqlLayer.InitAsync`, `MySqlSqlLayerSchemaManager.EnsureSchemaInitialized`,
+  `MySqlConnectionPool`'s lazy connection string, `TestingComponentRegistrar.MySqlDbPoolRegistrar`, then
+  `DbPool.ConnectionStringFor`. The exception's stack of the blocking thread's release showed it releasing the lock in
+  `DbPool.ConnectionStringFor` too, after more than 30 s inside it.
+- **The fix proposed:** take the lock only to find or record an entry for the reservation name, and reserve and reset
+  outside it, once for all the callers of that name. A `LazyCE<string>` per name, whose factory reserves, resets and
+  returns the connection string, does that: its waiters wait up to `LockTimeout.Default`, 2 minutes (45 s under
+  NCrunch), and a factory that throws is run again by the next read, where today a database whose reset and fallback
+  both failed stays cached and is handed out unreset. Callers for other names never wait behind another database.
+- **What the fix must handle: `Dispose`.** It takes the same lock now, so it waits for a `ConnectionStringFor` in
+  progress. Once the slow work runs outside the lock, `Dispose` could release the pool's reservations, which
+  `DbPoolMachineWideState.ReleaseReservationsFor` does by pool id, while another thread is still reserving: that
+  reservation would come after the release, and stay held until it expires. So `Dispose` waits for the entries still in
+  progress before it releases, or a reservation that finishes after `Dispose` releases itself. dbpool-reset-mid-test's
+  branch changes `Dispose` too: it throws `DatabaseHeldPastItsReservationException` for databases held past their
+  reservation.
 
 ## What was ruled out
 
