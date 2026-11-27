@@ -21,6 +21,8 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
   on SQLite, its transaction holds the one write lock that an arriving tessage's admission waits for, and the ASP.NET
   Core transport then waits out its 30-second shutdown timeout. A best-effort arrival's handlers get a token that is
   never cancelled, for now.
+- **Decision 7** is settled by Magnus on topic 7: hearing that a tessage was marked failed leaves this design for
+  Tessaging's administration plane, designed by a helper of its own (2026-11-27).
 
 Asked for by the Claude tooling's hub: on topic 27 of its session, Magnus chose that the hub drives its long operations
 through one exactly-once endpoint of its own, each operation's next step a tommand to that same endpoint. Forwarded by
@@ -117,6 +119,10 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
 - **On a server engine:** on SQLite, a step's long transaction would hold the one write lock and stop every other write
   (the tooling's topic 26).
 - **The hub writes no machinery of its own** for resuming, retrying, marking failed or deduplicating.
+- **A step that fails:** an expected failure, such as git refusing to remove a worktree with changes in it, is an outcome
+  in the hub's domain, which its handler records. A step that fails until its retry policy gives up is marked failed, and
+  is administration's (under "Not in this design"); until administration exists, the hub's handler catches such a
+  failure and records the operation's end, giving up the retries.
 
 ## Where this departs from the tooling's proposals
 
@@ -414,43 +420,6 @@ environment serves it and its process's other endpoints alike.
 - **The start's cost:** measured in its increment, the hub's composition today (named pipes, the registry, three SQLite
   databases) against one that converses with no other endpoint.
 
-## 6. Hearing that a deferred tessage was marked failed
-
-Found by tessaging-and-taggregates: a flow whose step keeps failing stops "visibly, until an administrator retries it",
-and the hub has no administrator. Whatever waits for the flow's end would wait for ever. The flow needs to hear of it, in a
-unit of work of its own, to end its taggregate. Without that, a handler catches its own failure and records the flow's end,
-giving up the retry policy's retries.
-
-### Public API (sketch)
-
-```csharp
-public interface IDeferredTommandHandlerRegistrar
-{
-   IDeferredTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler,
-                                                        HandlingOrder order = HandlingOrder.AsAdmitted,
-                                                        TimeSpan? transactionTimeout = null,
-                                                        //review-naming:
-                                                        Func<TTommand, Exception, IUnitOfWorkResolver, CancellationToken, Task>? whenMarkedFailed = null)
-      where TTommand : IExactlyOnceTommand;
-}
-```
-
-The same on `ForTommand` of the exactly-once registrar, for tommands that arrive from other endpoints: it applies wherever
-the inbox handles the tessage.
-
-### Mechanism, and the guarantee
-
-- **When the retry policy gives up,** the inbox marks the tessage failed in a unit of work that also runs `whenMarkedFailed`,
-  with the last try's exception: the mark and what the failure handler does commit together. So the flow hears of it
-  exactly once, by construction.
-- **A failure handler that throws** rolls back with the mark: the inbox tries the marking again, with the growing delay it
-  uses when it can't record, and logs each failure loudly. The tessage keeps its place meanwhile: an ordered one holds the
-  ordered line, as a tessage being retried does.
-- **Restarts:** a tessage whose marking didn't commit is still UnHandled, and its retries go on from its recorded failing
-  time, so it is marked again, and its failure handler run, in the next process.
-- **Administration:** a tessage marked failed and later retried by an administrator (`TODO/failed-tessage-administration.md`)
-  is handled again; its failure handler has run already, so the flow must expect that.
-
 ## The tevent counterparts
 
 `ForTevent` on the deferred registrar, with a declaration override `RegisterDeferredTeventHandlers`, would follow
@@ -518,7 +487,8 @@ predecessor's release (below).
      phases assume a transport server: all three would take the absence. An endpoint wanting no wire in a process whose
      other endpoints have one gets an environment of its own, through `IEndpointHost.RegisterEndpoint(declaration,
      environment)`. Recommended: it is only an absence, and needs no new abstraction.
-7. **How a flow hears that its deferred tessage was marked failed (change 6):** put to Magnus on a topic.
+7. **How a flow hears that its deferred tessage was marked failed:** settled by Magnus on topic 7, out of this design
+   and into Tessaging's administration plane (below, under "Not in this design").
 
 The names marked `review-naming:` above are chosen, not decisions: `RegisterDeferredTessageBusHandlers` and the
 deferred registrars,
@@ -534,3 +504,11 @@ deferred registrars,
   database.
 - **Declaring how many tessages the inbox handles at once.** 20, fixed, suits the hub.
 - **"A disposed store that refuses writes,"** on topic 27's list of what the hub needs from Compze: not in this brief.
+- **Hearing that a tessage was marked failed.** Found by tessaging-and-taggregates: a flow whose step fails until its
+  retry policy gives up stops "visibly, until an administrator retries it", and whatever waits for the flow's end waits
+  for ever. Magnus, on topic 7: a notice the bus itself owns belongs to an administration plane, an endpoint that isn't
+  exactly-once, and to no domain; guaranteed delivery would cost too much, and a failing handler of such a notice would be
+  a catch-22. Designed with Tessaging's other administration needs, by a helper of its own: see
+  [failed-tessage administration](../TODO/failed-tessage-administration.md). A failure handler at the registration, run
+  in the unit of work that marks the tessage failed, was this design's proposal and was dropped: it served only this case,
+  and one that kept throwing would hold the ordered line for ever.
