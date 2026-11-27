@@ -91,6 +91,11 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
 
          //A tessage this process never sent - one the inbox recovery scan reloaded from its own rows after a crash - has no
          //in-flight entry here: there is nothing to mark done, only the handling that just finished.
+         //bug: A delivery cut off by its receiver's stop after the receiver admitted the tessage stays in flight here forever when
+         //   the receiver's next process handles the tessage, from its recovery scan, before the sender's next process has
+         //   redelivered it: the handling finds no entry, and the redelivery that then adds one is acknowledged as a duplicate,
+         //   which nothing marks done. A false failure of the at-rest wait, seen as an undelivered tessage. Found 2026-11-27,
+         //   stopping a receiver with a cancelled token while a sender's next tommand waited for SQLite's write lock.
          if(_trackedTessages.TryGetValue(tessage.TessageId, out var inFlightTessage))
          {
             inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
