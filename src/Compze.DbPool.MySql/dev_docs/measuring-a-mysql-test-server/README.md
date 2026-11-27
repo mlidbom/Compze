@@ -1,0 +1,24 @@
+# Measuring a MySQL test server
+
+Python tools that measure what Compze's tests cost a MySQL server: written for
+[why the DbPool's resets take seconds on MySQL](../why-resets-take-seconds-on-mysql.md), and kept for measuring a change
+to a test server's settings before and after. They need Python 3 and MySQL's client programs, by default those of MySQL
+9.7 (`MYSQL_BIN` names another folder), and connect as root with the test servers' password (`MYSQL_MEASUREMENT_USER`,
+`MYSQL_MEASUREMENT_PASSWORD`).
+
+A server is `host` or `host:port`, such as `192.168.0.11` for threadripper's.
+
+| Tool | What it does to the server | What it says |
+|---|---|---|
+| `ddl_capacity.py <server> [<workers> [<seconds>]]` | Creates databases `dbpool_measurement_capacity_<n>` and drops them | The database uses a second it completes under a suite-like load, and the resets' latency meanwhile |
+| `fsyncs_per_operation.py <server>` | Creates the database `dbpool_measurement_operations` and drops it | The fsyncs, by file kind, and the wall time of each step a pool database goes through |
+| `observe_mysql.py <server> <folder>` | Reads only | Where the server's time went during a test run: statements, waits, fsyncs, what ran at once, the resets |
+| `binlog_resets.py <binlog file>...` | Reads its binary log files | Each past test run's resets and how long they took |
+
+- **`ddl_capacity.py` is the one to compare settings with:** run it before and after, on a quiet server. 16 workers,
+  about what a full suite runs at once, for 30 s.
+- **`observe_mysql.py` with a test run:** start it, run
+  `C-Test -Combinations 'MySql:Microsoft:Newtonsoft:AspNetCore'`, then create the file `<folder>/stop`. It writes
+  `<folder>/summary.txt` and prints it.
+- **The fixture**, `pool-tables.sql`: the 15 tables a pool database holds after a typical test, as threadripper's
+  server showed them on 2026-11-27. Compze's schemas change; the fixture stands for their size, not their columns.
