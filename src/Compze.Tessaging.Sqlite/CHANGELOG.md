@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.5.1-alpha
+## 0.6.0-alpha
 
 - **The inbox table has a `FailingTimeMilliseconds` column:** how long a tessage's handling has been failing, recorded with each failed try, so that an exactly-once endpoint's retries carry across restarts. An existing database's inbox table, `<endpoint name>_InboxTessages`, lacks it: add it as `bigint NOT NULL DEFAULT 0` (`INTEGER` in SQLite), or recreate the database.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Sqlite 0.8.0-alpha (was 0.7.1-alpha), Compze.Tessaging 0.14.0-alpha (was 0.12.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.5.1-alpha
+
 - **An endpoint's process lock is one of the domain database's process locks,** from Compze.Sql.Sqlite: a file beside the database file named `CompzeDatabaseProcessLock_<hash>.lock`, where it was `CompzeEndpointProcessLock_<hash>.lock`, and for an in-memory database or a `file:` URI data source in `Compze/DatabaseProcessLocks` in the temp directory, where it was `Compze/EndpointProcessLocks`. So a process of this version and one of an earlier version don't keep each other from running the same endpoint. Its holder records itself in the lock's file, and the endpoint catalog no longer has a `LockHolderDescription` column: an existing database keeps the column, which nothing writes any more.
 - **No longer depends on Compze.Threading.Interprocess,** which Compze.Sql.Sqlite now does.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Sqlite 0.7.1-alpha (was 0.6.0-alpha), Compze.Tessaging 0.12.1-alpha (was 0.11.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

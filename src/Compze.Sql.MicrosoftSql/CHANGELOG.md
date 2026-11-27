@@ -4,9 +4,13 @@ All notable changes to Compze.Sql.MicrosoftSql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-alpha
+## 0.8.0-alpha
 
 - **For Compze's SQL packages: a pool of its own on a database, which the server shows under an application name of its own,** for operations that commit on their own and may run inside a unit of work, such as Compze.TypeIdentifiers.Interning.MicrosoftSql's. Nothing public changes.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.9.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.0-alpha
+
 - **A transaction no longer fails to commit, with "The requested operation cannot be completed because the connection has been broken", when it takes the connection another transaction's completion has just returned to SqlClient's pool.** The returned connection was back in the pool before SqlClient's own handling of the completed transaction had run, and in SqlClient 6.1.3 that handling dooms the connection whatever transaction it takes part in by then. The other transaction aborted, and what it wrote was lost. Seen under load, as when more units of work than the thread pool has threads write at once. The fix is in Compze.Sql.Common.
 - **For Compze's SQL packages: a command's rows read asynchronously.**
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.7.0-alpha (was 0.6.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

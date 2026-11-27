@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive.TeventStore.MicrosoftSql will be documen
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **Storing a tevent type new to the database no longer deadlocks a full pool:** the type-id interner takes its connections from a pool of its own on the database, at most two, in Compze.TypeIdentifiers.Interning.MicrosoftSql, which this version requires. It took them from the pool units of work hold their transactions' connections from, so with as many units of work waiting for one taggregate's lock as the pool has connections, the lock's holder got none to intern the type with, and every one of them waited until the pool timed out.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.MicrosoftSql 0.8.0-alpha (was 0.7.0-alpha), Compze.TypeIdentifiers.Interning.MicrosoftSql 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 - **Reads a taggregate's history for update asynchronously,** for Compze.Teventive.TeventStore's part of `ITaggregateStoreUpdater.GetForUpdateAsync`: `sp_getapplock` waits for the taggregate's lock holding no thread. Requires the Compze.Teventive.TeventStore.Abstractions released with it.

@@ -4,6 +4,11 @@ All notable changes to Compze.DocumentDb.PostgreSql will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **Storing a document type new to the database no longer waits for a connection only other units of work can give back:** the type-id interner takes its connections from a pool of its own on the database, at most two, in Compze.TypeIdentifiers.Interning.PostgreSql, which this version requires. It took them from the pool units of work hold their transactions' connections from, so with every connection held by units of work, the interning waited until the pool timed out.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.8.0-alpha (was 0.6.0-alpha), Compze.TypeIdentifiers.Interning.PostgreSql 0.4.0-alpha (was 0.3.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.3.1-alpha
 
 - **Internal: its tables are created by one statement per command,** as Compze.Sql.PostgreSql's schema creation now runs them: see its changelog for why. Nothing public changes.

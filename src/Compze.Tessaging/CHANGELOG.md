@@ -4,7 +4,7 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.13.0-alpha
+## 0.14.0-alpha
 
 - **An exactly-once tessage whose handling fails is retried for 5 minutes of failing, with a growing delay, where it was tried five times at once and then given up on:** a few tries at once, then a delay that grows from a second to a minute. Since the endpoint handles its exactly-once tessages one at a time, in order, the tessages behind it wait meanwhile. When its handling has failed for 5 minutes it is marked failed, as it was after the five tries, and the endpoint goes on with the next. So a failure that outlasts a few milliseconds, such as a database failover or a dependency that is down for a minute, no longer costs the tessage. The time counts while the endpoint runs and can reach its database, and carries across restarts: an endpoint's next process goes on from what the previous one recorded. Marking a tessage failed is logged as an Error, where giving up was a Warning.
 - **How long an exactly-once endpoint retries is declared on it: `HandlingRetries`,** `HandlingRetries.For(TimeSpan)` or `HandlingRetries.UntilHandled`, which never marks a tessage failed and keeps the order whatever it costs the tessages behind it. Declared with `ExactlyOnceEndpointBuilder.HandlingRetries(...)` or by overriding `ExactlyOnceEndpointDeclaration.HandlingRetries`; an endpoint that declares nothing gets 5 minutes. `HandlingRetries.For(TimeSpan.Zero)` marks a tessage failed at its first failure.
@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **Stopping an exactly-once endpoint doesn't wait for a tessage that waits to be tried again:** the wait ends, and the tessage and those behind it are left for the recovery scan at the endpoint's next start, which handles them in order. The endpoint handles nothing after its inbox drain, before it releases its process lock.
 - **A tessage whose handler fails to deserialize it is retried and marked failed like any other failing handling,** where the endpoint forgot it until its next start.
 - **In a testing host, a specification whose exactly-once handler keeps failing now waits for the endpoint's handling retries:** with the default, its at-rest wait times out after 10 seconds, and its message shows each tessage being retried with the failure of its last try. A specification that expects a handler to fail, and the failure to be reported when the host is disposed, declares `HandlingRetries.For(TimeSpan.Zero)` on the endpoint.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.13.0-internal (was 0.12.1-internal), Compze.Tessaging.Abstractions 0.8.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.13.0-alpha
+
 - **`ExecuteAsync` beside each `Execute`, on `IIndependentLocalTypermediaNavigator` and `ILocalTypermediaNavigatorSession`,** for callers that are asynchronous themselves, such as an ASP.NET Core route or an asynchronous handler. Its semantics are `Execute`'s: the independent navigator's tommand is a unit of work of its own, committed before the task completes, and the session's executes within the caller's unit of work, whose transaction flows across the handler's awaits. While the handler awaits, it holds no thread, where `Execute` holds the caller's thread until the handler has finished. What the handler does synchronously, and a tommand's commit, still run on the thread they are on. With it there, the analyzers CA1849 and VSTHRD103 flag a call of `Execute` in asynchronous code. A class of a consumer's own that implements either interface must implement the three new methods.
 
 ## 0.12.1-alpha

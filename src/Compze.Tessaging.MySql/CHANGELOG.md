@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.MySql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.2-alpha
+## 0.5.0-alpha
 
 - **The inbox table has a `FailingTimeMilliseconds` column:** how long a tessage's handling has been failing, recorded with each failed try, so that an exactly-once endpoint's retries carry across restarts. An existing database's inbox table, `<endpoint name>_InboxTessages`, lacks it: add it as `bigint NOT NULL DEFAULT 0`, or recreate the database.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.MySql 0.9.0-alpha (was 0.7.1-alpha), Compze.Tessaging 0.14.0-alpha (was 0.12.1-alpha), Compze.TypeIdentifiers.Interning.MySql 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.4.2-alpha
+
 - **The endpoint catalog no longer has a `LockHolderDescription` column:** the holder of an endpoint's process lock records itself in the domain database's `DatabaseProcessLockHolder` table, as every holder of the domain database's process locks does. An existing database keeps the column, which nothing writes any more.
 - **Requires newer minor versions of other Compze packages:** Compze.Tessaging 0.12.1-alpha (was 0.11.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
