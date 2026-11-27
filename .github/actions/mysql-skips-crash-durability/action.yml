@@ -1,0 +1,37 @@
+name: MySQL skips crash durability
+description: Makes a MySQL service container create tables without files of their own and commit without flushing to disk, which a throwaway test server never needs.
+
+# On MySQL, Compze's tests are mostly DDL: each use of a pool database is a test's CREATE TABLE statements and the DbPool's
+# DROP DATABASE, about 500 fsyncs with InnoDB's defaults, so a suite waits on the disk's flushes. Measured 2026-11-27 with
+# MySQL 9.7 and the MySql suite: 150 s became 78 s, and 139,000 fsyncs 28,000. The measurements are in
+# src/Compze.DbPool.MySql/dev_docs/why-resets-take-seconds-on-mysql.md.
+#
+# - innodb_file_per_table = OFF: tables live in the system tablespace, so creating or dropping one creates or deletes no
+#   file of its own, with the fsyncs of each.
+# - innodb_flush_log_at_trx_commit = 2: a commit writes the redo log, which is flushed once a second.
+# - sync_binlog = 0: the binary log is flushed when the operating system chooses.
+#
+# Applied with SET GLOBAL rather than server options, because GitHub's service containers take no command. They hold until
+# the server stops, at the job's end, and apply to the tables created after them, which are all of the tests' tables.
+#
+# The image initializes its database on a temporary server with networking off, which answers the health check's ping,
+# and then starts the real one. So this waits for the server to accept a TCP connection, which only the real one does.
+
+inputs:
+  container-id:
+    description: The MySQL service container's id, from the job.services context.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Make MySQL skip crash durability
+      shell: bash
+      run: |
+        run_on_the_server() { docker exec "${{ inputs.container-id }}" mysql --protocol=TCP -h 127.0.0.1 -uroot -p'Development!1' -e "$1"; }
+        for attempt in $(seq 1 60); do
+          if run_on_the_server "SELECT 1" > /dev/null 2>&1; then break; fi
+          sleep 1
+        done
+        run_on_the_server "SET GLOBAL innodb_file_per_table = OFF; SET GLOBAL innodb_flush_log_at_trx_commit = 2; SET GLOBAL sync_binlog = 0;
+                           SELECT @@innodb_file_per_table, @@innodb_flush_log_at_trx_commit, @@sync_binlog"

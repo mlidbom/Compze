@@ -146,6 +146,11 @@ jobs:
         with:
           container-id: ${{ job.services.postgres.id }}
 
+      - if: matrix.persistence == 'MySql'
+        uses: ./.github/actions/mysql-skips-crash-durability
+        with:
+          container-id: ${{ job.services.mysql.id }}
+
       - name: Build and Test
         uses: ./.github/actions/build-and-test
         with:
