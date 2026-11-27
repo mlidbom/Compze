@@ -1,4 +1,3 @@
-using Compze.Internals.SystemCE;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting.Display;
@@ -8,9 +7,9 @@ namespace Compze.Tests.Infrastructure.XUnit.Logging;
 
 class XUnitTestOutputHelperSink : ILogEventSink
 {
-   static readonly MessageTemplateTextFormatter Formatter = CompzeEnvironment.IsGithubAction
-      ? new("{Level:u3} {LogSource} ### {Message}{NewLine}{Exception}")
-      : new("{Timestamp:HH:mm:ss.fff} {Level:u3} {LogSource} ### {Message}{NewLine}{Exception}");
+   ///<summary>Timestamped in CI too: a test's output reaches the job log in one piece once the test has ended, so the time<br/>
+   /// GitHub Actions stamps on each line is when the test ended, the same for every line, never when it was logged.</summary>
+   static readonly MessageTemplateTextFormatter Formatter = new("{Timestamp:HH:mm:ss.fff} {Level:u3} {LogSource} ### {Message}{NewLine}{Exception}");
 
    public void Emit(LogEvent logEvent)
    {
