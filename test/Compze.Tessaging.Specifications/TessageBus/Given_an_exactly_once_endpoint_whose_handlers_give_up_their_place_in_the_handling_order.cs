@@ -90,9 +90,10 @@ public abstract class Given_an_exactly_once_endpoint_whose_handlers_give_up_thei
 
    protected async Task AwaitHandledCountAsync(int count) => await HandledGate.AwaitPassedThroughCountEqualToAsync(count, HandlingTimeout);
 
-   protected async Task AwaitTheFirstsFirstTryFailingAsync() => await TheFirstsFailedTriesGate.AwaitPassedThroughCountEqualToAsync(1, HandlingTimeout);
+   //Several tries fail at once, so the count may have passed 1 by the time the wait looks.
+   protected async Task AwaitTheFirstsFirstTryFailingAsync() => await TheFirstsFailedTriesGate.AwaitAsync(it => it.Passed >= 1, HandlingTimeout);
 
-   protected async Task AwaitTheFirstsHandlerWaitingAsync() => await TheFirstsHandlerWaitsGate.AwaitPassedThroughCountEqualToAsync(1, HandlingTimeout);
+   protected async Task AwaitTheFirstsHandlerWaitingAsync() => await TheFirstsHandlerWaitsGate.AwaitAsync(it => it.Passed >= 1, HandlingTimeout);
 
    async Task HandleAsync(INumberedTessage tessage)
    {
