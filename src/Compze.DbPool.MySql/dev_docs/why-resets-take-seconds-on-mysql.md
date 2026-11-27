@@ -28,9 +28,11 @@ them resets. Nothing in `MySqlDbPoolSqlLayer` or `DbPool` makes them slower than
   database uses a second, 8.0.44 4.0, 8.4.6 3.9, and the installed 9.7.0 4.2 to 4.5, the reset's median between 1.5
   and 1.7 s on each. Alone, each resets a database in 0.13 to 0.22 s. 5.7 syncs less, 177 times for the 15 tables'
   creation against 8.0 and later's 296 to 378, but runs less DDL at once.
-- **What would cut it:** [emptying the tables instead of dropping
-  them](#emptying-the-tables-instead-of-dropping-them), 23 times the database uses a second, or [Windows' write-cache
-  buffer flushing](#windows-write-cache-buffer-flushing) turned off. Neither is decided.
+- **What would cut it: [less at once](#how-much-a-run-asks-of-the-server-at-once).** A run starts every test assembly
+  at once, each running a test class per logical processor, and other sessions' runs add theirs. The server's DDL
+  throughput stops rising at about 8 at once; past that, each statement only waits longer. [Emptying the tables
+  instead of dropping them](#emptying-the-tables-instead-of-dropping-them) was declined, and [Windows' write-cache
+  buffer flushing](#windows-write-cache-buffer-flushing) isn't decided.
 
 ## What was measured
 
@@ -155,6 +157,42 @@ difference the runs could show. Compze.Tests.Integration on the two MySql jobs:
 The same code varies from 112 to 223 s, and CI's MySql jobs take about as long as its PgSql and MsSql jobs. A cloud VM's
 disk completes a sync at once, which a consumer NVMe drive on Windows doesn't: that is my understanding, not measured.
 
+## How much a run asks of the server at once
+
+C-Test runs `dotnet test` on the whole solution, so MSBuild runs up to one test assembly per logical processor at once:
+32 on this machine, so all 34 test projects. Within each, xUnit runs test classes in parallel, up to one per logical
+processor, and Compze sets no limit. CI's runners have 4 logical processors, so there it is 4 per assembly. On this
+machine several sessions run suites at once, against the same servers: two runs at once took threadripper's MySQL past
+its `max_connections`. When resets took a fraction of a second, the tests didn't run like that (Magnus).
+
+**The server's DDL throughput stops rising at about 8 at once.** On this machine's installed server, quiet
+(`ddl_capacity.py`, each use a reset, the 15 tables' creation and 5 commits), 2026-11-27:
+
+| Workers | Database uses/s | fsyncs a use | Reset median / p90 | Schema creation median |
+|---|---|---|---|---|
+| 1 | 1.6 | 501 | 0.18 / 0.22 s | 0.40 s |
+| 2 | 2.2 | 404 | 0.28 / 0.34 s | 0.54 s |
+| 4 | 3.3 | 317 | 0.40 / 0.51 s | 0.70 s |
+| 8 | 4.1 | 291 | 0.73 / 0.98 s | 1.09 s |
+| 16 | 4.2 | 298 | 1.71 / 2.27 s | 1.91 s |
+| 32 | 4.1 | 302 | 3.27 / 4.95 s | 3.72 s |
+
+InnoDB's group commit shares a sync among the statements ready for it, so the syncs a use fall as more run at once,
+to about 290 by 8, and no further.
+
+**The MySql suite against this machine's server** (`suite_run.py`, C-Test's `-MaxParallelThreads` and
+`-MaxParallelAssemblies`), one run each, 2026-11-27, on a machine other sessions' builds and runs shared:
+
+| C-Test | Run | Statements running, median / max | Connections, median / max | Reset average | Resets seen, median / max |
+|---|---|---|---|---|---|
+| as it is | 126 s | 21 / 55 | 122 / 236 | 2.9 s | 4 / 14 s |
+| `-MaxParallelThreads 4` | 161 s | 6 / 22 | 27 / 153 | 0.68 s | 1 / 5 s |
+| `-MaxParallelAssemblies 8` | 212 s | 34 / 58 | 153 / 201 | 4.6 s | 5 / 16 s |
+| both | 294 s | 6 / 25 | 23 / 123 | 1.2 s | 2 / 4 s |
+
+Fewer assemblies at once only lengthens the run: the assemblies that use the database most still run their classes 32 at
+once. A run with `-MaxParallelThreads 8` overlapped another session's test run and is left out.
+
 ## Emptying the tables instead of dropping them
 
 `MySqlDbPoolSqlLayer.ResetDatabase` drops the database and creates it again. Its comment from 2020 says dropping the
@@ -170,8 +208,10 @@ commits (`ddl_capacity.py --reset`), 2026-11-27:
 | `TRUNCATE TABLE` of every table | 3.6 | 337 | 4.14 / 5.16 s | 0.15 s |
 | `DELETE FROM` every table, in one transaction | 97.5 | 9 | 0.01 / 0.01 s | 0.10 s |
 
-What emptying would cost: a reset database would hold the tables its previous user created, empty, where today it holds
-none.
+**Declined,** Magnus, 2026-11-27: "That is most likely not an option, it would hugely complicate both the dbpool and the
+test code compared to today. Reducing the extreme load on environments that cannot handle it is a much more reasonable
+approach I think". What emptying would have cost: a reset database would hold the tables its previous user created,
+empty, where today it holds none.
 
 - **A table of another schema:** one of the same name that another checkout's code, or an earlier build, created with
   other columns. `CREATE TABLE IF NOT EXISTS` keeps it, and the test fails on its columns.

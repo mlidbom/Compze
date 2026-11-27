@@ -47,8 +47,8 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
       //performance: in a full suite run, this waits seconds for the server, which the suite saturates with DDL: with
       //   InnoDB's defaults, a pool database's use, a test's CREATE TABLE statements and this drop, is about 440 syncs
       //   to disk. Dropping the tables instead, as the other layers drop their objects, is no faster; emptying them and
-      //   keeping them, with DELETE, gave 23 times the database uses a second, and isn't decided. Both measured in
-      //   dev_docs/why-resets-take-seconds-on-mysql.md.
+      //   keeping them, with DELETE, gave 23 times the database uses a second, and was declined: it would complicate the
+      //   DbPool and the tests. Both measured in dev_docs/why-resets-take-seconds-on-mysql.md.
       _masterConnectionPool.ExecuteNonQuery($"""
                                              DROP DATABASE IF EXISTS {db.Name};
                                              CREATE DATABASE {db.Name};
