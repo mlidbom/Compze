@@ -56,8 +56,8 @@ function GetPackagesThatUseTheInternalsOf([string[]]$PackageIds, $PackagesWhoseI
 
 function GetExactVersionDependenciesChanged($PreviousManifest, $Manifest) {
     # The manifest's exact-version dependencies that the previous version required otherwise: at another exact version, at
-    # a minimum version only, or not at all. Each as an object with PackageId, Version and Previously, what the previous
-    # version required ($null when it didn't depend on the package), ordered by package id.
+    # a minimum version only, or not directly. Each as an object with PackageId, Version and Previously, what the previous
+    # version required ($null when it didn't depend on the package directly), ordered by package id.
     foreach ($packageId in $Manifest.CompzeExactVersionDependencies.Keys) {
         $version = $Manifest.CompzeExactVersionDependencies[$packageId]
         $previously = if ($PreviousManifest.CompzeExactVersionDependencies.Contains($packageId)) { $PreviousManifest.CompzeExactVersionDependencies[$packageId] }
@@ -72,7 +72,7 @@ function FormatExactVersionDependenciesLine($ChangedExactVersionDependencies) {
     # The changelog line naming the exact-version dependencies a version changed; $null when it changed none.
     if (@($ChangedExactVersionDependencies).Count -eq 0) { return $null }
     $dependencies = (@($ChangedExactVersionDependencies) | ForEach-Object {
-        $previously = if ($_.Previously) { "was $($_.Previously)" } else { 'newly required' }
+        $previously = if ($_.Previously) { "was $($_.Previously)" } else { 'not required directly before' }
         "$($_.PackageId) $($_.Version) ($previously)"
     }) -join ', '
     return "$script:ExactVersionDependenciesLineLead $dependencies. Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well."

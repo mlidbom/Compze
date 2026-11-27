@@ -96,18 +96,16 @@ function C-Prepare-Release {
         Get-PackagesWithAChangelog $PackageId | Where-Object { -not $_.IsReleased -and (Get-TopChangelogSection (Read-TextFile $_.Changelog).Lines).Version -eq $_.Version }
     }
 
-    function Get-PackagesToPrepareForTheInternalsTheyUse($ToPrepare) {
+    function Get-PackagesToPrepareForTheInternalsTheyUse($ToPrepare, $PackagesWhoseInternalsEachUses) {
         # The packages at a released version that use the internals of a package the release releases, one of $ToPrepare
         # or one already awaiting release, or of one this adds: each as a preparation, with what its changelog gained and
         # the packages whose internals it uses as its reason. -PackageId doesn't limit them: the release can't leave them
         # behind, since each requires the exact version of the packages whose internals it uses.
-        $packages = @(Get-PackagesWithAChangelog)
-        $packagesWhoseInternalsEachUses = ReadPackagesWhoseInternalsEachPackageUses @($packages | ForEach-Object { $_.PackageId })
         $released = @(@($ToPrepare | ForEach-Object { $_.Package.PackageId }) + @(Get-PackagesAwaitingRelease | ForEach-Object { $_.PackageId }))
-        $added = @(GetPackagesThatUseTheInternalsOf $released $packagesWhoseInternalsEachUses)
+        $added = @(GetPackagesThatUseTheInternalsOf $released $PackagesWhoseInternalsEachUses)
         $releasedTogether = $released + $added
-        foreach ($package in @($packages | Where-Object { $_.IsReleased -and $added -contains $_.PackageId })) {
-            $usesTheInternalsOf = @($packagesWhoseInternalsEachUses[$package.PackageId] | Where-Object { $releasedTogether -contains $_ })
+        foreach ($package in @(Get-PackagesWithAChangelog | Where-Object { $_.IsReleased -and $added -contains $_.PackageId })) {
+            $usesTheInternalsOf = @($PackagesWhoseInternalsEachUses[$package.PackageId] | Where-Object { $releasedTogether -contains $_ })
             [PSCustomObject]@{
                 Package     = $package
                 GainedLines = @(Get-ChangelogLinesGainedSinceTheRelease $package)
@@ -237,7 +235,8 @@ function C-Prepare-Release {
         $gainedLines = @(Get-ChangelogLinesGainedSinceTheRelease $package)
         if ($gainedLines | Where-Object { $_.Trim() }) { [PSCustomObject]@{ Package = $package; GainedLines = $gainedLines; Reason = 'its changelog' } }
     })
-    $toPrepare += @(Get-PackagesToPrepareForTheInternalsTheyUse $toPrepare)
+    $packagesWhoseInternalsEachUses = ReadPackagesWhoseInternalsEachPackageUses @(Get-PackagesWithAChangelog | ForEach-Object { $_.PackageId })
+    $toPrepare += @(Get-PackagesToPrepareForTheInternalsTheyUse $toPrepare $packagesWhoseInternalsEachUses)
     if ($toPrepare.Count -eq 0 -and @(Get-PackagesAwaitingRelease $PackageId).Count -eq 0) {
         Write-Host "Nothing to prepare: no released package's changelog has gained entries since its release."
         return
@@ -257,7 +256,11 @@ function C-Prepare-Release {
         [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion; Reason = $preparation.Reason }
     })
     if ($prepared.Count -gt 0) { RemoveUnreleasedChangeAcknowledgements @($prepared | ForEach-Object { $_.PackageId }) }
-    $awaitingRelease = @(Get-PackagesAwaitingRelease $(if ($PackageId) { @($PackageId) + @($prepared | ForEach-Object { $_.PackageId }) }))
+    # -PackageId names packages; the lines go to their sections, to those of the packages prepared for them, and, when this
+    # runs again, to those of the packages an earlier run prepared for them.
+    $awaitingRelease = @(Get-PackagesAwaitingRelease $(if ($PackageId) {
+        @($PackageId) + @($prepared | ForEach-Object { $_.PackageId }) + @(GetPackagesThatUseTheInternalsOf $PackageId $packagesWhoseInternalsEachUses)
+    }))
 
     C-Pack -CI
     if ($global:LASTEXITCODE -ne 0) { throw "C-Prepare-Release: packing failed (see above), so the lines about the versions' Compze dependencies weren't checked." }
