@@ -17,7 +17,7 @@ they are today:
 
 1. **A tommand handler may run in a transaction of its own:** never in the sender's, always after the sender commits,
    through the endpoint's own inbox.
-2. **A tommand handler may run an outside effect outside any transaction:** the effect at least once, then the recording
+2. **An at-least-once tommand may run an outside effect outside any transaction:** the effect at least once, then the recording
    of its outcome exactly once, in the transaction that marks the tommand handled.
 3. **A handler may give up its place in the endpoint's order,** so that its tessages are handled as soon as there is
    capacity, at the same time as anything else.
@@ -75,9 +75,12 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
        {
           unitOfWork.Resolve<IWorktreeRemovals>().Add(new WorktreeRemoval(start.RemovalId, start.Worktree));
           await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new RemoveTheWorktreesFiles(start.RemovalId, start.Worktree), cancellation);
-       })
+       });
+
+   //RemoveTheWorktreesFiles and DeleteTheWorktreesBranch are IAtLeastOnceTommands (change 2).
+   protected override void RegisterAtLeastOnceTommandHandlers(IAtLeastOnceTommandHandlerRegistrar handle) => handle
       //The 60-second git step: outside any transaction, at least once; its outcome and the next step, exactly once.
-      .ForTommandOutsideAnyTransaction<RemoveTheWorktreesFiles, GitOutcome>(
+      .ForTommand<RemoveTheWorktreesFiles, GitOutcome>(
           outsideEffect: async (step, scope, cancellation) => await scope.Resolve<IGit>().RemoveWorktreeAsync(step.Worktree, cancellation),
           recordOutcome: async (step, outcome, unitOfWork, cancellation) =>
           {
@@ -86,7 +89,7 @@ class HubOperations : ExactlyOnceEndpointDeclaration<HubOperations>, IEndpointId
              await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new DeleteTheWorktreesBranch(step.RemovalId), cancellation);
           },
           HandlingOrder.None)
-      .ForTommandOutsideAnyTransaction<DeleteTheWorktreesBranch, GitOutcome>(..., HandlingOrder.None);
+      .ForTommand<DeleteTheWorktreesBranch, GitOutcome>(..., HandlingOrder.None);
 }
 ```
 
@@ -190,24 +193,35 @@ The inbox's dispatch loop already handles several tessages at once, up to `MaxCo
 a task of its own, and consults a list of dispatching rules (`ITessageDispatchingRule`) for each waiting tessage. Change 1
 needs nothing more of it but the reserved place: today an entry is ready when it is enqueued.
 
-## 2. Handling outside any transaction
+## 2. At-least-once tommands, handled outside any transaction
+
+Magnus, on topic 1, 2026-11-27: "A handler outside any transactions is not an ExactlyOnceTommandHandler." The first draft
+registered such a handler on the exactly-once registrar. The type hierarchy already has the rung that tells the truth:
+`IAtLeastOnceTessage`, "delivered until it arrives, and whose handling is retried while it fails", without the
+transactional handling `IExactlyOnceTessage` adds.
 
 ### Public API (sketch)
 
 ```csharp
-public interface IExactlyOnceTommandHandlerRegistrar
+//review-naming:
+///A tommand delivered exactly once to its receiver's inbox, and handled at least once: its handler's effect runs outside any
+///transaction, and runs again when a try fails or a crash or a stop cuts it off, so it must be safe to repeat.
+public interface IAtLeastOnceTommand : IAtLeastOnceTessage, IMustBeSentTransactionally, ITommand;
+
+//review-naming:
+public interface IAtLeastOnceTommandHandlerRegistrar
 {
-   //review-naming:
-   ///At least once: the inbox runs outsideEffect outside any transaction, then recordOutcome in the unit of work that marks the tommand handled.
-   IExactlyOnceTommandHandlerRegistrar ForTommandOutsideAnyTransaction<TTommand, TOutcome>(
+   ///The inbox runs outsideEffect outside any transaction, then recordOutcome in the unit of work that marks the tommand handled.
+   IAtLeastOnceTommandHandlerRegistrar ForTommand<TTommand, TOutcome>(
       Func<TTommand, IScopeResolver, CancellationToken, Task<TOutcome>> outsideEffect,
       Func<TTommand, TOutcome, IUnitOfWorkResolver, CancellationToken, Task> recordOutcome,
-      HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IExactlyOnceTommand;
+      HandlingOrder order = HandlingOrder.AsAdmitted) where TTommand : IAtLeastOnceTommand;
 }
 ```
 
-Sent from the endpoint itself, such a tommand is admitted to the inbox as in change 1: it never runs inline, since its
-effect can't run in the sender's transaction. Sent from another endpoint, it arrives in the inbox as today.
+The tommand senders accept it beside `IExactlyOnceTommand`. Sent from the endpoint itself, it is admitted to the inbox as
+in change 1: it never runs inline, since its effect can't run in the sender's transaction. Sent from another endpoint, it
+travels the outbox and arrives in the inbox as an exactly-once tommand does today.
 
 ### Mechanism
 
@@ -222,8 +236,8 @@ effect can't run in the sender's transaction. Sent from another endpoint, it arr
 
 ### The guarantee, walked through
 
-- **The effect: at least once, never twice at the same time.** It must be safe to repeat: the contract its registration
-  declares, in its name.
+- **The effect: at least once, never twice at the same time.** It must be safe to repeat: the contract the tommand's type
+  declares, which its sender sees.
 - **The recording: exactly once,** atomically with the mark.
 - **The tommand: admitted exactly once,** deduplicated and in its pair's order, as every tessage the inbox admits.
 - **Crash windows.** During the effect: the row stays UnHandled, and the effect runs again at the next start. After the
@@ -400,7 +414,7 @@ alone:
    publishers, and `IEndpoint.StopAsync(CancellationToken)`.
 2. **Tommand handlers in a transaction of their own:** change 1.
 3. **The handling order:** change 3.
-4. **Tommand handlers outside any transaction:** change 2.
+4. **At-least-once tommands, handled outside any transaction:** change 2.
 5. **The endpoint that converses with no other:** change 5, with the start's cost measured before and after.
 
 Later, when a consumer needs them: the tevent counterparts, the order by a key, and a successor's claim that waits for its
@@ -416,12 +430,13 @@ predecessor's release (below).
      `IStrictlyLocalTessage`, the type-level promise in the other direction. Tevents can't have it: a publisher mustn't
      decide what its subscribers need.
    - **(c) No:** the law stays, and multi-step flows ping-pong between two endpoints.
-2. **Handling outside any transaction:**
-   - **(a) Two parts: the effect at least once, its outcome recorded exactly once with the mark.** Recommended: only the
-     effect ever repeats.
-   - **(b) One part, at least once as a whole:** the handler records its outcome through independent sends, which must
-     then be safe to repeat too.
-   - **(c) None:** Compze runs every handler in a transaction, and the hub keeps its long effects outside Compze.
+2. **A long outside effect, such as a git step** (rewritten after Magnus's objection on topic 1):
+   - **(a) An at-least-once tommand:** a rung of its own, which `IAtLeastOnceTessage` already names. Its type declares
+     at least once, so its sender sees it, and its handler registers through a registrar of its own, outside any
+     transaction: the effect at least once, its outcome recorded exactly once with the mark. Recommended, if Compze is to
+     carry the hub's long steps.
+   - **(b) None:** Compze runs every handler in a transaction, and the hub runs its long effects outside any handler,
+     recording each outcome with a tommand. Resuming an effect a restart cut off is then the hub's own machinery.
 3. **Where the order is given up:**
    - **(a) Per handler registration.** Recommended.
    - **(b) For the endpoint as a whole.**
@@ -441,7 +456,7 @@ predecessor's release (below).
      discovery today.
 
 The names marked `review-naming:` above are chosen, not decisions: `ForTommandInATransactionOfItsOwn`,
-`ForTommandOutsideAnyTransaction`, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
+`IAtLeastOnceTommand` with its registrar, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
 
 ## Not in this design
 
