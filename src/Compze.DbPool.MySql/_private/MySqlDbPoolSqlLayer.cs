@@ -1,3 +1,4 @@
+using Compze.Sql.Common._internal;
 using Compze.Underscore;
 using Compze.Sql.MySql._internal;
 using Compze.DependencyInjection;
@@ -50,9 +51,13 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
                                              """);
    }
 
+   ///<summary>Clears every pool Compze keeps in this process on <paramref name="db"/>: the database's own, and the pools of their own on it.</summary>
    void ResetConnectionPool(DbPoolDatabase db)
    {
-      using var connection = new MySqlConnection(CompzeMySqlConnectionString.From(ConnectionStringFor(db)));
-      MySqlConnection.ClearPool(connection);
+      foreach(var connectionString in PoolsOfTheirOwn.ConnectionStringsOfEveryPoolOn(CompzeMySqlConnectionString.From(ConnectionStringFor(db))))
+      {
+         using var connection = new MySqlConnection(connectionString);
+         MySqlConnection.ClearPool(connection);
+      }
    }
 }

@@ -17,6 +17,13 @@ interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySql
    /// gets the settings the pool's own connections have.</summary>
    string ConnectionString { get; }
 
+   ///<summary>A pool of its own on this pool's database, of at most <paramref name="maxPoolSize"/> connections, which the server shows as<br/>
+   /// <paramref name="applicationName"/>'s: for operations that commit on their own and may run inside a unit of work, which no connection<br/>
+   /// held by a unit of work may keep waiting. See <see cref="PoolsOfTheirOwn"/>.</summary>
+   IMySqlConnectionPool APoolOfItsOwn(string applicationName, int maxPoolSize) =>
+      CreateInstance(() => PoolsOfTheirOwn.Record(ConnectionString,
+                                                   new MySqlConnectionStringBuilder(ConnectionString) { ApplicationName = applicationName, MinimumPoolSize = 0, MaximumPoolSize = (uint)maxPoolSize }.ConnectionString));
+
    public class MySqlConnectionPool : IMySqlConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;

@@ -16,6 +16,13 @@ interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCo
    /// catalog's process lock is such a session).</summary>
    string ConnectionString { get; }
 
+   ///<summary>A pool of its own on this pool's database, of at most <paramref name="maxPoolSize"/> connections, which the server shows as<br/>
+   /// <paramref name="applicationName"/>'s: for operations that commit on their own and may run inside a unit of work, which no connection<br/>
+   /// held by a unit of work may keep waiting. See <see cref="PoolsOfTheirOwn"/>.</summary>
+   IMsSqlConnectionPool APoolOfItsOwn(string applicationName, int maxPoolSize) =>
+      CreateInstance(() => PoolsOfTheirOwn.Record(ConnectionString,
+                                                   new SqlConnectionStringBuilder(ConnectionString) { ApplicationName = applicationName, MinPoolSize = 0, MaxPoolSize = maxPoolSize }.ConnectionString));
+
    public class MsSqlConnectionPool : IMsSqlConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>> _pool;

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.7.0-alpha
 
+- **For Compze's SQL packages: pools of their own on a database,** beside the pool its units of work hold their transactions' connections from, for operations that commit on their own and may run inside a unit of work, such as the type-id interner's. It records the connection string of each, for what clears a database's pools, such as the DbPool. Nothing public changes.
 - **For Compze's SQL packages: commands created, executed and read asynchronously throughout,** where a command was created synchronously on the asynchronous path. A connection whose command creation waits, as SQLite's does for its write gate, waits holding no thread.
 - **A transaction's connection goes back to the database provider's pool only once the provider is done with the completed transaction on it.** The pool disposed the connection in a completion handler it subscribed before the connection opened, so the handler ran before the provider's own, which the provider subscribes as the connection takes part in the transaction. The connection was back in the provider's pool while the provider still handled the completed transaction on it. The connection now subscribes its disposal once it has opened. See Compze.Sql.MicrosoftSql's changelog for what a consumer saw.
 
