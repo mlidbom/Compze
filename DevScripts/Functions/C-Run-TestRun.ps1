@@ -16,6 +16,13 @@ function C-Run-TestRun {
     parallel (xUnit's ParallelizeTestCollections=false, as a RunSettings argument, which the VSTest runner honours). Slower
     to start too: MSBuild then goes through the solution's projects one at a time.
     
+    .PARAMETER MaxParallelAssemblies
+    Runs at most this many test assemblies at once (MSBuild's -m). Ignored with SingleThreaded.
+
+    .PARAMETER MaxParallelThreads
+    Runs at most this many test collections at once within each test assembly (xUnit's MaxParallelThreads, as a RunSettings
+    argument). Ignored with SingleThreaded.
+
     .PARAMETER Filter
     Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores"
 
@@ -50,6 +57,10 @@ function C-Run-TestRun {
         
         [switch]$SingleThreaded,
 
+        [int]$MaxParallelAssemblies,
+
+        [int]$MaxParallelThreads,
+
         [string]$Filter,
 
         [bool]$DisplayOutput = $true
@@ -65,6 +76,9 @@ function C-Run-TestRun {
     # RunSettings arguments go last, after --.
     if ($SingleThreaded) {
         $testArguments += @('-m:1', '--', 'xUnit.ParallelizeTestCollections=false')
+    } else {
+        if ($MaxParallelAssemblies -gt 0) { $testArguments += "-m:$MaxParallelAssemblies" }
+        if ($MaxParallelThreads -gt 0) { $testArguments += @('--', "xUnit.MaxParallelThreads=$MaxParallelThreads") }
     }
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     $testOutput = dotnet @testArguments 2>&1
