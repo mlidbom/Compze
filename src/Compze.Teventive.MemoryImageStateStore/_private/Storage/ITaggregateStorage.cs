@@ -6,10 +6,11 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 /// taggregates' state, which it may write in any form it likes, not taggregates.</summary>
 ///<remarks>A write has two steps, because a transaction has two. The store calls <see cref="Prepare"/> when the unit of work's<br/>
 /// transaction prepares, once its tevents are dispatched, and <see cref="IPreparedWrite.Commit"/> or<br/>
-/// <see cref="IPreparedWrite.Discard"/> when it commits or rolls back. Everything that can fail belongs in <see cref="Prepare"/>:<br/>
-/// serializing, writing, a full disk, a file another program holds.</remarks>
+/// <see cref="IPreparedWrite.Discard"/> when it commits or rolls back, then <see cref="IPreparedWrite.Complete"/>. Everything that can<br/>
+/// fail belongs in <see cref="Prepare"/>: serializing, writing, a full disk, a file another program holds.</remarks>
 ///<remarks>One memory image at a time uses a storage: what the store holds in memory is what the storage holds, which nothing but the<br/>
-/// store changes, so a storage never reads back what it wrote.</remarks>
+/// store changes, so a storage never reads back what it wrote. A storage that has a lock, to keep other memory images out, holds it with a<br/>
+/// <see cref="StorageLock"/>: once disposed, it refuses every load and write, and releases its lock only when no write of it can still land.</remarks>
 interface ITaggregateStorage : IDisposable
 {
    ///<summary>Every taggregate stored, read when the store is first used, and at each reload.</summary>

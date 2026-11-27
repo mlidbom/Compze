@@ -18,8 +18,9 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 /// of a <see cref="ITaggregateFilesLoadCache"/>, are in <see cref="TaggregateJsonFiles.OwnFolderName"/> under the store's folder, on<br/>
 /// the same volume as the taggregates' files, so renaming a temporary file moves no data.</remarks>
 ///<remarks>One memory image at a time uses a store's files: the first load takes the store's lock in its own folder<br/>
-/// (<see cref="IFileSystem.TryTakeTheStoresLock"/>), and the storage holds it until disposed. So no other process's store, nor another<br/>
-/// container's in this process, finishes a commit as a crash's, nor writes over the files, while this one uses them.</remarks>
+/// (<see cref="IFileSystem.TryTakeTheStoresLock"/>), and the storage holds it until disposed, with a <see cref="StorageLock"/>. So no other<br/>
+/// process's store, nor another container's in this process, finishes a commit as a crash's, nor writes over the files, while this one uses<br/>
+/// them, nor this one over theirs once it is disposed.</remarks>
 sealed class TaggregateFileStorage : ITaggregateStorage
 {
    const string LoadCacheExtension = ".load-cache";
@@ -32,9 +33,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    readonly bool _isAcceptingNonAtomicCommitsWithADatabase;
    readonly WaitTimeout _waitForTheFiles;
    readonly IThreadShared<StoredFiles> _storedFiles = IThreadShared.New(new StoredFiles());
-
-   //Taken by the first load, under the store's loading monitor.
-   IDisposable? _theStoresLock;
+   readonly StorageLock _theStoresLock;
 
    ///<summary>The storage of <paramref name="classes"/> in files laid out as <paramref name="jsonFiles"/> says, on <paramref name="files"/>:<br/>
    /// the disk, or a file system in memory for specifications. <paramref name="isAcceptingNonAtomicCommitsWithADatabase"/>: as<br/>
@@ -49,22 +48,26 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       _classes = classes.ToDictionary(it => it.Class);
       _snapshotJson = new SnapshotJson(options, _classes.Values);
       _loadCache = loadCache;
+      _theStoresLock = new StorageLock(_jsonFiles.Folder, take: TakeTheStoresLock);
    }
 
    ///<summary>Takes the store's lock, at the first load, then finishes any commit a crash interrupted, and loads every file of every class:<br/>
    /// from the load cache where it holds the file unchanged, by reading the file otherwise.</summary>
    ///<remarks>The lock comes first: it is what makes every journal and temporary file in the store's own folder a crash's leftovers, since no<br/>
    /// other memory image can be preparing or carrying out a commit there.</remarks>
-   public IReadOnlyList<TaggregateSnapshot> LoadAll()
+   public IReadOnlyList<TaggregateSnapshot> LoadAll() => _theStoresLock.WhileLoading<IReadOnlyList<TaggregateSnapshot>>(() =>
    {
-      var whereItIsKept = _jsonFiles.Folder;
-      _theStoresLock ??= _files.TryTakeTheStoresLock(_jsonFiles.OwnFolder, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(whereItIsKept), _waitForTheFiles)
-                      ?? throw StorageHeldByAnotherMemoryImage.Refusal(whereItIsKept, _files.HolderOfTheStoresLock(_jsonFiles.OwnFolder), _waitForTheFiles);
       CommitJournal.FinishInterruptedCommits(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder);
       var loaded = _jsonFiles.Classes.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
       return [..loaded.Select(it => it.Snapshot)];
-   }
+   });
+
+   ///<summary>Takes the store's lock in its own folder, for the first load, waiting at most as long as declared for another memory image to<br/>
+   /// release it, or throws that memory image's refusal.</summary>
+   IDisposable TakeTheStoresLock() =>
+      _files.TryTakeTheStoresLock(_jsonFiles.OwnFolder, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(_jsonFiles.Folder), _waitForTheFiles)
+   ?? throw StorageHeldByAnotherMemoryImage.Refusal(_jsonFiles.Folder, _files.HolderOfTheStoresLock(_jsonFiles.OwnFolder), _waitForTheFiles);
 
    ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as the files hold state: see<br/>
    /// <see cref="SnapshotJson.HoldTheSameState"/>.</summary>
@@ -113,21 +116,38 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    /// <see cref="FilesAsADurableParticipant"/>.</remarks>
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
-      var write = new PreparedFileWrite(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder, _storedFiles);
-      if(!_isAcceptingNonAtomicCommitsWithADatabase && (toSave.Count > 0 || toDelete.Count > 0))
-         FilesAsADurableParticipant.TakePartIn(Transaction.Current._assert().NotNull(), write, _jsonFiles.Folder);
-      Write(write, toSave, toDelete);
-      return write;
+      if(toSave.Count == 0 && toDelete.Count == 0) return NothingToWrite.Instance;
+      return _theStoresLock.PreparingAWrite(underWay =>
+      {
+         var write = NewWrite(underWay);
+         if(!_isAcceptingNonAtomicCommitsWithADatabase)
+            FilesAsADurableParticipant.TakePartIn(Transaction.Current._assert().NotNull(), write, _jsonFiles.Folder);
+         Write(write, toSave, toDelete);
+         return write;
+      });
    }
 
    ///<summary>Writes the file of each of <paramref name="everything"/> under a temporary name, then commits them as one, through the journal,<br/>
    /// with no transaction: a failure before the journal is written writes nothing, and comes out of this call.</summary>
    public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
    {
-      var write = new PreparedFileWrite(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder, _storedFiles);
-      Write(write, everything, toDelete: []);
-      write.CommitOutsideATransaction();
+      var write = _theStoresLock.PreparingAWrite(underWay =>
+      {
+         var prepared = NewWrite(underWay);
+         Write(prepared, everything, toDelete: []);
+         return prepared;
+      });
+      try
+      {
+         write.CommitOutsideATransaction();
+      }
+      finally
+      {
+         write.Complete();
+      }
    }
+
+   PreparedFileWrite NewWrite(StorageLock.WriteUnderWay underWay) => new(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder, _storedFiles, underWay);
 
    ///<summary>Prepares <paramref name="write"/>: writes the file of each of <paramref name="toSave"/> under a temporary name, and notes<br/>
    /// each of <paramref name="toDelete"/> to delete. Discards what it wrote if any of it fails.</summary>
@@ -174,8 +194,9 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       }
    }
 
-   ///<summary>Releases the store's lock, for the next memory image to take.</summary>
-   public void Dispose() => _theStoresLock?.Dispose();
+   ///<summary>Refuses every load and write from now on, and releases the store's lock, for the next memory image to take, once no write of<br/>
+   /// this one can still land: see <see cref="StorageLock"/>.</summary>
+   public void Dispose() => _theStoresLock.Dispose();
 
    sealed class LoadedFile(ListedFile file, TaggregateSnapshot snapshot)
    {

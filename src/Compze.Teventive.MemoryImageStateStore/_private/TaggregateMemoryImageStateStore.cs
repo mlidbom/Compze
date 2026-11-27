@@ -22,6 +22,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    readonly IMonitor _loadingMonitor = IMonitor.New(); //Taken by every load, and by writing everything anew, so that none installs what it read over what another did.
    readonly UnitsOfWorkAndReloadsGate _gate = new();
    volatile bool _hasLoaded;
+   volatile bool _isDisposed;
 
    internal TaggregateMemoryImageStateStore(TaggregateUnitsOfWork unitsOfWork,
                                  IEnumerable<SnapshotableTaggregateClass> declaredClasses,
@@ -36,8 +37,20 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       Committed = new CommittedTaggregates(Indexes);
    }
 
-   ///<summary>Releases the storage, and with it the storage's lock, for the next memory image to take.</summary>
-   public void Dispose() => Storage.Dispose();
+   ///<summary>Refuses every use from now on, then releases the storage, and with it the storage's lock, for the next memory image to take,<br/>
+   /// once no write of this one can still land: see <see cref="StorageLock"/>.</summary>
+   ///<remarks>A unit of work under way as disposing begins: one that has prepared its write commits or rolls back as it would have, and one<br/>
+   /// that hasn't gets, adds and prepares nothing more, so it rolls back.</remarks>
+   public void Dispose()
+   {
+      _isDisposed = true;
+      Storage.Dispose();
+   }
+
+   ///<summary>Refuses a use of a store that is disposed: what it holds in memory may no longer be what its storage holds, since another memory<br/>
+   /// image may hold the storage by now.</summary>
+   internal void AssertNotDisposed() =>
+      State.Assert(!_isDisposed, () => "The memory image state store is disposed, as its container is, so it is used no more: another memory image may hold its storage by now, and what this one holds may no longer be what the storage holds.");
 
    public string Name => "the memory image state store";
 
@@ -88,6 +101,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
 
    public ChangesFoundInStorage LoadFromStorage(Action? changeTheStorageFirst = null)
    {
+      AssertNotDisposed();
       State.Assert(Storage is not NoStorage,
                    () => "This memory image state store has no storage to reload from: it was composed without one, such as StoredInJsonFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the memory image state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
@@ -117,6 +131,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
 
    public void WriteAllToStorage()
    {
+      AssertNotDisposed();
       State.Assert(Storage is not NoStorage,
                    () => "This memory image state store has no storage to write its taggregates to: it was composed without one, such as StoredInJsonFiles, so it keeps its taggregates in memory only.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the memory image state store can't have it write every taggregate anew: that waits for every such unit of work to complete, this one included.");
@@ -155,9 +170,11 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
 
    ITaggregate RestoredFrom(TaggregateSnapshot snapshot) => snapshot.RestoredTaggregate ?? DeclaredClassOf(snapshot.TaggregateClass).Restore(snapshot.Id, snapshot.Snapshot);
 
-   ///<summary>Fills the store from its storage, once, at its first use.</summary>
+   ///<summary>Fills the store from its storage, once, at its first use: every read, and every unit of work's first use of the store, begins<br/>
+   /// here, so it refuses them all once the store is disposed.</summary>
    internal void EnsureLoaded()
    {
+      AssertNotDisposed();
       if(_hasLoaded) return;
       _loadingMonitor.Locked(() =>
       {

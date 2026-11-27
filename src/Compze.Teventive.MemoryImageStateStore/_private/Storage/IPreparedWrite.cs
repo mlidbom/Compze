@@ -8,4 +8,9 @@ interface IPreparedWrite
 
    ///<summary>Abandons the write. Called when the unit of work rolls back.</summary>
    void Discard();
+
+   ///<summary>The unit of work has completed: committed, rolled back, or with its outcome in doubt, when neither <see cref="Commit"/> nor<br/>
+   /// <see cref="Discard"/> is called. The write can no longer land, so disposing the storage may release its lock: see <see cref="StorageLock"/>.<br/>
+   /// Called once, last, whatever happened before.</summary>
+   void Complete();
 }

@@ -7,7 +7,6 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Threading;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Tables;
 
@@ -17,8 +16,8 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Tables;
 ///<remarks>Composed with <see cref="MemoryImageStateStoreBuilder.StoredInTheDomainDatabase"/>. The SQL is the domain database's<br/>
 /// <see cref="IMemoryImageStateStoreSqlLayer"/>, which a package of its own registers, such as Compze.Teventive.MemoryImageStateStore.Sqlite's.</remarks>
 ///<remarks>One memory image at a time uses a database's tables: the first load takes the domain database's process lock<br/>
-/// <see cref="TheTablesLockName"/>, and the storage holds it until disposed. Should the database session holding it die, as when the database<br/>
-/// becomes unreachable, another memory image may take the tables, so this one commits nothing more.</remarks>
+/// <see cref="TheTablesLockName"/>, and the storage holds it until disposed, with a <see cref="StorageLock"/>. Should the database session<br/>
+/// holding it die, as when the database becomes unreachable, another memory image may take the tables, so this one commits nothing more.</remarks>
 sealed class TaggregateTableStorage : ITaggregateStorage
 {
    ///<summary>The name of the domain database's process lock that the memory image using its tables holds: one for the database, whichever<br/>
@@ -31,9 +30,7 @@ sealed class TaggregateTableStorage : ITaggregateStorage
    readonly SnapshotJson _snapshotJson;
    readonly TaggregateClassNames _classNames;
    readonly WaitTimeout _waitForTheTables;
-
-   //Taken by the first load, under the store's loading monitor.
-   IDisposable? _theTablesLock;
+   readonly StorageLock _theTablesLock;
 
    //Set on the lock's keepalive task when the session holding it dies.
    volatile Exception? _theTablesLockWasLostBecause;
@@ -46,14 +43,13 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       _snapshotJson = snapshotJson;
       _classNames = classNames;
       _waitForTheTables = waitForTheTables;
+      _theTablesLock = new StorageLock(WhereItIsKept, take: TakeTheTablesLock);
    }
 
    ///<summary>Takes the tables' lock, at the first load, then reads every row of the declared classes, outside any transaction. Each snapshot<br/>
    /// keeps the text it was read from, for a reload to compare with what the store would write for the taggregate it held.</summary>
-   public IReadOnlyList<TaggregateSnapshot> LoadAll()
+   public IReadOnlyList<TaggregateSnapshot> LoadAll() => _theTablesLock.WhileLoading<IReadOnlyList<TaggregateSnapshot>>(() =>
    {
-      _theTablesLock ??= _sqlLayer.TryTakeProcessLock(TheTablesLockName, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(WhereItIsKept), _waitForTheTables, RecordThatTheTablesLockWasLost)
-                      ?? throw StorageHeldByAnotherMemoryImage.Refusal(WhereItIsKept, _sqlLayer.ProcessLockHolder(TheTablesLockName), _waitForTheTables);
       //bug: the read outside the transaction takes a connection from the domain database's pool, the pool units of work hold their
       //   transactions' connections from. The first load runs at the store's first use, which may be in a unit of work that holds its
       //   transaction's connection, and a lock other units of work wait for holding theirs, such as a tevent-store taggregate's lock:
@@ -61,7 +57,13 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       //   may hold theirs too. Found 2026-11-27 while fixing the tevent stores' second connections, the same deadlock: see
       //   Given_a_tevent_store_holding_a_user. No specification reproduces it yet.
       return [..TransactionScopeCe.Execute(() => _sqlLayer.ReadAll(_classNames.Names), TransactionScopeOption.Suppress).Select(SnapshotIn)];
-   }
+   });
+
+   ///<summary>Takes the domain database's process lock on the tables, for the first load, waiting at most as long as declared for another<br/>
+   /// memory image to release it, or throws that memory image's refusal.</summary>
+   IDisposable TakeTheTablesLock() =>
+      _sqlLayer.TryTakeProcessLock(TheTablesLockName, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(WhereItIsKept), _waitForTheTables, RecordThatTheTablesLockWasLost)
+   ?? throw StorageHeldByAnotherMemoryImage.Refusal(WhereItIsKept, _sqlLayer.ProcessLockHolder(TheTablesLockName), _waitForTheTables);
 
    void RecordThatTheTablesLockWasLost(Exception sessionDeath)
    {
@@ -69,10 +71,9 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       this.Log().Error(sessionDeath, $"The memory image state store kept in {WhereItIsKept} lost its lock on them: the database session holding it died. Another memory image may take them now, so this one commits nothing more.");
    }
 
-   ///<summary>Asserts that this memory image holds the tables, as it does from its first load on, unless the database session holding their lock died.</summary>
-   void AssertTheTablesAreStillHeld()
+   ///<summary>Throws if the database session holding the tables' lock has died, so that another memory image may have taken them since.</summary>
+   void AssertTheTablesLockIsNotLost()
    {
-      State.Assert(_theTablesLock != null, () => "The memory image state store writes its tables before it has loaded them, and so before it holds them.");
       if(_theTablesLockWasLostBecause is {} sessionDeath)
          throw new InvalidOperationException($"The memory image state store kept in {WhereItIsKept} lost its lock on them when the database session holding it died, so another memory image may have taken them since. This memory image commits nothing more: dispose its container, and start the store anew once the database is reachable.", sessionDeath);
    }
@@ -85,24 +86,29 @@ sealed class TaggregateTableStorage : ITaggregateStorage
    /// commit, or roll back, with it, as the database's commit is the transaction's decision. So nothing is left to do when the unit of work<br/>
    /// completes.</summary>
    ///<remarks>Safe without a lock on each taggregate in the database: the unit of work holds each taggregate's lock in memory, and the memory<br/>
-   /// image holding the tables' lock is the only one that writes them, so no other transaction writes the same rows meanwhile.</remarks>
+   /// image holding the tables' lock is the only one that writes them, so no other transaction writes the same rows meanwhile. The write is<br/>
+   /// under way until the unit of work has completed, its transaction committing the rows or rolling them back, so the tables' lock is held<br/>
+   /// until then.</remarks>
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
-      if(toSave.Count == 0 && toDelete.Count == 0) return WrittenInTheTransaction.Instance;
-      AssertTheTablesAreStillHeld();
-      var rows = toSave.Select(RowToSave).ToList();
-      Transaction.Current._assert().NotNull();
-      _sqlLayer.Write(rows, toDelete);
-      return WrittenInTheTransaction.Instance;
+      if(toSave.Count == 0 && toDelete.Count == 0) return NothingToWrite.Instance;
+      return _theTablesLock.PreparingAWrite(underWay =>
+      {
+         AssertTheTablesLockIsNotLost();
+         var rows = toSave.Select(RowToSave).ToList();
+         Transaction.Current._assert().NotNull();
+         _sqlLayer.Write(rows, toDelete);
+         return new WrittenInTheTransaction(underWay);
+      });
    }
 
    ///<summary>Writes every row anew, in a transaction of its own.</summary>
-   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
+   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything) => _theTablesLock.WhileWriting(() =>
    {
-      AssertTheTablesAreStillHeld();
+      AssertTheTablesLockIsNotLost();
       var rows = everything.Select(RowToSave).ToList();
       TransactionScopeCe.Execute(() => _sqlLayer.Write(rows, deleted: []), TransactionScopeOption.RequiresNew);
-   }
+   });
 
    TaggregateRowToSave RowToSave(TaggregateSnapshot snapshot) =>
       new(snapshot.Id, _classNames.NameOf(snapshot.TaggregateClass), _snapshotJson.Of(snapshot.TaggregateClass, snapshot.Snapshot));
@@ -126,15 +132,20 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       }
    }
 
-   ///<summary>Releases the tables' lock, for the next memory image to take.</summary>
-   public void Dispose() => _theTablesLock?.Dispose();
+   ///<summary>Refuses every load and write from now on, and releases the tables' lock, for the next memory image to take, once no write of<br/>
+   /// this one can still land: see <see cref="StorageLock"/>.</summary>
+   public void Dispose() => _theTablesLock.Dispose();
 
-   ///<summary>A write made in the unit of work's transaction already, which commits or rolls back with it: nothing is left to do.</summary>
+   ///<summary>A write made in the unit of work's transaction already, which commits or rolls back with it: nothing is left to do but end the<br/>
+   /// write under way once the unit of work has completed.</summary>
    sealed class WrittenInTheTransaction : IPreparedWrite
    {
-      internal static readonly WrittenInTheTransaction Instance = new();
+      readonly StorageLock.WriteUnderWay _underWay;
+
+      internal WrittenInTheTransaction(StorageLock.WriteUnderWay underWay) => _underWay = underWay;
 
       public void Commit() {}
       public void Discard() {}
+      public void Complete() => _underWay.End();
    }
 }

@@ -16,6 +16,11 @@ namespace Compze.Teventive.MemoryImageStateStore;
 /// <see cref="TimeoutException"/> naming the holder, unless it is declared to wait<br/>
 /// (<see cref="MemoryImageStateStoreBuilder.WaitingForAnotherMemoryImageToReleaseTheStorage"/>). A first load that fails takes nothing,<br/>
 /// and the next use tries again.</remarks>
+///<remarks>Disposing the container refuses every use of the store from then on, and releases the storage's lock only once no write of the<br/>
+/// store can still land in the storage, so that a host may dispose its container while work still runs. A unit of work that has prepared<br/>
+/// its write as disposing begins commits or rolls back first, and disposing waits for it. One that hasn't fails at its next use of the<br/>
+/// store, or as it commits, and rolls back. Disposing waits at most a minute for loads and writes under way to end: should one still be<br/>
+/// under way then, it throws, and the store keeps holding the storage until the process ends.</remarks>
 public interface IMemoryImageStateStore
 {
    ///<summary>Loads every taggregate from the storage, and replaces the committed taggregates with what it loaded: the store's first<br/>
