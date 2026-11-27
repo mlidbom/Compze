@@ -86,11 +86,14 @@ if ($newPackages.Count -eq 0) {
         exit 1
     }
 
+    # The commit checked out and built: each release's tag names it, whatever the branch has moved to since.
+    $builtCommit = (git rev-parse HEAD).Trim()
+
     Write-Host ""
     foreach ($pkg in $newPackages) {
         Write-Host "── $($pkg.PackageName) v$($pkg.Version) ──"
         PushToNuGet $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
-        CreateGitHubRelease $pkg $nupkgsPath -DryRun:$DryRun -Verbose:$Verbose
+        CreateGitHubRelease $pkg $nupkgsPath -Commit $builtCommit -DryRun:$DryRun -Verbose:$Verbose
         Write-Host ""
     }
 

@@ -1,4 +1,6 @@
-function CreateGitHubRelease($Package, [string]$NupkgsPath, [switch]$DryRun, [switch]$Verbose) {
+# $Commit is the commit the release was built from, which its tag must name. Without --target, GitHub tags the default
+# branch's head as it creates the release, and a push during the release run moved the tags onto a commit it hadn't built.
+function CreateGitHubRelease($Package, [string]$NupkgsPath, [string]$Commit, [switch]$DryRun, [switch]$Verbose) {
     $releaseName = "$($Package.PackageName) v$($Package.Version)"
 
     $assets = @("nupkg", "snupkg") |
@@ -12,7 +14,7 @@ function CreateGitHubRelease($Package, [string]$NupkgsPath, [switch]$DryRun, [sw
 
     if ($Verbose) {
         $assetNames = $assets | ForEach-Object { Split-Path $_ -Leaf }
-        Write-Host "  Create GitHub release (prerelease: $($prereleaseFlag.Count -gt 0))"
+        Write-Host "  Create GitHub release (prerelease: $($prereleaseFlag.Count -gt 0)), tagging $Commit"
         Write-Host "    Assets: $($assetNames -join ', ')"
         Write-Host "    Changelog:"
     }
@@ -25,6 +27,7 @@ function CreateGitHubRelease($Package, [string]$NupkgsPath, [switch]$DryRun, [sw
             [IO.File]::WriteAllText($tempNotesFile, $Package.ChangelogContent)
 
             gh release create $Package.Tag `
+                --target $Commit `
                 --title $releaseName `
                 --notes-file $tempNotesFile `
                 @prereleaseFlag `
