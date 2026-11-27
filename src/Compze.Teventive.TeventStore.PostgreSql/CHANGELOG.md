@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **Getting a taggregate for update no longer deadlocks the connection pool when more units of work wait for the taggregate than the pool has connections.** The store took the taggregate's lock on the transaction's connection, then read its history outside the transaction, on a second connection. With every connection of the pool held by units of work waiting for the lock, the one holding it got no connection for its read, and all of them waited until the pool's timeout, 15 s by default, failed them. The history is now read in the transaction, on its connection. Getting a taggregate for update now requires a transaction at `ReadCommitted`, the isolation level of a unit of work's transaction, and throws naming the transaction's level otherwise: at a higher level, the read would miss the tevents that units of work committed after the transaction's first statement.
 - **Reads a taggregate's history for update asynchronously,** for Compze.Teventive.TeventStore's part of `ITaggregateStoreUpdater.GetForUpdateAsync`: `pg_advisory_xact_lock` waits for the taggregate's lock holding no thread. Requires the Compze.Teventive.TeventStore.Abstractions released with it.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.7.0-alpha (was 0.6.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
