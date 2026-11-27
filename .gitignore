@@ -62,3 +62,6 @@ BenchmarkDotNet.Artifacts
 
 # The gh-pages checkout src/Websites/Website/buildAndPublish.ps1 publishes compze.net through
 /src/Compze-gh-pages/
+
+# What Python writes beside the scripts it runs, such as the measurement tools in dev_docs
+__pycache__/

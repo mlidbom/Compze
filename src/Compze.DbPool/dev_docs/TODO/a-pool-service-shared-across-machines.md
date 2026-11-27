@@ -7,7 +7,7 @@ reach `main`.
 
 - **The DbPool coordinates its reservations per machine only.** `DbPoolMachineWideState` keeps them in an interprocess
   object under this machine's LocalAppData, shared by every test process on the machine and seen by no other.
-- **Every machine names the pool databases the same:** `Compze_DbPool_0001` and on.
+- **Every machine names the pool databases the same:** `Compze_DbPool_v2_0001` and on.
 - **So two machines that use the same database servers reset each other's databases** in the middle of their tests:
   failures that look like flakes.
 
@@ -43,6 +43,8 @@ one machine.
 - **Resets off the tests' critical path:** the service can clean a database after it is released, so a reservation gets
   an empty one at once. Whether that matters is to be measured first: against threadripper, the server combinations
   (4,940 tests) took 172.2 s, against 96.6 s on the development machine's own servers. A round trip there takes 0.33 ms
-  against 0.10 ms locally, and threadripper's 1950X is much slower per thread. How much of the difference goes to resets
-  is unknown.
+  against 0.10 ms locally, and threadripper's 1950X is much slower per thread. On MySQL, measured 2026-11-27: the resets
+  and the tests' schema creation are most of the server's work, DDL that queues for the drive's flushes, so a reset done
+  after the release would still take the same capacity from the tests. Three server settings cut it five times:
+  [why the DbPool's resets take seconds on MySQL](../../../Compze.DbPool.MySql/dev_docs/why-resets-take-seconds-on-mysql.md).
 - **Sqlite stays local.** Its pool databases are files on the machine that runs the tests.

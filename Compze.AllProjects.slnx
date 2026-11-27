@@ -76,6 +76,7 @@
   </Folder>
   <Folder Name="/Utilities/Compze.DbPool/Specifications/">
     <Project Path="test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
+    <Project Path="test/Compze.DbPool.InternalSpecifications/Compze.DbPool.InternalSpecifications.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.DbPool/SqlLayer/">
     <Project Path="src/Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />

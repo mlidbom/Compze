@@ -26,7 +26,14 @@ function C-Test {
     
     .PARAMETER SingleThreadedTesting
     Run tests single-threaded (forces sequential test execution, useful for debugging)
-    
+
+    .PARAMETER MaxParallelAssemblies
+    Runs at most this many test assemblies at once (MSBuild's -m), where by default it runs one for each logical processor.
+
+    .PARAMETER MaxParallelThreads
+    Runs at most this many test collections at once within each test assembly (xUnit's MaxParallelThreads), where by
+    default xUnit runs one for each logical processor.
+
     .PARAMETER Iterations
     Run the test suite multiple times and display a summary of results across all iterations
 
@@ -95,6 +102,8 @@ function C-Test {
         [switch]$Clean,
         [switch]$FullGitReset,
         [switch]$SingleThreadedTesting,
+        [int]$MaxParallelAssemblies,
+        [int]$MaxParallelThreads,
         [int]$Iterations = 1,
         [string[]]$Combinations,
         [string]$Filter
@@ -132,7 +141,7 @@ function C-Test {
             }
             
             # Run tests
-            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -Filter $Filter
+            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -MaxParallelAssemblies $MaxParallelAssemblies -MaxParallelThreads $MaxParallelThreads -Filter $Filter
             
             # Collect failed tests from this iteration
             if ($testRunResult.FailedTests -and $testRunResult.FailedTests.Count -gt 0) {

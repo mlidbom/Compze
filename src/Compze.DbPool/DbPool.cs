@@ -20,7 +20,7 @@ public static class DbPoolRegistrar
       Compze.DbPool.DbPool.RegisterWith(registrar, System.Diagnostics.Debugger.IsAttached ? 10.Minutes() : 65.Seconds());
 }
 
-public class DbPool : StrictlyManagedResourceBase<DbPool>
+public partial class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar, TimeSpan reservationLength) =>
       registrar.Register(Singleton.For<DbPool>()
@@ -44,49 +44,101 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
       _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
    }
 
-   readonly IThreadShared<List<DbPoolDatabase>> _reservedDatabases = IThreadShared.New(new List<DbPoolDatabase>(), LockTimeout.Seconds(30));
+   ///<summary>How long a call waits for another call that is reserving and resetting the database for the same reservation name, and<br/>
+   /// <see cref="Dispose"/> for the calls still doing so: longer than a reservation waits for a free database, 45 seconds, and<br/>
+   /// than a reset takes on a server that a test suite keeps busy.</summary>
+   static readonly WaitTimeout WaitForAnotherCallsPreparation = new(2.Minutes());
+
+   ///<summary>The pool's lock: held only to read and change the reservations, never while a database is reserved or reset.</summary>
+   readonly IAwaitableThreadShared<Reservations> _reservations = IAwaitableThreadShared.New(new Reservations(), LockTimeout.Seconds(30));
    readonly Guid _poolId = Guid.NewGuid();
 
    static ILogger _log = CompzeLogger.For<DbPool>();
 
-   public void SetLogLevel(LogLevel logLevel) => _reservedDatabases.Locked(_ => _log = _log.WithLogLevel(logLevel));
+   public void SetLogLevel(LogLevel logLevel) => _reservations.Update(_ => _log = _log.WithLogLevel(logLevel));
 
-   public string ConnectionStringFor(string reservationName) => _reservedDatabases.Locked(reservedDatabases =>
+   ///<summary>The connection string of the database this pool holds for <paramref name="reservationName"/>: reserved and emptied<br/>
+   /// by the first call for the name, the same database on every later call.</summary>
+   ///<remarks>The first call for a name reserves and resets its database without holding the pool's lock, so calls for other names<br/>
+   /// don't wait for it: a reset can take seconds on a busy server. Calls for the same name wait until its database is ready.</remarks>
+   public string ConnectionStringFor(string reservationName)
    {
-      Contract.State.NotDisposed(Disposed, this);
+      var (reservation, thisCallPreparesIt) = _reservations.UpdateWhen(
+         reservations => !reservations.IsBeingPrepared(reservationName),
+         reservations =>
+         {
+            Contract.State.NotDisposed(Disposed, this);
+            var reservation = reservations.For(reservationName);
+            return (reservation, reservation.TryBeginPreparation());
+         },
+         timeout: WaitForAnotherCallsPreparation);
 
-      var reservedDatabase = reservedDatabases.SingleOrDefault(db => db.ReservationName == reservationName);
-      if(reservedDatabase != null)
-      {
-         _log.Debug($"Retrieved reserved pool database from cache: {reservedDatabase.Id}");
-         return _sqlLayer.ConnectionStringFor(reservedDatabase);
-      }
+      if(thisCallPreparesIt) Prepare(reservation, reservationName);
+      return _sqlLayer.ConnectionStringFor(reservation.ReservedDatabase._assert().NotNull());
+   }
 
-      reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
-      _log.Info($"Reserved pool database: {reservedDatabase.Name}");
-      reservedDatabases.Add(reservedDatabase);
-
+   ///<summary>Reserves a database for <paramref name="reservation"/>, unless an earlier call did and only its reset failed, and resets it,<br/>
+   /// outside the pool's lock. Whether it succeeds or throws, it ends the preparation, so that the calls waiting for it go on.</summary>
+   void Prepare(Reservation reservation, string reservationName)
+   {
+      var database = reservation.ReservedDatabase;
+      var isReset = false;
       try
       {
-         _log.Debug($"Resetting database {reservedDatabase.Name}");
-         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(reservedDatabase));
+         database ??= ReserveDatabase(reservationName);
+         Reset(database);
+         isReset = true;
+      }
+      finally
+      {
+         _reservations.Update(_ => reservation.EndPreparation(database, isReset));
+      }
+   }
+
+   DbPoolDatabase ReserveDatabase(string reservationName)
+   {
+      var reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
+      _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+      return reservedDatabase;
+   }
+
+   void Reset(DbPoolDatabase database)
+   {
+      try
+      {
+         _log.Debug($"Resetting database {database.Name}");
+         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(database));
       }
 #pragma warning disable CA1031 //It's hard to know what kind of exception a sql layer may end up throwing, and it's likewise hard to see any other action to take than nuking the database and starting over
       catch(Exception exception)
       {
 #pragma warning restore CA1031
-         _log.Warning(exception, $"Resetting database {reservedDatabase.Name} failed. Calling {nameof(IDbPoolSqlLayer.EnsureDatabaseExistsAndIsEmpty)}");
-         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
+         _log.Warning(exception, $"Resetting database {database.Name} failed. Calling {nameof(IDbPoolSqlLayer.EnsureDatabaseExistsAndIsEmpty)}");
+         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.EnsureDatabaseExistsAndIsEmpty(database));
       }
+   }
 
-      return _sqlLayer.ConnectionStringFor(reservedDatabase);
-   });
-
-   public override void Dispose() => _reservedDatabases.Locked(reservedDatabases =>
+   ///<summary>Releases the pool's databases for other pools to reserve, once the calls still reserving or resetting one are done. Throws<br/>
+   /// if the pool held any of them past the end of its reservation, since another pool may then have reset it while it was still in use.</summary>
+   public override void Dispose()
    {
-      if(Disposed) return;
-      base.Dispose();
-      _sqlLayer.Dispose(reservedDatabases);
-      _machineWideState.ReleaseReservationsFor(_poolId);
-   });
+      var databasesHeldPastTheirReservation = _reservations.UpdateWhen(
+         reservations => !reservations.AnyIsBeingPrepared,
+         IReadOnlyList<DbPoolDatabase> (reservations) =>
+         {
+            if(Disposed) return [];
+            base.Dispose();
+            var reservedDatabases = reservations.ReservedDatabases;
+            _sqlLayer.Dispose(reservedDatabases);
+            _machineWideState.ReleaseReservationsFor(_poolId);
+            return [..reservedDatabases.Where(db => db.ReservationHasExpired)];
+         },
+         timeout: WaitForAnotherCallsPreparation);
+      _machineWideState.Dispose();
+
+      if(databasesHeldPastTheirReservation.Any())
+#pragma warning disable CA1065 // Magnus's decision, 2026-11-27: a pool that held a database past its reservation fails loudly here, at its end, since another pool may have reset the database while it was in use. A log entry would go unread.
+         throw new DatabaseHeldPastItsReservationException(databasesHeldPastTheirReservation, _reservationLength, disposedAt: DateTime.UtcNow);
+#pragma warning restore CA1065
+   }
 }
