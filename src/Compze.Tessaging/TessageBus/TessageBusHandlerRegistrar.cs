@@ -32,12 +32,24 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// publisher's unit of work, an exactly-once arrival inside the inbox processing's own, and a best-effort arrival inside the<br/>
    /// direct dispatch's own. A handler registered here never runs outside one — delivery detached from any transaction is<br/>
    /// observation, declared under its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>).</summary>
-   internal TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+   ///<remarks>The handler also receives the token of the execution it serves. When the endpoint's inbox handles the tevent, as<br/>
+   /// it does every exactly-once tevent published by another endpoint, that is the endpoint's stopping token: cancelled when<br/>
+   /// the endpoint's stop no longer waits for its inbox (<see cref="Endpoints.IEndpoint.StopAsync"/>). The handler's unit of work<br/>
+   /// then rolls back, and the endpoint's next start handles the tevent again. When the handler takes part in its publisher's<br/>
+   /// execution, it is the token the publisher was given (<see cref="IUnitOfWorkTeventPublisher.PublishAsync"/>). A best-effort<br/>
+   /// arrival's handlers receive a token that is never cancelled.</remarks>
+   ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
+   public TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTeventHandler(handler);
       return this;
    }
+
+   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   /// handler that waits on nothing it could give up.</summary>
+   internal TessageBusHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+      => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork));
 
    ///<summary>The synchronous form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,Task})"/> — first-class for<br/>
    /// subscriptions whose kind is not exactly-once; a subscription demanding exactly-once delivery explodes here, because<br/>
@@ -46,7 +58,7 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    {
       AssertUsedOnlyInsideItsCallback();
       AssertSubscriptionAllowsSynchronousHandlers<TTevent>();
-      _registrations.AddTeventHandler<TTevent>((tevent, unitOfWork) =>
+      _registrations.AddTeventHandler<TTevent>((tevent, unitOfWork, _) =>
       {
          handler(tevent, unitOfWork);
          return Task.CompletedTask;
@@ -58,29 +70,40 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
    /// <see cref="IUnitOfWorkTommandSender.SendAsync"/> accepts. The handler receives the <see cref="IUnitOfWorkResolver"/> of the unit of work its execution IS:<br/>
    /// a tommand mutates state, so every path that executes one runs it inside a unit of work, and its effects commit or roll<br/>
    /// back as a whole. Async only, no synchronous form: exactly-once kinds are async end to end.</summary>
-   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand
+   ///<remarks>The handler also receives the token of the execution it serves. When the endpoint's inbox handles the tommand, as<br/>
+   /// it does every tommand sent from another endpoint, that is the endpoint's stopping token: cancelled when the endpoint's<br/>
+   /// stop no longer waits for its inbox (<see cref="Endpoints.IEndpoint.StopAsync"/>). The handler's unit of work then rolls back,<br/>
+   /// and the endpoint's next start handles the tommand again. When the tommand runs inline, in its sender's execution, it is<br/>
+   /// the token the sender was given (<see cref="IUnitOfWorkTommandSender.SendAsync"/>).</remarks>
+   ///<param name="handler">The handler: the tommand, the unit of work, and the token of the execution it serves.</param>
+   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : IExactlyOnceTommand
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddVoidTommandHandler(handler);
       return this;
    }
 
+   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   /// handler that waits on nothing it could give up.</summary>
+   public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand
+      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork));
+
    //The minimal registrars an endpoint-declaration's overrides receive - each showing only its facet of this registrar, with
    //the facet's guarantee-fit asserted at registration.
-   IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler)
+   IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler)
    {
       ForTommand(handler);
       return this;
    }
 
-   IExactlyOnceTeventHandlerRegistrar IExactlyOnceTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler)
+   IExactlyOnceTeventHandlerRegistrar IExactlyOnceTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler)
    {
       AssertSubscriptionDemandsExactlyOnceDelivery<TTevent>();
       ForTevent(handler);
       return this;
    }
 
-   IBestEffortTeventHandlerRegistrar IBestEffortTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler)
+   IBestEffortTeventHandlerRegistrar IBestEffortTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler)
    {
       AssertSubscriptionDoesNotDemandExactlyOnceDelivery<TTevent>();
       ForTevent(handler);

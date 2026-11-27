@@ -18,6 +18,9 @@ interface ITessagesInFlightTracker
     ///<summary>Completes when nothing is in flight, holding no thread while it waits; throws when <paramref name="timeoutOverride"/>, or 10 seconds, passes first.</summary>
     Task AwaitNoTessagesInFlightAsync(WaitTimeout? timeoutOverride);
     void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception);
+    ///<summary>The endpoint <paramref name="endpointId"/> admitted <paramref name="tessage"/>, which it sent itself, and its sender<br/>
+    /// committed: in flight until the endpoint has handled it.</summary>
+    void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId);
     ///<summary>A try of <paramref name="tessage"/>'s handling in <paramref name="handlingEndpointId"/> failed with<br/>
     /// <paramref name="exception"/>, and the tessage is tried again or marked failed: still in flight. The at-rest wait's<br/>
     /// timeout shows each tessage's last failed try, so a test whose handler keeps failing says why it didn't come to rest.</summary>

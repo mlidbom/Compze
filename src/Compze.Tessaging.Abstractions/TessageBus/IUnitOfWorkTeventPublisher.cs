@@ -33,5 +33,8 @@ public interface IUnitOfWorkTeventPublisher
 
    ///<summary>Publishes <paramref name="tevent"/> per the delivery contract its type declares, awaiting participation and the<br/>
    /// durable outbox write an <see cref="IExactlyOnceTevent"/>'s contract demands. The one form serving every tevent kind.</summary>
-   Task PublishAsync(ITevent tevent);
+   ///<param name="tevent">The tevent to publish.</param>
+   ///<param name="cancellationToken">Gives up the publish: the handlers participating in it receive it. Cancelled, the<br/>
+   /// publish throws an <see cref="OperationCanceledException"/>, and the caller's unit of work fails with it.</param>
+   Task PublishAsync(ITevent tevent, CancellationToken cancellationToken = default);
 }

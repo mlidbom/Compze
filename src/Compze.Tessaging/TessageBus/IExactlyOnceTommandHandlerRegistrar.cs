@@ -12,5 +12,13 @@ public interface IExactlyOnceTommandHandlerRegistrar
    ///<summary>Registers the handler for <typeparamref name="TTommand"/>. The handler receives the <see cref="IUnitOfWorkResolver"/><br/>
    /// of the unit of work its execution IS — a tommand mutates state, so its effects commit or roll back as a whole.<br/>
    /// Async only, no synchronous form: exactly-once kinds are async end to end.</summary>
-   IExactlyOnceTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand;
+   ///<remarks>The handler also receives the token of the execution it serves: see<br/>
+   /// <see cref="TessageBusHandlerRegistrar.ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task})"/>.</remarks>
+   ///<param name="handler">The handler: the tommand, the unit of work, and the token of the execution it serves.</param>
+   IExactlyOnceTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : IExactlyOnceTommand;
+
+   ///<summary>The form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   /// handler that waits on nothing it could give up.</summary>
+   IExactlyOnceTommandHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand
+      => ForTommand<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork));
 }

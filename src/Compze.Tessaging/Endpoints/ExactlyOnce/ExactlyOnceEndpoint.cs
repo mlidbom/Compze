@@ -20,8 +20,8 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 /// Built from an <see cref="ExactlyOnceEndpointDeclaration{TIdentity}"/>
 /// (<see cref="IExactlyOnceEndpointDeclaration.Build"/>). Which machinery carries a given tessage is decided by the tessage's type and the
 /// consistency law: a send whose handler is in the roster executes inline, in the sender's execution — exactly-once by
-/// construction, no delivery machinery involved — and a send whose handler lives elsewhere crosses the boundary through the
-/// durable vertical.
+/// construction, no delivery machinery involved — unless the handler is deferred, when the endpoint's own inbox handles it
+/// once the sender has committed, and a send whose handler lives elsewhere crosses the boundary through the durable vertical.
 ///</summary>
 public class ExactlyOnceEndpoint : Endpoint
 {
@@ -45,7 +45,13 @@ public class ExactlyOnceEndpoint : Endpoint
    /// else touches the database.</summary>
    private protected override async Task ClaimTheProcessLockAsync() => await _processLock.AcquireAsync().caf();
 
-   private protected override async Task ReleaseTheProcessLockAsync() => await _processLock.ReleaseAsync().caf();
+   ///<summary>Releases the process lock once the inbox no longer admits the tommands the endpoint sends itself — see<br/>
+   /// <see cref="IInbox.StopAdmittingTessagesSentToItselfAsync"/>.</summary>
+   private protected override async Task ReleaseTheProcessLockAsync()
+   {
+      await _inbox.StopAdmittingTessagesSentToItselfAsync().caf();
+      await _processLock.ReleaseAsync().caf();
+   }
 
    ///<summary>The inbox listens and the outbox's durable storage initializes in the listening phase — before any endpoint in<br/>
    /// the host starts sending, so the sending phase's connection delivery streams can load their recovery backlogs from it.</summary>
@@ -55,5 +61,7 @@ public class ExactlyOnceEndpoint : Endpoint
 
    ///<summary>Waits for the inbox to finish handling every received tessage it can, and stops its handling, before the process<br/>
    /// lock is released and the container is torn down — see <see cref="IInbox.DrainAndStopHandlingAsync"/>.</summary>
-   private protected override async Task DrainTheInboxAsync() => await _inbox.DrainAndStopHandlingAsync().caf();
+   private protected override async Task DrainTheInboxAsync(CancellationToken cancellationToken) => await _inbox.DrainAndStopHandlingAsync(cancellationToken).caf();
+
+   private protected override CancellationTokenRegistration StopHandlingInTheInboxWhenCancelled(CancellationToken cancellationToken) => _inbox.StopHandlingWhenCancelled(cancellationToken);
 }

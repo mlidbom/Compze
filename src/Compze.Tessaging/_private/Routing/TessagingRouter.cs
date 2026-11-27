@@ -356,8 +356,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
    //The condition may call this router's own lookups: the monitor is reentrant, and the condition always runs on the thread
    //holding the monitor's lock - whichever thread the wait resumes on - so the nested lock acquisitions are balanced re-entries,
    //never contention.
-   public async Task<bool> TryAwaitConnectionsOrPeerMemorySatisfyingAsync(Func<bool> condition, WaitTimeout patience) =>
-      await _monitor.TryAwaitAsync(condition, waitTimeout: patience).caf();
+   public async Task<bool> TryAwaitConnectionsOrPeerMemorySatisfyingAsync(Func<bool> condition, WaitTimeout patience, CancellationToken cancellationToken = default) =>
+      await _monitor.TryAwaitAsync(condition, cancellationToken, waitTimeout: patience).caf();
 
    public void Dispose()
    {

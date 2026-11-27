@@ -57,5 +57,5 @@ interface ITessagingRouter
     /// thread parked for that long, when it is a pool thread, starves the pool (<see cref="IAwaitableCriticalSection.TryAwaitAsync"/>).<br/>
     /// A condition that already holds costs no wait at all. A condition that throws — the router's lookups assert the router<br/>
     /// is not stopped — propagates out of the wait immediately.</remarks>
-    Task<bool> TryAwaitConnectionsOrPeerMemorySatisfyingAsync(Func<bool> condition, WaitTimeout patience);
+    Task<bool> TryAwaitConnectionsOrPeerMemorySatisfyingAsync(Func<bool> condition, WaitTimeout patience, CancellationToken cancellationToken = default);
 }

@@ -50,8 +50,23 @@ partial class Inbox
          _coordinator.EnqueueTessageTask(transportTessage, failingTime);
       }
 
+      ///<summary>Opens the admission of the tessages the endpoint sends itself — see<br/>
+      /// <see cref="Coordinator.StartAdmittingTessagesSentToItself"/>.</summary>
+      internal void StartAdmittingTessagesSentToItself() => _coordinator.StartAdmittingTessagesSentToItself();
+
+      ///<summary>Begins admitting a tessage the endpoint sends itself — see <see cref="Coordinator.BeginAdmittingATessageSentToItself"/>.</summary>
+      internal Coordinator.AdmissionOfATessageSentToItself BeginAdmittingATessageSentToItself() => _coordinator.BeginAdmittingATessageSentToItself();
+
+      ///<summary>Refuses the tessages the endpoint sends itself from now on, and waits for those being admitted — see<br/>
+      /// <see cref="Coordinator.StopAdmittingTessagesSentToItselfAsync"/>.</summary>
+      internal Task StopAdmittingTessagesSentToItselfAsync() => _coordinator.StopAdmittingTessagesSentToItselfAsync(ShutdownDrainPatience);
+
       ///<summary>Drains the inbox for shutdown and stops handling — see <see cref="Coordinator.DrainAndStopAsync"/>.</summary>
-      internal Task DrainAndStopHandlingAsync() => _coordinator.DrainAndStopAsync(ShutdownDrainPatience);
+      internal Task DrainAndStopHandlingAsync(CancellationToken cancellationToken) => _coordinator.DrainAndStopAsync(ShutdownDrainPatience, cancellationToken);
+
+      ///<summary>Stops handling the moment <paramref name="cancellationToken"/> is cancelled — see<br/>
+      /// <see cref="Coordinator.StopHandlingWhenCancelled"/>.</summary>
+      internal CancellationTokenRegistration StopHandlingWhenCancelled(CancellationToken cancellationToken) => _coordinator.StopHandlingWhenCancelled(cancellationToken);
 
       void AwaitDispatchableTessageThreadLoop()
       {
@@ -84,6 +99,8 @@ partial class Inbox
          _disposed = true;
 
          await _coordinator.StopAsync().caf();
+         //The endpoint's stop refused them already, unless it failed before it could.
+         await _coordinator.StopAdmittingTessagesSentToItselfAsync(ShutdownDrainPatience).caf();
          if(_awaitDispatchableTessageLoop != null)
          {
             this.Log().Info("Stopping");

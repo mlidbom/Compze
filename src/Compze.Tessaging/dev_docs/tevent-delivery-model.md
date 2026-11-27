@@ -329,7 +329,10 @@ Per rung:
   endpoint's own database is unreachable, it is the endpoint failing, not the tessage, so the tessage keeps
   its place, waits, and the time doesn't count. Stopping the endpoint ends a wait to be tried again and
   stops handling before the process lock is released: the waiting tessage and those behind it are left
-  UnHandled, and the recovery scan at the next start re-enqueues them in admission order.
+  UnHandled, and the recovery scan at the next start re-enqueues them in admission order. A stop whose token
+  is cancelled (`IEndpoint.StopAsync(CancellationToken)`) stops handling at once, in whichever phase it is,
+  and cancels the token the running tries' handlers were handed: a try that fails once handling has stopped
+  doesn't count, and its tessage is left UnHandled the same way.
 
 ## Tommands are different
 
@@ -338,7 +341,10 @@ subscription-side election at all: an `IExactlyOnceTommand`'s type is its delive
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.SendAsync`. A tommand whose handler is
 in the sender's own roster never touches delivery machinery at all: it executes inline, in the sender's
 execution — exactly-once by construction, per the consistency law (see
-[Tessaging](tessaging.md)). A tommand whose handler lives elsewhere binds to its one
+[Tessaging](tessaging.md)). Unless its handler is deferred: then the endpoint admits it to its own inbox in
+the sender's transaction, advancing the endpoint's stream to itself, a row of the inbox's admissions table
+whose lock makes the sends to the endpoint itself commit one after another, and handles it in an execution
+of its own once the sender has committed, in the order the senders committed. A tommand whose handler lives elsewhere binds to its one
 specific receiver at send time — the live handler when one is connected, otherwise the sole remembered peer
 whose advertisement handles the type (see [peers](peers.md)) — so a
 known-but-down handler receives the tommand on its return without the send exploding, while every tessage

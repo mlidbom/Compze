@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.Engine.HandlerRegistration;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus._internal;
 using Compze.Tessaging._internal.TessagesInFlight;
@@ -343,6 +344,9 @@ public abstract class EndpointBuilder
    /// every advertised type has a type-id mapping and gets a route on the peers' routers. The best-effort tier additionally<br/>
    /// asserts that no registered handler demands more than the endpoint delivers.</summary>
    private protected virtual void AssertTheRosterIsSound(TessageHandlerRoster roster) => roster.AdvertisedRemoteTessageTypeIds();
+
+   ///<summary>The handler registrations of the endpoint's engine, for the registration surfaces only a tier has.</summary>
+   private protected TessageHandlerRegistrations HandlerRegistrations => _engine.HandlerRegistrations;
 
    private protected IReadOnlyList<IEndpointAddressAnnouncer> AddressAnnouncers => _addressAnnouncers;
    private protected IEndpointRegistry? EndpointRegistry { get; private set; }

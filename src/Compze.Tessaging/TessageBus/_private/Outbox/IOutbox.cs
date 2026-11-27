@@ -8,5 +8,5 @@ interface IOutbox : IExactlyOnceTeventDeliveryLeg
 {
     Task StartAsync();
     Task StopAsync();
-    Task SendTransactionallyAsync(IExactlyOnceTommand exactlyOnceTommand);
+    Task SendTransactionallyAsync(IExactlyOnceTommand exactlyOnceTommand, CancellationToken cancellationToken);
 }

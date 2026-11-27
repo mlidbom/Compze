@@ -57,6 +57,7 @@ that can register only that kind, so a handler of the wrong kind can't be regist
 | Override | Registers | Endpoint |
 |---|---|---|
 | `RegisterExactlyOnceTommandHandlers` | handlers of exactly-once tommands | exactly-once |
+| `RegisterDeferredTommandHandlers` | handlers of exactly-once tommands that never run in their sender's unit of work: see [Delivery guarantees](delivery-guarantees.md) | exactly-once |
 | `RegisterExactlyOnceTeventHandlers` | handlers of exactly-once tevents | exactly-once |
 | `RegisterBestEffortTeventHandlers` | handlers of the other tevents | both |
 | `ObserveTevents` | [observers](observing-tevents.md) | both |
@@ -136,7 +137,12 @@ above does. The host is a convenience: an endpoint's declaration can build it wi
   has started; finding the other endpoints goes on from there, and
   [readiness](readiness-and-waiting-sends.md) awaits it.
 - **Stopping** runs the phases in reverse: it retracts the address, stops sending and stops listening, then lets what
-  was already received finish. Disposing an endpoint stops it first. A stopped endpoint never starts again.
+  was already received finish, for up to 30 seconds. Disposing an endpoint stops it first. A stopped endpoint never
+  starts again.
+- **Letting go at once.** Cancelling the token given to `StopAsync` ends that wait, as for a process handing the
+  endpoint over to its next one: the inbox handles nothing more, and the handlers still running are cancelled through
+  the token they were handed, and roll back. What wasn't handled is neither lost nor marked failed: the endpoint's next
+  start handles it, in its order.
 - **One process at a time.** An exactly-once endpoint runs in one process at a time: starting it in a second process
   fails with `EndpointAlreadyRunningInAnotherProcessException`. The lock that ensures it dies with its process, so after
   a crash the endpoint can start again at once.

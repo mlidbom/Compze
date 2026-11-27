@@ -1,3 +1,5 @@
+using Compze.Tessaging.Endpoints;
+using Compze.Contracts;
 using Compze.Sql.Common._internal;
 using Compze.Sql.MicrosoftSql._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -31,29 +33,56 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
          if(!await TryAdvanceAdmissionHighWaterMarkAsync(deliveryStreamPosition).caf())
             //One position in the stream is one tessage, so at or below the mark means this very tessage was admitted
             //already - a redelivery to acknowledge. Above it, its declared predecessor has not been admitted: refuse.
-            return deliveryStreamPosition.SequenceNumber <= await GetLastAdmittedSequenceNumberAsync(deliveryStreamPosition).caf()
+            return deliveryStreamPosition.SequenceNumber <= await GetLastAdmittedSequenceNumberAsync(deliveryStreamPosition.SenderEndpointId).caf()
                       ? ITessagingSqlLayer.SaveTessageResult.Duplicate
                       : ITessagingSqlLayer.SaveTessageResult.RefusedAwaitingItsPredecessor;
 
-         await _connectionFactory.UseCommandAsync(
+         await InsertTheTessagesRowAsync(tessageId, internedTypeId, deliveryStreamPosition.SenderEndpointId, deliveryStreamPosition.SequenceNumber, serializedTessage).caf();
+
+         return ITessagingSqlLayer.SaveTessageResult.NewTessage;
+      }).caf();
+   }
+
+   public async Task OpenTheStreamToItselfAsync(EndpointId endpointId) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        INSERT INTO {_tables.InboxDeliveryStreamAdmissions}
+                                    ({Admissions.SenderEndpointId}, {Admissions.LastAdmittedSequenceNumber})
+                             SELECT @{Admissions.SenderEndpointId}, 0
+                        WHERE NOT EXISTS (SELECT 1 FROM {_tables.InboxDeliveryStreamAdmissions} WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId})
+
+                        """)
+                   .AddParameter(Admissions.SenderEndpointId, endpointId.Value)
+                   .ExecuteNonQueryAsync().caf()).caf();
+
+   public async Task SaveTessageSentToItselfAsync(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId endpointId)
+   {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
+      //The advance and the tessage's row commit together. The advance's row lock is held to the end of the sender's
+      //transaction, so the sends to the endpoint itself commit one after another, in the order of their sequence numbers.
+      await TransactionScopeCe.ExecuteAsync(async () =>
+      {
+         var advanced = await _connectionFactory.UseCommandAsync(
             async command => await command
                       .SetCommandText(
                           $"""
 
-                           INSERT INTO {_tables.InboxTessages}
-                                       ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.SenderEndpointId},  {TessageTable.DeliveryStreamSequenceNumber},  {TessageTable.Body}, {TessageTable.Status})
-                               VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.SenderEndpointId}, @{TessageTable.DeliveryStreamSequenceNumber}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
+                           UPDATE {_tables.InboxDeliveryStreamAdmissions}
+                               SET {Admissions.LastAdmittedSequenceNumber} = {Admissions.LastAdmittedSequenceNumber} + 1
+                           WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId}
 
                            """)
-                      .AddParameter(TessageTable.TessageId, tessageId.Value)
-                      .AddParameter(TessageTable.TypeId, internedTypeId)
-                      .AddParameter(TessageTable.SenderEndpointId, deliveryStreamPosition.SenderEndpointId.Value)
-                      .AddParameter(TessageTable.DeliveryStreamSequenceNumber, deliveryStreamPosition.SequenceNumber)
-                       //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
-                      .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
+                      .AddParameter(Admissions.SenderEndpointId, endpointId.Value)
                       .ExecuteNonQueryAsync().caf()).caf();
+         Contract.State.Assert(advanced == 1, () => $"The endpoint's stream to itself has no row in {_tables.InboxDeliveryStreamAdmissions}: the inbox opens it at its start, before it admits anything the endpoint sends itself.");
 
-         return ITessagingSqlLayer.SaveTessageResult.NewTessage;
+         var sequenceNumber = await GetLastAdmittedSequenceNumberAsync(endpointId).caf();
+         await InsertTheTessagesRowAsync(tessageId, internedTypeId, endpointId, sequenceNumber, serializedTessage).caf();
       }).caf();
    }
 
@@ -99,7 +128,26 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
       return admittedAsFirstContact == 1;
    }
 
-   async Task<long> GetLastAdmittedSequenceNumberAsync(DeliveryStreamPosition position) =>
+   async Task InsertTheTessagesRowAsync(TessageId tessageId, int internedTypeId, EndpointId senderEndpointId, long sequenceNumber, string serializedTessage) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        INSERT INTO {_tables.InboxTessages}
+                                    ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.SenderEndpointId},  {TessageTable.DeliveryStreamSequenceNumber},  {TessageTable.Body}, {TessageTable.Status})
+                            VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.SenderEndpointId}, @{TessageTable.DeliveryStreamSequenceNumber}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
+
+                        """)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
+                   .AddParameter(TessageTable.TypeId, internedTypeId)
+                   .AddParameter(TessageTable.SenderEndpointId, senderEndpointId.Value)
+                   .AddParameter(TessageTable.DeliveryStreamSequenceNumber, sequenceNumber)
+                    //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
+                   .AddNVarcharMaxParameter(TessageTable.Body, serializedTessage)
+                   .ExecuteNonQueryAsync().caf()).caf();
+
+   async Task<long> GetLastAdmittedSequenceNumberAsync(EndpointId senderEndpointId) =>
       await _connectionFactory.UseCommandAsync(
          async command => (long)(await command
                    .SetCommandText(
@@ -110,7 +158,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                         WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId}
 
                         """)
-                   .AddParameter(Admissions.SenderEndpointId, position.SenderEndpointId.Value)
+                   .AddParameter(Admissions.SenderEndpointId, senderEndpointId.Value)
                    .ExecuteScalarAsync().caf())!).caf();
 
    //UPDLOCK+ROWLOCK take the row lock the claim IS - held to the end of the caller's ambient handling transaction - and

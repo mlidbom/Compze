@@ -35,6 +35,9 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(it => it.DoneWith(tessage, handlingEndpointId, exception));
 
+   public void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId) =>
+      _implementation.Update(it => it.AdmittedTessageSentToItself(tessage, endpointId));
+
    public void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception) =>
       _implementation.Update(it => it.FailedTry(tessage, handlingEndpointId, exception));
 
@@ -80,6 +83,16 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
          inFlightTessage.EndpointDeliveryStatus.TryAdd(remoteEndpointId, false); //Retrying messages must not reset the status of already delivered messages.
       }
 
+      internal void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId) =>
+         _trackedTessages.GetOrAdd(tessage.TessageId,
+                                   () => new InFlightTessage
+                                         {
+                                            TessageId = tessage.TessageId,
+                                            TypeName = tessage.TessageTypeId.CanonicalString,
+                                            Body = tessage.Body
+                                         })
+                         .EndpointDeliveryStatus.TryAdd(endpointId, false);
+
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
          if(tessage.TessageTypeId.Type == typeof(EndpointInformationQuery))
@@ -89,13 +102,18 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
             _busExceptions.Add(exception);
          }
 
-         //A tessage this process never sent - one the inbox recovery scan reloaded from its own rows after a crash - has no
-         //in-flight entry here: there is nothing to mark done, only the handling that just finished.
-         if(_trackedTessages.TryGetValue(tessage.TessageId, out var inFlightTessage))
-         {
-            inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
-            inFlightTessage.LastFailedTries.Remove(handlingEndpointId);
-         }
+         //A tessage this process never sent - one the inbox recovery scan reloaded from its own rows after a crash or a stop - is
+         //recorded as handled here, so that the sender's next process redelivering it afterwards doesn't count as in flight: the
+         //receiver acknowledges that redelivery as a duplicate, and nothing would mark it done.
+         var inFlightTessage = _trackedTessages.GetOrAdd(tessage.TessageId,
+                                                         () => new InFlightTessage
+                                                               {
+                                                                  TessageId = tessage.TessageId,
+                                                                  TypeName = tessage.TessageTypeId.CanonicalString,
+                                                                  Body = tessage.Body
+                                                               });
+         inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
+         inFlightTessage.LastFailedTries.Remove(handlingEndpointId);
       }
 
       internal void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception)

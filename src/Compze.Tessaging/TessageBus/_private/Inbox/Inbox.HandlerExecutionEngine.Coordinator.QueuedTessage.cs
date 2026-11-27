@@ -23,14 +23,15 @@ partial class Inbox
          /// at the head of the line, so that no tessage behind it is handled first.</summary>
          ///<remarks>A try counts only when the endpoint could record it. When it couldn't, such as when the endpoint's database<br/>
          /// is unreachable, it is the endpoint that is failing, not the tessage: the tessage is tried again once the endpoint<br/>
-         /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint ends a wait to be<br/>
-         /// tried again, and leaves the tessage unhandled for the recovery scan at the endpoint's next start.</remarks>
+         /// has waited, and neither the try nor the wait counts toward its failing time. Stopping the endpoint's handling ends a wait to<br/>
+         /// be tried again, and cancels the token a running try's handlers were handed; a try that fails once handling has<br/>
+         /// stopped doesn't count either. The tessage is then left unhandled for the recovery scan at the endpoint's next start.</remarks>
          // ReSharper disable once MemberCanBePrivate.Local Resharper is just confused....
          internal class HandlerExecutionTask
          {
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, IUnitOfWorkResolver, Task> _tessageTask;
+            readonly Func<object, IUnitOfWorkResolver, CancellationToken, Task> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
@@ -55,6 +56,18 @@ partial class Inbox
 
             internal TessageId TessageId { get; }
 
+            ///<summary>True for a tessage the endpoint sent itself, which took its place in the line as it was admitted, in its<br/>
+            /// sender's transaction. False for one the recovery scan enqueued, whatever sent it: such tessages are in the line<br/>
+            /// before any the endpoint sends itself in this process.</summary>
+            internal bool IsSentByTheEndpointToItself { get; }
+
+            ///<summary>True while the transaction of the sender of a tessage the endpoint sent itself hasn't committed: the tessage<br/>
+            /// has its place in the line, and neither it nor any tessage the endpoint sent itself behind it may be handled yet.</summary>
+            internal bool AwaitsItsSendersCommit { get; private set; }
+
+            ///<summary>The sender of this tessage, which the endpoint sent itself, committed: the tessage may be handled.</summary>
+            internal void ItsSenderCommitted() => AwaitsItsSendersCommit = false;
+
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
 
             public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCoreAsync);
@@ -68,7 +81,7 @@ partial class Inbox
                }
                catch(OperationCanceledException) when(_stopping.IsCancellationRequested)
                {
-                  this.Log().Info($"Leaving tessage {TessageId} unhandled: the endpoint stopped handling while the tessage waited to be tried again. The recovery scan at the endpoint's next start enqueues it again, ahead of the tessages behind it.");
+                  this.Log().Info($"Leaving tessage {TessageId} unhandled: the endpoint stopped handling while the tessage was being tried, or waited to be tried again. The recovery scan at the endpoint's next start enqueues it again, ahead of the tessages behind it.");
                   _coordinator.LeftUnhandledAtStop(this);
                }
             }
@@ -84,6 +97,11 @@ partial class Inbox
                      _coordinator.Succeeded(this);
                      return;
                   }
+
+                  //A try that fails once handling has stopped is the endpoint stopping, not the tessage failing: its handlers were
+                  //handed the stopping token, cancelled, and gave up. So the try doesn't count, and the tessage is left unhandled
+                  //for the next start.
+                  _stopping.ThrowIfCancellationRequested();
 
                   if(!await TryRecordFailedTryAsync(failure).caf())
                   {
@@ -120,7 +138,7 @@ partial class Inbox
                         claimed = false;
                         return;
                      }
-                     await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork).caf();
+                     await _tessageTask(TransportTessage.DeserializeTessageAndCacheForNextCall(), unitOfWork, _stopping).caf();
                      await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                   }).caf();
                }
@@ -217,10 +235,12 @@ partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, TimeSpan failingTime, bool sentByTheEndpointToItself, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, RetryPolicy retryPolicy, CancellationToken stopping)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
+               IsSentByTheEndpointToItself = sentByTheEndpointToItself;
+               AwaitsItsSendersCommit = sentByTheEndpointToItself;
                _failingTime = failingTime;
                _coordinator = coordinator;
                _taskRunner = taskRunner;
@@ -233,12 +253,12 @@ partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, IUnitOfWorkResolver, Task> CreateTessageTask() =>
+            Func<object, IUnitOfWorkResolver, CancellationToken, Task> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
                   //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork) => _executor.ExecuteTeventHandlersAsync(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork),
-                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) => _executor.ExecuteTommandHandlerAsync((IExactlyOnceTommand)tessage, unitOfWork),
+                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork, cancellationToken) => _executor.ExecuteTeventHandlersAsync(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork, cancellationToken),
+                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork, cancellationToken) => _executor.ExecuteTommandHandlerAsync((IExactlyOnceTommand)tessage, unitOfWork, cancellationToken),
                   TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(),
                   _                                     => throw new ArgumentOutOfRangeException()
                };

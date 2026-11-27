@@ -17,5 +17,13 @@ public interface IExactlyOnceTeventHandlerRegistrar
    ///<summary>Registers a handler for tevents compatible with <typeparamref name="TTevent"/> — a subscription whose subscribed<br/>
    /// type demands exactly-once delivery, asserted at declaration. The handler receives the <see cref="IUnitOfWorkResolver"/><br/>
    /// of the unit of work delivering the tevent. Async only, no synchronous form: exactly-once kinds are async end to end.</summary>
-   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent;
+   ///<remarks>The handler also receives the token of the execution it serves: see<br/>
+   /// <see cref="TessageBusHandlerRegistrar.ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/>.</remarks>
+   ///<param name="handler">The handler: the tevent, the unit of work, and the token of the execution it serves.</param>
+   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent;
+
+   ///<summary>The form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,CancellationToken,Task})"/> for a<br/>
+   /// handler that waits on nothing it could give up.</summary>
+   IExactlyOnceTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+      => ForTevent<TTevent>((tevent, unitOfWork, _) => handler(tevent, unitOfWork));
 }

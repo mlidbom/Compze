@@ -24,7 +24,8 @@ sealed class TessageHandlerRegistrations
 
    readonly List<TeventHandlerRegistration> _teventHandlers = [];
    readonly List<TeventObserverRegistration> _teventObservers = [];
-   readonly Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers = new();
+   readonly Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>> _voidTommandHandlers = new();
+   readonly HashSet<Type> _deferredTommandTypes = [];
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
    readonly Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers = new();
    readonly List<Type> _subscribedTeventTypes = [];
@@ -37,7 +38,7 @@ sealed class TessageHandlerRegistrations
    ///<summary>Registers a participation handler for tevents compatible with <typeparamref name="TTevent"/>: see<br/>
    /// <see cref="TeventHandlerRegistration"/>. A tevent runs its handlers in the order they were registered, whatever types they<br/>
    /// subscribe to.</summary>
-   internal void AddTeventHandler<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent => _monitor.Locked(() =>
+   internal void AddTeventHandler<TTevent>(Func<TTevent, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTevent : ITevent => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
       _teventHandlers.Add(TeventHandlerRegistration.For(handler));
@@ -69,7 +70,19 @@ sealed class TessageHandlerRegistrations
    ///<summary>Registers the handler for <typeparamref name="TTommand"/> — a tommand whose type declares no result. The handler<br/>
    /// receives the <see cref="IUnitOfWorkResolver"/> of the unit of work its execution IS: a tommand mutates state, so every path<br/>
    /// that executes one runs it inside a unit of work, and its effects commit or roll back as a whole.</summary>
-   internal void AddVoidTommandHandler<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : ITommand => _monitor.Locked(() =>
+   internal void AddVoidTommandHandler<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : ITommand =>
+      _monitor.Locked(() => AddTheVoidTommandHandler(handler));
+
+   ///<summary>Registers the deferred handler for <typeparamref name="TTommand"/>: one that never runs in its sender's unit of<br/>
+   /// work, since the endpoint's inbox runs it in one of its own once the sender has committed — see<br/>
+   /// <see cref="TessageBus.DeferredTessageBusHandlerRegistrar"/>. A tommand type has one handler, deferred or not.</summary>
+   internal void AddDeferredTommandHandler<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : IExactlyOnceTommand => _monitor.Locked(() =>
+   {
+      AddTheVoidTommandHandler(handler);
+      _deferredTommandTypes.Add(typeof(TTommand));
+   });
+
+   void AddTheVoidTommandHandler<TTommand>(Func<TTommand, IUnitOfWorkResolver, CancellationToken, Task> handler) where TTommand : ITommand
    {
       AssertRosterIsNotYetBuilt();
       TessageInspector.AssertValid<TTommand>();
@@ -77,8 +90,8 @@ sealed class TessageHandlerRegistrations
                    () => $"{typeof(TTommand)} expects a result. You must register a handler that returns its result.");
       AssertSingleHandlerKindIsUnregistered(_voidTommandHandlers, typeof(TTommand));
 
-      _voidTommandHandlers.Add(typeof(TTommand), (tommand, unitOfWork) => handler((TTommand)tommand, unitOfWork));
-   });
+      _voidTommandHandlers.Add(typeof(TTommand), (tommand, unitOfWork, cancellationToken) => handler((TTommand)tommand, unitOfWork, cancellationToken));
+   }
 
    ///<summary>Registers the handler for <typeparamref name="TTommand"/>, whose result answers the caller — see <see cref="AddVoidTommandHandler{TTommand}"/>.</summary>
    internal void AddTommandHandlerWithResult<TTommand, TResult>(Func<TTommand, IUnitOfWorkResolver, Task<TResult>> handler) where TTommand : ITommand<TResult> => _monitor.Locked(() =>
@@ -114,7 +127,8 @@ sealed class TessageHandlerRegistrations
                                       teventObservers: [.._teventObservers],
                                       isTheEngineOfAnEndpoint: _isTheEngineOfAnEndpoint,
                                       teventTypesSubscribedForDynamicObservers: [.._teventTypesSubscribedForDynamicObservers],
-                                      voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>>(_voidTommandHandlers),
+                                      voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>>(_voidTommandHandlers),
+                                      deferredTommandTypes: new HashSet<Type>(_deferredTommandTypes),
                                       tommandHandlersWithResults: new Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult>(_tommandHandlersWithResults),
                                       tueryHandlers: new Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>>(_tueryHandlers),
                                       subscribedTeventTypes: [.._subscribedTeventTypes],

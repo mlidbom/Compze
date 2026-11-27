@@ -11,6 +11,7 @@ class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
    public Task AwaitNoTessagesInFlightAsync(WaitTimeout? timeoutOverride) => Task.CompletedTask;
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) {}
+   public void AdmittedTessageSentToItself(TransportTessage.InComing tessage, EndpointId endpointId) {}
    public void FailedTry(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception exception) {}
    public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
    public void TeventObservationQueued(Type wrapperTeventType) {}

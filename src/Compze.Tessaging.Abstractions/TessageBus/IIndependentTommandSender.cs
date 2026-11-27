@@ -17,5 +17,8 @@ public interface IIndependentTommandSender
 {
    ///<summary>Sends <paramref name="tommand"/> as its own unit of work — see <see cref="IUnitOfWorkTommandSender.SendAsync"/>.<br/>
    /// The unit of work commits when the awaited send completes; the tommand is then durably on its way, exactly-once.</summary>
-   Task SendAsync(IExactlyOnceTommand tommand);
+   ///<param name="tommand">The tommand to send.</param>
+   ///<param name="cancellationToken">Gives up the send, as for <see cref="IUnitOfWorkTommandSender.SendAsync"/>: the unit of<br/>
+   /// work then rolls back.</param>
+   Task SendAsync(IExactlyOnceTommand tommand, CancellationToken cancellationToken = default);
 }

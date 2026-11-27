@@ -9,6 +9,10 @@ partial class Inbox
    {
       Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage);
 
+      ///<summary>Admits a tessage the endpoint sends itself, in the sender's ambient transaction — see<br/>
+      /// <see cref="ITessagingSqlLayer.IInboxSqlLayer.SaveTessageSentToItselfAsync"/>.</summary>
+      Task SaveTessageSentToItselfAsync(TransportTessage.InComing tessage);
+
       ///<summary>Claims the tessage for the caller's handling execution, exclusively, riding its ambient handling<br/>
       /// transaction — see <see cref="ITessagingSqlLayer.IInboxSqlLayer.TryClaimForHandlingAsync"/>. False means the tessage<br/>
       /// is not this execution's to handle, and the caller skips without touching it.</summary>
@@ -25,6 +29,9 @@ partial class Inbox
       Task RecordFailedTryAsync(TransportTessage.InComing tessage, Exception exception, TimeSpan failingTime);
 
       Task MarkAsFailedAsync(TransportTessage.InComing tessage);
+
+      ///<summary>Creates the inbox's tables if they don't exist yet, and opens the endpoint's stream to itself — see<br/>
+      /// <see cref="ITessagingSqlLayer.IInboxSqlLayer.OpenTheStreamToItselfAsync"/>.</summary>
       Task StartAsync();
    }
 }

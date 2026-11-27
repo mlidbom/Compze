@@ -22,7 +22,8 @@ namespace Compze.Tessaging.Engine.HandlerRegistration;
 public class TessageHandlerRoster
 {
    readonly IReadOnlyList<TeventHandlerRegistration> _teventHandlers;
-   readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers;
+   readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>> _voidTommandHandlers;
+   readonly IReadOnlySet<Type> _deferredTommandTypes;
    readonly IReadOnlyDictionary<Type, TommandHandlerWithResult> _tommandHandlersWithResults;
    readonly IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers;
    readonly IReadOnlyList<Type> _subscribedTeventTypes;
@@ -35,7 +36,8 @@ public class TessageHandlerRoster
                                  IReadOnlyList<TeventObserverRegistration> teventObservers,
                                  bool isTheEngineOfAnEndpoint,
                                  IReadOnlyList<Type> teventTypesSubscribedForDynamicObservers,
-                                 IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> voidTommandHandlers,
+                                 IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task>> voidTommandHandlers,
+                                 IReadOnlySet<Type> deferredTommandTypes,
                                  IReadOnlyDictionary<Type, TommandHandlerWithResult> tommandHandlersWithResults,
                                  IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> tueryHandlers,
                                  IReadOnlyList<Type> subscribedTeventTypes,
@@ -46,6 +48,7 @@ public class TessageHandlerRoster
       IsTheEngineOfAnEndpoint = isTheEngineOfAnEndpoint;
       TeventTypesSubscribedForDynamicObservers = teventTypesSubscribedForDynamicObservers;
       _voidTommandHandlers = voidTommandHandlers;
+      _deferredTommandTypes = deferredTommandTypes;
       _tommandHandlersWithResults = tommandHandlersWithResults;
       _tueryHandlers = tueryHandlers;
       _subscribedTeventTypes = subscribedTeventTypes;
@@ -62,7 +65,7 @@ public class TessageHandlerRoster
    /// dispatch's own for a best-effort arrival.</summary>
    ///<remarks>The order is a guarantee: a handler may depend on what the handlers registered before it did (Magnus, 2026-11-24).</remarks>
    //performance: Use static caching trick.
-   public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
+   public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, CancellationToken, Task>> GetTeventHandlers(Type wrapperTeventType) =>
       [.._teventHandlers.Where(it => it.MatchesTeventsWrappedAs(wrapperTeventType)).Select(it => it.Handle)];
 
    ///<summary>Every composed tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
@@ -79,7 +82,7 @@ public class TessageHandlerRoster
    internal IReadOnlyList<Type> TeventTypesSubscribedForDynamicObservers { get; }
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose type declares no result.</summary>
-   public Func<ITommand, IUnitOfWorkResolver, Task> GetVoidTommandHandler(Type tommandType) =>
+   public Func<ITommand, IUnitOfWorkResolver, CancellationToken, Task> GetVoidTommandHandler(Type tommandType) =>
       _voidTommandHandlers.TryGetValue(tommandType, out var handler) ? handler : throw new NoHandlerException(tommandType);
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose result answers the caller.</summary>
@@ -92,8 +95,14 @@ public class TessageHandlerRoster
 
    ///<summary>Whether this roster holds a handler for the tommand type <paramref name="tommandType"/> — the question the<br/>
    /// tommand sender asks to honor the consistency law: an in-roster tommand executes inline, in the sender's execution,<br/>
-   /// and only a tommand whose handler lives elsewhere crosses the endpoint boundary through delivery machinery.</summary>
+   /// unless its handler is deferred (<see cref="DefersTheHandlingOf"/>), and only a tommand whose handler lives elsewhere<br/>
+   /// crosses the endpoint boundary through delivery machinery.</summary>
    internal bool HandlesTommand(Type tommandType) => _voidTommandHandlers.ContainsKey(tommandType) || _tommandHandlersWithResults.ContainsKey(tommandType);
+
+   ///<summary>Whether the handler of the tommand type <paramref name="tommandType"/> is deferred: it never runs in its sender's<br/>
+   /// unit of work, since the endpoint's inbox runs it in one of its own once the sender has committed — see<br/>
+   /// <see cref="DeferredTessageBusHandlerRegistrar"/>.</summary>
+   internal bool DefersTheHandlingOf(Type tommandType) => _deferredTommandTypes.Contains(tommandType);
 
    ///<summary>Whether this roster holds a handler for the single-handler tessage type <paramref name="tessageType"/> — a<br/>
    /// tommand of either shape, or a tuery. What readiness asks about the endpoint's own half: a type the endpoint itself<br/>

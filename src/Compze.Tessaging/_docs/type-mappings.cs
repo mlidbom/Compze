@@ -4,6 +4,7 @@
 #region type_mapper
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Documentation.DeclaringEndpoints;
+using Compze.Tessaging.Documentation.DeliveryGuarantees;
 using Compze.Tessaging.Documentation.OnOneMachine;
 using Compze.Tessaging.Typermedia.Documentation.DeclaringAnApi;
 
@@ -18,6 +19,7 @@ class TessageTypeMappings : IAssemblyTypeMapper
       .Map<IAccountRegistered>("cb849aa3-e951-4334-9118-9dd55003378c")
       .Map<AccountRegistered>("eefb3f2d-256f-4a00-a280-07a62239959d")
       .Map<RecordWelcomeEmailSent>("d95c7d8d-bc07-41f1-91cd-bccb24704497")
+      .Map<SendWelcomeEmail>("4f0c8e27-3b91-4d6a-a5e8-92d17c6b03fa")
       .Map<IIndexingProgressed>("599d64e1-18e7-4384-90be-d70609045d4d")
       .Map<IndexingProgressed>("1579d6ff-cc6d-4112-891f-51240ea20bba")
       .Map<AccountLink>("bd50a225-57bf-47bc-9908-62a28e270103")

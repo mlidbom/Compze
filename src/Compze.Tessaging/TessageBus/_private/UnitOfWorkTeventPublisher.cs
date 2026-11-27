@@ -61,14 +61,14 @@ static class UnitOfWorkTeventPublisherRegistrar
       //todo:urgent: a synchronous wait on asynchronous handlers, inside the caller's unit of work: it stalls while the thread
       //   pool is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
 #pragma warning disable VSTHRD002 // The synchronous Publish, over participation's handlers, which may be asynchronous.
-      PublishCoreAsync(wrappedTevent).GetAwaiter().GetResult();
+      PublishCoreAsync(wrappedTevent, CancellationToken.None).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002
    }
 
-   public async Task PublishAsync(ITevent tevent) => await PublishCoreAsync(PublisherTevent.Wrapped(tevent)).caf();
+   public async Task PublishAsync(ITevent tevent, CancellationToken cancellationToken = default) => await PublishCoreAsync(PublisherTevent.Wrapped(tevent), cancellationToken).caf();
 
    //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped by the publish methods above, and routing operates on the wrapper's type.
-   async Task PublishCoreAsync(IPublisherTevent<ITevent> wrappedTevent)
+   async Task PublishCoreAsync(IPublisherTevent<ITevent> wrappedTevent, CancellationToken cancellationToken)
    {
       State.Assert(Transaction.Current != null,
                    () => $"{nameof(IUnitOfWorkTeventPublisher)} publishes within the caller's unit of work, and there is no ambient transaction — no unit of work to publish within. Run the caller through ExecuteUnitOfWork, or publish through {nameof(IIndependentTeventPublisher)}, which runs each publish as its own unit of work.");
@@ -82,7 +82,7 @@ static class UnitOfWorkTeventPublisherRegistrar
       //participation runs, so a tevent a participation handler publishes in response comes after this one: observers see cause
       //before consequence.
       _observationDispatcher.QueueAtTheCommitOf(unitOfWork, wrappedTevent);
-      await _executor.ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork).caf();
+      await _executor.ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork, cancellationToken).caf();
       if(remoteDelivery != null) await remoteDelivery().caf();
    }
 

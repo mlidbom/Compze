@@ -32,7 +32,8 @@ public sealed class TypermediaHandlerRegistrar : ITypermediaTommandHandlerRegist
    {
       AssertUsedOnlyInsideItsCallback();
       AssertTommandIsANavigatedKind<TTommand>();
-      _registrations.AddVoidTommandHandler(handler);
+      //Typermedia handlers receive no token yet: see src/Compze.Tessaging/dev_docs/TODO/remote-typermedia-calls-deadlines-cancellation-and-stopping.md.
+      _registrations.AddVoidTommandHandler<TTommand>((tommand, unitOfWork, _) => handler(tommand, unitOfWork));
       return this;
    }
 
@@ -42,7 +43,7 @@ public sealed class TypermediaHandlerRegistrar : ITypermediaTommandHandlerRegist
    {
       AssertUsedOnlyInsideItsCallback();
       AssertTommandIsANavigatedKind<TTommand>();
-      _registrations.AddVoidTommandHandler<TTommand>((tommand, unitOfWork) =>
+      _registrations.AddVoidTommandHandler<TTommand>((tommand, unitOfWork, _) =>
       {
          handler(tommand, unitOfWork);
          return Task.CompletedTask;

@@ -1,3 +1,6 @@
+using Compze.Contracts;
+using Compze.Internals.SystemCE.TransactionsCE;
+using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
@@ -28,8 +31,8 @@ static class InboxRegistrar
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITessageStorage>()
-                  .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
-                                => new InboxTessageStorage(sqlLayer)),
+                  .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer, EndpointConfiguration configuration)
+                                => new InboxTessageStorage(sqlLayer, configuration.Id)),
          Singleton.For<HandlerExecutionEngine>()
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, RetryPolicy retryPolicy, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, retryPolicy, configuration.Id)),
@@ -61,6 +64,7 @@ static class InboxRegistrar
       _handlerExecutionEngine.Start();
       await _storage.StartAsync().caf();
       await ReEnqueueUnHandledTessagesAsync().caf();
+      _handlerExecutionEngine.StartAdmittingTessagesSentToItself();
       this.Log().Info("Started");
    }
 
@@ -109,7 +113,29 @@ static class InboxRegistrar
       _handlerExecutionEngine.Enqueue(tessage, failingTime: TimeSpan.Zero);
    }
 
-   public Task DrainAndStopHandlingAsync() => _handlerExecutionEngine.DrainAndStopHandlingAsync();
+   public async Task AdmitTommandSentToItselfAsync(IExactlyOnceTommand tommand)
+   {
+      State.NotNull(Transaction.Current);
+      //Captured before the first await: the hooks must bind to the sender's unit of work even if the ambient has drifted in a continuation.
+      var transaction = Transaction.Current;
+      this.Log().Debug($"Admitting tommand {tommand.Id} ({tommand.GetType().Name}), sent by the endpoint to itself, to be handled once its sender commits");
+
+      var admission = _handlerExecutionEngine.BeginAdmittingATessageSentToItself();
+      //Registered before the row is written, so the admission ends however the sender's transaction does.
+      transaction.OnCommittedSuccessfully(admission.ItsSenderCommitted);
+      transaction.OnCompletedWithoutCommitting(admission.ItsSenderDidNotCommit);
+
+      //The handler gets the tommand as its row holds it, as it would after a restart, never the instance the sender holds.
+      var tessage = new TransportTessage.InComing(_serializer.SerializeTessage(tommand), _typeMap.GetId(tommand.GetType()).CanonicalString, tommand.Id, _typeMap, _serializer);
+      await _storage.SaveTessageSentToItselfAsync(tessage).caf();
+      admission.TakeAPlaceInTheLine(tessage);
+   }
+
+   public Task StopAdmittingTessagesSentToItselfAsync() => _handlerExecutionEngine.StopAdmittingTessagesSentToItselfAsync();
+
+   public Task DrainAndStopHandlingAsync(CancellationToken cancellationToken) => _handlerExecutionEngine.DrainAndStopHandlingAsync(cancellationToken);
+
+   public CancellationTokenRegistration StopHandlingWhenCancelled(CancellationToken cancellationToken) => _handlerExecutionEngine.StopHandlingWhenCancelled(cancellationToken);
 
    public async ValueTask DisposeAsync()
    {

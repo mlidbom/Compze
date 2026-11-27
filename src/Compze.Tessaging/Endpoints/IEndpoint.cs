@@ -39,7 +39,14 @@ public interface IEndpoint : IAsyncDisposable
    /// that resumes on thread-pool threads, so a disposal that has to stop first disposes the container on whichever thread<br/>
    /// that work resumed on. Stopping first, then disposing from the thread that owns those components, begins the<br/>
    /// container's disposal on that thread instead, without awaiting anything before it.</remarks>
-   Task StopAsync();
+   ///<remarks>The drain is bounded: it waits at most 30 seconds for the tessages its inbox received to be handled, then goes<br/>
+   /// on as though a handler were hung. Cancelling <paramref name="cancellationToken"/> lets go at once, such as for a process<br/>
+   /// handing the endpoint over to its successor, in whichever phase the stop then is: the inbox handles nothing more, and the<br/>
+   /// tries of tessages still running are cancelled, through the token their handlers were handed, and roll back. They, and<br/>
+   /// the tessages behind them, are neither handled nor marked failed: the endpoint's next start handles them, in their order.<br/>
+   /// A token already cancelled stops the endpoint without a drain.</remarks>
+   ///<param name="cancellationToken">Lets go of what the inbox still runs, and ends the drain.</param>
+   Task StopAsync(CancellationToken cancellationToken = default);
 
    ///<summary>Readiness: completes when this endpoint can reach a handler for every type in<br/>
    /// <paramref name="readinessTypes"/> — the framework-native replacement for the startup readiness probes applications<br/>
