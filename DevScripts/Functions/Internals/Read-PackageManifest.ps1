@@ -13,7 +13,9 @@ function Read-PackageManifest {
     dependency floor is.
 
     .OUTPUTS
-    Object with PackageId, Version, RepositoryCommit and CompzeDependencyFloors (Compze package id to floor)
+    Object with PackageId, Version, RepositoryCommit, CompzeDependencyFloors (Compze package id to floor) and
+    CompzeExactVersionDependencies (Compze package id to the exact version required, for the packages whose internals it
+    uses)
     #>
     [CmdletBinding()]
     param(

@@ -305,8 +305,9 @@ internals:
 ## 6. What else it touches
 
 - **The upgrade report (`C-Get-CompzeUpgradeReport`).**
-  - **It reads dependency versions as plain versions,** from the restore graphs and from the manifests. Both readers learn
-    `[x.y.z]`, or the report fails on the first exact version.
+  - **It reads dependency versions from the restore graphs and from the manifests.** The restore graphs' reader already
+    reads the lowest version of any range, `[x.y.z]` included. The manifests' reader learns `[x.y.z]`, or the report fails
+    on the first exact version.
   - **An upgrade brings along an exact-version dependency at exactly its version:** "-> 0.10.0-alpha exactly", not "or
     newer".
   - **Its left-behind section reads a left-behind version's exact-version dependencies from its manifest:** such a pairing
@@ -371,7 +372,7 @@ error, for a pairing that breaks at run time.
 
 In this order, each step a commit of its own:
 
-1. The manifest reader and the upgrade report's restore graph reader learn `[x.y.z]`.
+1. The manifest reader learns `[x.y.z]`.
 2. Direct references to Compze.Sql.Common for the 24 packages; the removal of each grant the build shows unused; the code
    policy.
 3. The pack target.

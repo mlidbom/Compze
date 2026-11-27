@@ -10,8 +10,9 @@ function Read-NuGetOrgPackageManifest {
     dependency floor is.
 
     .OUTPUTS
-    Object with PackageId, Version, RepositoryCommit ($null for an older release that predates the commit stamp) and
-    CompzeDependencyFloors (Compze package id to floor)
+    Object with PackageId, Version, RepositoryCommit ($null for an older release that predates the commit stamp),
+    CompzeDependencyFloors (Compze package id to floor) and CompzeExactVersionDependencies (Compze package id to the exact
+    version required, for the packages whose internals it uses)
     #>
     [CmdletBinding()]
     param(

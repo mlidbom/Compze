@@ -10,19 +10,31 @@ function ConvertFromPackageManifestXml([string]$ManifestXml) {
     # into every package it packs, here and in the release workflow alike. It is what tells two builds of one version
     # apart. Older Compze releases predate the stamp, so RepositoryCommit may be $null.
     #
-    # A dependency floor is the lowest version of a dependency that a package accepts. Compze's dependencies name a
-    # version with no upper bound, so a floor of 0.7.2 means 0.7.2 or newer. CompzeDependencyFloors maps the id of each
-    # Compze package this one depends on to its floor.
+    # A dependency floor is the lowest version of a dependency that a package accepts. CompzeDependencyFloors maps the id
+    # of each Compze package this one depends on to its floor.
+    #
+    # A Compze package names a version with no upper bound for most of its Compze dependencies, so a floor of 0.7.2 means
+    # 0.7.2 or newer. For each Compze package whose internals it uses, it names an exact version instead, [0.7.2], which
+    # is that dependency's floor too: see dev_docs/WIP/exact-versions-on-internals.md. CompzeExactVersionDependencies maps the id of each
+    # such dependency to its version. Older releases predate exact versions, so it may be empty.
     [xml]$manifest = $ManifestXml
     $metadata = $manifest.package.metadata
     # Selected rather than read as properties: under Set-StrictMode a missing element or attribute read as a property throws.
     $repository = $metadata.SelectSingleNode("*[local-name()='repository']")
     $repositoryCommit = if ($repository -and $repository.HasAttribute('commit')) { $repository.GetAttribute('commit') } else { $null }
+    $compzeDependencies = @(ReadCompzeDependencies $manifest)
+    $floors = [ordered]@{}
+    $exactVersions = [ordered]@{}
+    foreach ($dependency in $compzeDependencies) {
+        $floors[$dependency.PackageId] = $dependency.Floor
+        if ($dependency.IsExactVersion) { $exactVersions[$dependency.PackageId] = $dependency.Floor }
+    }
     return [PSCustomObject]@{
-        PackageId              = $metadata.id
-        Version                = $metadata.version
-        RepositoryCommit       = $repositoryCommit
-        CompzeDependencyFloors = ReadCompzeDependencyFloors $manifest
+        PackageId                      = $metadata.id
+        Version                        = $metadata.version
+        RepositoryCommit               = $repositoryCommit
+        CompzeDependencyFloors         = $floors
+        CompzeExactVersionDependencies = $exactVersions
     }
 }
 
@@ -84,21 +96,29 @@ function GetManifestEntry([System.IO.Compression.ZipArchive]$Package, [string]$N
     return $manifestEntry
 }
 
-function ReadCompzeDependencyFloors([xml]$Manifest) {
-    # The floor of each Compze dependency, in every dependency group: Compze packages target one framework, so one
-    # floor per dependency, which this asserts.
-    $floors = [ordered]@{}
+function ReadCompzeDependencies([xml]$Manifest) {
+    # Each Compze dependency, in every dependency group, ordered by package id: its PackageId, its Floor, and whether
+    # IsExactVersion, its range being that one version. Compze packages target one framework, so one range per
+    # dependency, which this asserts.
+    $ranges = [ordered]@{}
     $dependencies = $Manifest.SelectNodes("//*[local-name()='metadata']/*[local-name()='dependencies']//*[local-name()='dependency']")
     foreach ($dependency in @($dependencies | Where-Object { $_.id -like 'Compze.*' } | Sort-Object { $_.id })) {
-        if ($dependency.version -match '[\[\(,]') {
-            throw "$($Manifest.package.metadata.id) $($Manifest.package.metadata.version) depends on $($dependency.id) in the range '$($dependency.version)', where Compze's dependencies name a version with no upper bound."
+        if ($ranges.Contains($dependency.id) -and $ranges[$dependency.id] -ne $dependency.version) {
+            throw "$($Manifest.package.metadata.id) $($Manifest.package.metadata.version) depends on $($dependency.id) in two ranges, '$($ranges[$dependency.id])' and '$($dependency.version)': a package that targets several frameworks, which this does not handle yet."
         }
-        if ($floors.Contains($dependency.id) -and $floors[$dependency.id] -ne $dependency.version) {
-            throw "$($Manifest.package.metadata.id) $($Manifest.package.metadata.version) depends on $($dependency.id) with two floors, $($floors[$dependency.id]) and $($dependency.version): a package that targets several frameworks, which this does not handle yet."
-        }
-        $floors[$dependency.id] = $dependency.version
+        $ranges[$dependency.id] = $dependency.version
     }
-    return $floors
+    foreach ($packageId in $ranges.Keys) {
+        $range = $ranges[$packageId]
+        $exactVersion = [regex]::Match($range, '^\[\s*(?<version>[^,\s\[\]\(\)]+)\s*\]$')
+        if ($exactVersion.Success) {
+            [PSCustomObject]@{ PackageId = $packageId; Floor = $exactVersion.Groups['version'].Value; IsExactVersion = $true }
+        } elseif ($range -notmatch '[\[\(,\]\)]') {
+            [PSCustomObject]@{ PackageId = $packageId; Floor = $range; IsExactVersion = $false }
+        } else {
+            throw "$($Manifest.package.metadata.id) $($Manifest.package.metadata.version) depends on $packageId in the range '$range', where Compze's dependencies name either a version with no upper bound or one exact version."
+        }
+    }
 }
 
 function SetReleaseNotesElement([xml]$Manifest, [string]$ReleaseNotes) {
