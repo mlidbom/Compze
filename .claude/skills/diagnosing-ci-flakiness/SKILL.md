@@ -45,8 +45,13 @@ That local reproduction can fail where CI's succeeds: the 2026-11-12 case reprod
 rather than theorise further:
 
 - **The flake-hunt workflow** (`.github/workflows/flake-hunt.yml`): push a branch named `flake-hunt/<what>` with the
-  workflow's combination and test project set, and one push runs that project 20 times on each of 8 Linux runners,
-  each run from a fresh runner's state. `ci.yml` skips such branches.
+  workflow's combination and test project set, and one push runs that project 20 times on each of 8 runners, each run
+  from a fresh runner's state. `ci.yml` skips such branches. `os` in its matrix picks Linux or Windows; on Windows it
+  runs SQLite only. It lists each run's slowest tests, as CI lists a job's.
+- **A slow test that passes says nothing:** only failed tests print their output. To see where a slow one's time goes,
+  make it fail with its evidence on the hunt branch: `flake-hunt/windows-sqlite-accountmanagement-stall`'s
+  `UserStoryTest` samples the thread pool, the process's processor time and GC every half second on a thread of its
+  own, and fails any user story past 10 s with the samples. Its timestamped log then shows each gap.
 - **Make a test's own timeout leave a dump:** `WaitAsyncDumpingTheProcessOnTimeout` (Compze.Tests.Infrastructure)
   dumps the process while the awaited work is still stuck, and names the thread pool's state in the exception.
 - **Read the dumps in the job log,** not the artifact: on failure CI prints each dump's thread pool, threads,
@@ -110,3 +115,16 @@ What that hunt left for the next one:
 - **SqlClient's diagnostic events also start work at an exact moment inside SqlClient,** for a deterministic
   specification of a race: `WhenSqlClientHasClosedTheConnectionThatRan` in Compze.Sql.InternalSpecifications runs an
   action once a connection is back in SqlClient's pool, before its close returns.
+
+**On Windows, the system's temp folder is on C:, the runner's operating-system disk, and its flushes stall for
+seconds.** The 2026-11-27 case, CI run 46021615668: two AccountManagement user stories on file SQLite held their
+databases for 67-68 s against the DbPool's 65-second reservations. Their timestamped logs, from a flake hunt, showed two
+kinds of gap, with the CPU idle and nothing pending in the thread pool: a fresh database's first writes (a dump caught
+threads in `sqlite3_step` running schema DDL), and an endpoint's container closing its connections, each close a WAL
+checkpoint that Microsoft.Data.Sqlite's `ClearPool` runs under one lock for the whole process, so the endpoint disposals
+of every test wait for each other. Same code, the pool's files moved to D:: 27 user stories over 10 s in 40 runs on C:,
+none on D:, and the suite twice as fast. CI has kept them in `RUNNER_TEMP`, on D:, since
+(`COMPOSABLE_SQLITE_DATABASE_POOL_BASE_DIRECTORY`). Defender's real-time protection is off on those runners, and both
+drives are excluded. AccountManagement.Tests had taken 45 s to 2 m 45 s in 11 of the last 150 or so runs of the two
+SQLite jobs on Windows, against 30-40 s otherwise, unnoticed while no test failed.
+A stall on Windows with the CPU idle and no backlog in the pool: look at what the test keeps on C: first.
