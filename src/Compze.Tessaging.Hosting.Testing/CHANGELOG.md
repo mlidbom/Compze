@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.8.2-alpha
 
-- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha), Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal), Compze.Tessaging.MicrosoftSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.MySql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.PostgreSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.Sqlite 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.11.0-alpha (was 0.10.0-alpha), Compze.Internals.SystemCE 0.14.0-internal (was 0.13.0-internal), Compze.Tessaging.MicrosoftSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.MySql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.PostgreSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging.Sqlite 0.7.0-alpha (was 0.6.0-alpha), Compze.Tessaging.Transport.AspNetCore 0.5.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 - **Requires exact versions of the Compze packages whose internals it uses:** Compze.Tessaging 0.15.0-alpha (was 0.14.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
 
 ## 0.8.1-alpha

@@ -4,8 +4,9 @@ All notable changes to Compze.Tessaging.Transport.AspNetCore will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.1-alpha
+## 0.5.0-alpha
 
+- **No longer sends the endpoint server's logs to Seq, nor depends on `Seq.Extensions.Logging`.** The ASP.NET Core server each endpoint hosts added a Seq logger provider for the hard-coded address `http://192.168.0.11:5341`, so every application using the package tried to post its log events there. The server now logs only through the providers ASP.NET Core's `WebApplication` sets up by default. Code that compiled against Seq's types through this package's dependency must reference `Seq.Extensions.Logging` itself.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.DependencyInjection 0.11.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 - **Requires exact versions of the Compze packages whose internals it uses:** Compze.Tessaging 0.15.0-alpha (was 0.9.0-alpha or newer). Upgrading to this version upgrades each package listed here to exactly that version, so their changelogs apply to this upgrade as well.
 

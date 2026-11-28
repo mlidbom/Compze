@@ -131,8 +131,6 @@ Besides the address it listens on:
 - **The announced address.** With a wildcard bind Kestrel reports `http://0.0.0.0:port` or `http://[::]:port`,
   which no other machine can use. Listening on one named IP address solves both. (Known Kestrel behavior, not
   run in the investigation.)
-- **The hard-coded Seq address** (`http://192.168.0.11:5341`, tagged `todo:urgent` in
-  `AspNetCoreEndpointTransportServer`) is unreachable from the guest.
 - **Timeouts.** `HttpClientFactoryCE` sets neither `Timeout` nor `ConnectTimeout`, so .NET's default of 100
   seconds bounds both a silent-vanish and every handler's run time.
 - **The proxy.** `SocketsHttpHandler` uses the system proxy unless told otherwise. Whether that affects requests
