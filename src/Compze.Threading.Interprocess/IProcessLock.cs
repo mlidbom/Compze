@@ -10,8 +10,9 @@ namespace Compze.Threading.Interprocess;
 ///<remarks>The lock is a file in the directory, <c>{name}.lock</c>, which a holder keeps open in a way that keeps every other holder out. A wait<br/>
 /// tries to open it every 50 milliseconds, so the lock isn't fair: whoever tries first after a release takes it. Nor is it reentrant: a second<br/>
 /// take waits for the first hold like any other, even in the same process, on the same thread.<br/>
-/// On Windows a holder shares the file for reading, so that a virus scanner or an indexer reading it keeps no holder out, and writes in it what it<br/>
-/// holds the lock for. On Linux, macOS and the other Unix systems .NET locks the file with <c>flock</c>, which keeps out only those who also lock<br/>
+/// On Windows a holder shares the file for reading, and writes in it what it holds the lock for. A reader that shares the file for writing keeps no<br/>
+/// holder out; one that doesn't, such as a virus scanner or an indexer that opens it so, keeps holders out for as long as it reads, which delays a<br/>
+/// take that much. On Linux, macOS and the other Unix systems .NET locks the file with <c>flock</c>, which keeps out only those who also lock<br/>
 /// it, and locks every file it opens, so a waiter couldn't read the file: the holder writes what it holds the lock for in a file of its own beside<br/>
 /// it, named after the lock with the extension <c>.holder</c>. And since .NET's file locking can be turned off, and some file systems don't<br/>
 /// support <c>flock</c>, taking the lock there checks that the file keeps a second holder out, and throws if it doesn't.<br/>
